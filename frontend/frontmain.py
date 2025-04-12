@@ -1,34 +1,56 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel, QPushButton
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QWidget,
+    QVBoxLayout, QLabel, QHBoxLayout, QDesktopWidget
+)
+from PyQt5.QtCore import Qt
 
-class MainWindow(QMainWindow):
+class MainInterface(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("My PyQt App")
-        self.setGeometry(100, 100, 400, 300)
+        self.setWindowTitle("SenseFit")
 
-        # Central widget and layout
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
+        # Get screen size and calculate 80% of width and height
+        screen = QDesktopWidget().screenGeometry()
+        screen_width = screen.width()
+        screen_height = screen.height()
+        window_width = int(screen_width * 0.8)
+        window_height = int(screen_height * 0.8)
 
-        layout = QVBoxLayout()
-        central_widget.setLayout(layout)
+        self.setGeometry(100, 100, window_width, window_height)
 
-        # Example widgets
-        self.label = QLabel("Hello, PyQt!")
-        self.button = QPushButton("Click Me")
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
 
-        layout.addWidget(self.label)
-        layout.addWidget(self.button)
+        # Main layout
+        main_layout = QVBoxLayout()
 
-        # Connect button signal
-        self.button.clicked.connect(self.on_button_click)
+        # Title label
+        title_label = QLabel("Welcome to Sense_Fit")
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setStyleSheet("font-size: 24px; font-weight: bold; margin: 20px;")
+        main_layout.addWidget(title_label)
 
-    def on_button_click(self):
-        self.label.setText("Button clicked!")
+        # Content layout
+        content_layout = QHBoxLayout()
+        main_layout.addLayout(content_layout)
+
+        # Left panel (navigation)
+        left_panel = QLabel("Left Panel")
+        left_panel.setAlignment(Qt.AlignCenter)
+        left_panel.setStyleSheet("background-color: #e0e0e0; min-width: 200px;")
+        content_layout.addWidget(left_panel)
+
+        # Right panel (main area)
+        right_panel = QLabel("Main Display Area")
+        right_panel.setAlignment(Qt.AlignCenter)
+        right_panel.setStyleSheet("background-color: #f5f5f5;")
+        content_layout.addWidget(right_panel)
+
+        self.central_widget.setLayout(main_layout)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = MainInterface()
     window.show()
     sys.exit(app.exec_())

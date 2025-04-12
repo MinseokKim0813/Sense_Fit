@@ -1,4 +1,5 @@
 from Backend.tracking_module import CursorTracker
+from Frontend.frontmain import 
 
 from PyQt5.QtWidgets import QApplication
 import sys
