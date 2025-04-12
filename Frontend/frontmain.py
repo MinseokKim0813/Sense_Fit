@@ -2,21 +2,20 @@ import sys
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget,
     QVBoxLayout, QLabel, QGridLayout, QScrollArea,
-    QDesktopWidget, QPushButton, QFrame, QMessageBox
+    QDesktopWidget, QPushButton, QFrame
 )
 from PyQt5.QtCore import Qt, pyqtSignal
-
-from create_profile import show_new_profile_window
+from new_profile import show_new_profile_window
 
 
 class AddProfileCard(QFrame):
     clicked = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, width, height):
         super().__init__()
+        self.setFixedSize(width, height)
         self.setFrameShape(QFrame.Box)
         self.setLineWidth(1)
-        self.setFixedSize(200, 150)
         self.setStyleSheet("background-color: #ffffff; border-radius: 8px; padding: 10px;")
 
         layout = QVBoxLayout()
@@ -43,15 +42,17 @@ class MainInterface(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("SenseFit")
-        self.profiles = []  # Store profile names or objects
+        self.profiles = []  # Store profile names
 
-        # Centered window
+        # Center window
         screen = QDesktopWidget().screenGeometry()
-        w, h = int(screen.width() * 0.8), int(screen.height() * 0.8)
+        self.window_width = int(screen.width() * 0.8)
+        self.window_height = int(screen.height() * 0.8)
         self.setGeometry(
-            int((screen.width() - w) / 2),
-            int((screen.height() - h) / 2),
-            w, h
+            int((screen.width() - self.window_width) / 2),
+            int((screen.height() - self.window_height) / 2),
+            self.window_width,
+            self.window_height
         )
 
         self.central_widget = QWidget()
@@ -62,12 +63,14 @@ class MainInterface(QMainWindow):
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
 
+        # Title
         title = QLabel("Select Profile")
         title.setFixedHeight(60)
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet("background-color: #2c3e50; color: white; font-size: 24px; font-weight: bold;")
         main_layout.addWidget(title)
 
+        # Scrollable area for grid
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
 
@@ -75,42 +78,67 @@ class MainInterface(QMainWindow):
         self.grid_layout = QGridLayout()
         self.grid_layout.setSpacing(20)
         self.grid_layout.setContentsMargins(40, 20, 40, 20)
-
         self.grid_container.setLayout(self.grid_layout)
+
         scroll_area.setWidget(self.grid_container)
         main_layout.addWidget(scroll_area)
-
         self.central_widget.setLayout(main_layout)
 
-        self.add_card = AddProfileCard()
-        self.add_card.clicked.connect(self.handle_add_profile)
         self.refresh_grid()
 
+    def get_card_size(self):
+        spacing = self.grid_layout.spacing() * 3
+        margins = self.grid_layout.contentsMargins().left() + self.grid_layout.contentsMargins().right()
+        usable_width = self.window_width - margins - spacing
+        card_width = usable_width // 4
+        card_height = int(card_width * 0.75)
+        return card_width, card_height
+
+    from PyQt5.QtWidgets import QSpacerItem, QSizePolicy
+
     def refresh_grid(self):
-        # Clear current grid
         for i in reversed(range(self.grid_layout.count())):
             widget = self.grid_layout.itemAt(i).widget()
             if widget:
                 widget.setParent(None)
 
-        # Re-add the "+" card to (0,0)
-        self.grid_layout.addWidget(self.add_card, 0, 0)
+        card_width, card_height = self.get_card_size()
+        total_items = len(self.profiles) + 1  # profiles + add card
+        columns = 4
 
-        # Add all profile cards starting from (0,1) onward
-        for index, title in enumerate(self.profiles):
-            row = (index + 1) // 4
-            col = (index + 1) % 4
-            self.grid_layout.addWidget(self.create_profile_card(title), row, col)
+        for idx in range(total_items):
+            row = idx // columns
+            col = idx % columns
+
+            if idx < len(self.profiles):
+                title = self.profiles[idx]
+                card = self.create_profile_card(title, card_width, card_height)
+            else:
+                card = AddProfileCard(card_width, card_height)
+                card.clicked.connect(self.handle_add_profile)
+
+            self.grid_layout.addWidget(card, row, col)
+
+        # Add invisible fillers to maintain grid shape (fill missing cells in the last row)
+        remainder = total_items % columns
+        if remainder != 0:
+            for col in range(remainder, columns):
+                filler = QWidget()
+                filler.setFixedSize(card_width, card_height)
+                filler.setStyleSheet("background-color: transparent;")
+                self.grid_layout.addWidget(filler, total_items // columns, col)
+
 
     def handle_add_profile(self):
         self.new_profile_window = show_new_profile_window()
+        self.new_profile_window.show()  # show() is already called in the class, but just to be safe
 
 
-    def create_profile_card(self, title):
+    def create_profile_card(self, title, width, height):
         card = QFrame()
         card.setFrameShape(QFrame.Box)
         card.setLineWidth(1)
-        card.setFixedSize(200, 150)
+        card.setFixedSize(width, height)
         card.setStyleSheet("background-color: white; border-radius: 8px; padding: 10px;")
 
         layout = QVBoxLayout()
