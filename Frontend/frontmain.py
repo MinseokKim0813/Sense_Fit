@@ -6,6 +6,8 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, pyqtSignal
 
+from new_profile import show_new_profile_window
+
 
 class AddProfileCard(QFrame):
     clicked = pyqtSignal()
@@ -101,9 +103,8 @@ class MainInterface(QMainWindow):
             self.grid_layout.addWidget(self.create_profile_card(title), row, col)
 
     def handle_add_profile(self):
-        new_profile_name = f"Profile {len(self.profiles) + 1}"
-        self.profiles.append(new_profile_name)
-        self.refresh_grid()
+        self.new_profile_window = show_new_profile_window()
+
 
     def create_profile_card(self, title):
         card = QFrame()

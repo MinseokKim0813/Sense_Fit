@@ -18,7 +18,9 @@ def show_new_profile_window():
             screen = QDesktopWidget().screenGeometry()
             window_width = int(screen.width() * 0.8)
             window_height = int(screen.height() * 0.8)
-            self.setGeometry(100, 100, window_width, window_height)
+            center_x = int((screen.width() - window_width) / 2)
+            center_y = int((screen.height() - window_height) / 2)
+            self.setGeometry(center_x, center_y, window_width, window_height)
             self.setStyleSheet("background-color: #2e2e2e;")
 
             title_font = QFont('Arial', 32, QFont.Bold)
@@ -92,9 +94,5 @@ def show_new_profile_window():
 
             self.setLayout(layout)
             self.show()
-
-    app = QApplication(sys.argv)
-    new_profile = NewProfileWindow()
-    sys.exit(app.exec_())
-
-show_new_profile_window()
+    
+    return NewProfileWindow()  # <- Return instance instead of running sys.exit()
