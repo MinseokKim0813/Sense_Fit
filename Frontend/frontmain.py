@@ -2,11 +2,10 @@ import sys
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget,
     QVBoxLayout, QLabel, QGridLayout, QScrollArea,
-    QDesktopWidget, QPushButton, QFrame
+    QDesktopWidget, QPushButton, QFrame, QSpacerItem, QSizePolicy
 )
 from PyQt5.QtCore import Qt, pyqtSignal
-from new_profile import show_new_profile_window
-
+from create_profile import show_new_profile_window
 
 class AddProfileCard(QFrame):
     clicked = pyqtSignal()
@@ -94,8 +93,6 @@ class MainInterface(QMainWindow):
         card_height = int(card_width * 0.75)
         return card_width, card_height
 
-    from PyQt5.QtWidgets import QSpacerItem, QSizePolicy
-
     def refresh_grid(self):
         for i in reversed(range(self.grid_layout.count())):
             widget = self.grid_layout.itemAt(i).widget()
@@ -127,7 +124,6 @@ class MainInterface(QMainWindow):
                 filler.setFixedSize(card_width, card_height)
                 filler.setStyleSheet("background-color: transparent;")
                 self.grid_layout.addWidget(filler, total_items // columns, col)
-
 
     def handle_add_profile(self):
         self.new_profile_window = show_new_profile_window()
