@@ -16,8 +16,8 @@ def show_new_profile_window():
             self.setWindowTitle("Sense Fit")
 
             screen = QDesktopWidget().screenGeometry()
-            window_width = int(screen.width() * 0.8)
-            window_height = int(screen.height() * 0.8)
+            window_width = int(screen.width() * 0.4)
+            window_height = int(screen.height() * 0.4)
             center_x = int((screen.width() - window_width) / 2)
             center_y = int((screen.height() - window_height) / 2)
             self.setGeometry(center_x, center_y, window_width, window_height)
