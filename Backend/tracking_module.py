@@ -1,4 +1,5 @@
 import sys
+import os
 import csv
 from datetime import datetime
 import pyautogui  #For accessing the global mouse position
@@ -20,7 +21,11 @@ class CursorTracker(QWidget):
         layout.addWidget(self.label)
         self.setLayout(layout)
 
-        self.csv_file = "cursor_log.csv"
+        # Create the logs directory if it doesn't exist
+        if not os.path.exists("logs"):
+            os.makedirs("logs")
+
+        self.csv_file = f"logs/cursor_log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
         self.init_csv()
 
         #Set up a timer to repeatedly check and update the cursor position
@@ -31,7 +36,7 @@ class CursorTracker(QWidget):
     def init_csv(self):
         # Create the file and write header only if it doesn't exist
         try:
-            with open(self.csv_file, "x", newline='') as file:
+            with open(self.csv_file, "w", newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(["Timestamp", "X", "Y"])
         except FileExistsError:
