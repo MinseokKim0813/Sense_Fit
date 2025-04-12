@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, pyqtSignal
 
-from new_profile import show_new_profile_window
+from create_profile import show_new_profile_window
 
 
 class AddProfileCard(QFrame):
