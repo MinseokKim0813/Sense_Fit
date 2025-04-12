@@ -4,3 +4,6 @@ env
 
 # macOS metadata
 .DS_Store
+
+# Logs
+logs
