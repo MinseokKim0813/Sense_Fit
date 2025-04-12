@@ -5,8 +5,8 @@ env
 # macOS metadata
 .DS_Store
 
-# Logs
-logs
+# Storage and Logs
+Backend/storage
 
 # Cache
 __pycache__

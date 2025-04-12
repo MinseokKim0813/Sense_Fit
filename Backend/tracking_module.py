@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget  #Basic P
 class CursorTracker(QWidget):
     def __init__(self):
         super().__init__()
+        self.log_directory = os.path.join("Backend", "storage", "logs")
         #Set up main window
         self.setWindowTitle("Global Cursor Tracker")                    #Window title
         self.resize(300, 100)                                           #Set window size
@@ -22,10 +23,10 @@ class CursorTracker(QWidget):
         self.setLayout(layout)
 
         # Create the logs directory if it doesn't exist
-        if not os.path.exists("logs"):
-            os.makedirs("logs")
+        if not os.path.exists(self.log_directory):
+            os.makedirs(self.log_directory)
 
-        self.csv_file = f"logs/cursor_log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
+        self.csv_file = os.path.join(self.log_directory, f"cursor_log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv")
         self.init_csv()
 
         #Set up a timer to repeatedly check and update the cursor position
@@ -34,7 +35,7 @@ class CursorTracker(QWidget):
         self.timer.start(10)                                            #Trigger the timeout every 10 milliseconds (100Hz)
 
     def init_csv(self):
-        # Create the file and write header only if it doesn't exist
+        # Create the file with the header
         try:
             with open(self.csv_file, "w", newline='') as file:
                 writer = csv.writer(file)
