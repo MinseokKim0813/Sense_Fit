@@ -1,2 +1,6 @@
+# Python virtual environment
 .venv
 env
+
+# macOS metadata
+.DS_Store
