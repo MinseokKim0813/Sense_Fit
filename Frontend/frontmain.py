@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget,
     QVBoxLayout, QLabel, QGridLayout, QScrollArea,
-    QDesktopWidget, QPushButton, QFrame, QSpacerItem, QSizePolicy
+    QDesktopWidget, QPushButton, QFrame
 )
 from PyQt5.QtCore import Qt, pyqtSignal
 from Frontend.create_profile import CreateProfileDialog
@@ -79,7 +79,6 @@ class MainInterface(QMainWindow):
         super().__init__()
         self.setWindowTitle("SenseFit")
         self.profiles = profile_handler.get_profiles()
-        # [{id: 1, name: "John", dpi: 100}, {id: 2, name: "Jane", dpi: 200}]
 
         # Center window
         screen = QDesktopWidget().screenGeometry()
@@ -92,8 +91,13 @@ class MainInterface(QMainWindow):
             self.window_height
         )
         self.setStyleSheet("background-color: #1e1e1e; color: white;")
-        self.central_widget = QWidget()
-        self.setCentralWidget(self.central_widget)
+
+        self.build_profile_grid()
+
+    def build_profile_grid(self):
+        self.profiles = profile_handler.get_profiles()  # Refresh in case of newly created profile
+        profile_grid_widget = QWidget()
+        self.setCentralWidget(profile_grid_widget)
 
         # Layouts
         main_layout = QVBoxLayout()
@@ -119,7 +123,8 @@ class MainInterface(QMainWindow):
 
         scroll_area.setWidget(self.grid_container)
         main_layout.addWidget(scroll_area)
-        self.central_widget.setLayout(main_layout)
+
+        profile_grid_widget.setLayout(main_layout)
 
         self.refresh_grid()
 
@@ -155,11 +160,6 @@ class MainInterface(QMainWindow):
                 card.clicked.connect(self.handle_add_profile)
 
             self.grid_layout.addWidget(card, row, col)
-        
-        wrapper_layout = QVBoxLayout(self.grid_container)
-        wrapper_layout.setContentsMargins(0, 0, 0, 0)
-        wrapper_layout.addLayout(self.grid_layout)
-        wrapper_layout.addStretch()
 
         # Add invisible fillers to maintain grid shape (fill missing cells in the last row)
         remainder = total_items % columns
@@ -171,9 +171,9 @@ class MainInterface(QMainWindow):
                 self.grid_layout.addWidget(filler, total_items // columns, col)
 
     def handle_add_profile(self):
-        dialog = CreateProfileDialog()
+        dialog = CreateProfileDialog(profile_handler)
         dialog.profile_created.connect(self.switch_to_profile_page)
-        dialog.exec_()  # block and wait for the dialog to close
+        dialog.exec_()
 
     def switch_to_profile_page(self, profile):
         self.setCentralWidget(ProfileWindow(profile))
@@ -182,6 +182,46 @@ class MainInterface(QMainWindow):
         card = ProfileCard(profile, width, height)
         card.clicked.connect(self.switch_to_profile_page)
         return card
+    
+    def show_profile_selection(self):
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+
+        self.profiles = profile_handler.get_profiles()
+        print(self.profiles)
+
+        self.setup_ui()
+
+    def setup_ui(self):
+        # Main layout
+        main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+
+        # Title
+        title = QLabel("Select Profile")
+        title.setFixedHeight(60)
+        title.setAlignment(Qt.AlignCenter)
+        title.setStyleSheet("background-color: #2c3e50; color: white; font-size: 24px; font-weight: bold;")
+        main_layout.addWidget(title)
+
+        # Scrollable area for grid
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+
+        self.grid_container = QWidget()
+        self.grid_layout = QGridLayout()
+        self.grid_layout.setSpacing(20)
+        self.grid_layout.setContentsMargins(40, 20, 40, 20)
+        self.grid_container.setLayout(self.grid_layout)
+
+        scroll_area.setWidget(self.grid_container)
+        main_layout.addWidget(scroll_area)
+        self.central_widget.setLayout(main_layout)
+
+        self.refresh_grid()
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

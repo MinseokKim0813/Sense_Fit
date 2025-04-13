@@ -8,10 +8,13 @@ from PyQt5.QtCore import Qt
 from Backend.tracking_module import *
 
 class ProfileWindow(QWidget):
-    def __init__(self, profile):
+    def __init__(self, profile, main_window=None):
         super().__init__()
+        self.main_interface = main_window
         self.profile = profile
+        self.main_window = main_window
         self.initUI()
+
 
     def initUI(self):
         self.setWindowTitle(f"{self.profile['name']}'s Profile")
@@ -37,8 +40,11 @@ class ProfileWindow(QWidget):
 
         #Back Button
         back_button = QPushButton("← Back")
+        back_button.clicked.connect(self.go_back)
         back_button.setFixedSize(120, 40)
         back_button.setStyleSheet("font-size: 18px; background-color: #2c2c2c; color: white;")
+        back_button.clicked.connect(self.go_back)
+
         # Title label
         self.title_label = QLabel(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
         self.title_label.setAlignment(Qt.AlignCenter)
@@ -135,6 +141,11 @@ class ProfileWindow(QWidget):
         main_layout.addStretch()
 
         self.setLayout(main_layout)
+
+
+    def go_back(self):
+        self.main_interface.build_profile_grid()
+
 
     def on_toggle(self, checked):
         if checked:
