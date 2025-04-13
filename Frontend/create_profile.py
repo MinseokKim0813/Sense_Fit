@@ -1,10 +1,13 @@
+import sys
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout,
     QHBoxLayout, QApplication, QDesktopWidget
 )
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QFont
-import sys
+
+from profile_main import ProfileWindow
+
 
 def show_new_profile_window():
     class NewProfileWindow(QWidget):
@@ -94,5 +97,6 @@ def show_new_profile_window():
 
             self.setLayout(layout)
             self.show()
+        
     
     return NewProfileWindow()  # <- Return instance instead of running sys.exit()
