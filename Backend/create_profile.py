@@ -1,6 +1,8 @@
 import os
 import json
 
+def is_alphanumeric(char: str) -> bool:
+    return (ord('a') <= ord(char) <= ord('z')) or (ord('A') <= ord(char) <= ord('Z')) or (ord('0') <= ord(char) <= ord('9'))
 class profileHandler:
     def __init__(self):
         self.__profiles = []
@@ -47,8 +49,12 @@ class profileHandler:
             
             # Check if name contains only letters and numbers
             for char in name:
-                if not char.isalnum() and not char.isspace():
+                if not is_alphanumeric(char) and not char.isspace():
                     raise ValueError("Name must contain only letters and numbers")
+                
+            # Check if name does not contain only spaces
+            if name.isspace():
+                raise ValueError("Name cannot contain only spaces")
                 
             # Check if profile name already exists
             for profile in self.__profiles:
@@ -114,3 +120,10 @@ class profileHandler:
 
 if __name__ == "__main__":
     pass
+    # # Test Suite
+    # profileHandler = profileHandler()
+
+    # # Sample test cases
+    # print(profileHandler.create_profile("John 1", "100"))
+    # print(profileHandler.create_profile("Johnㅋㅋ", "100"))
+    # print(profileHandler.create_profile("   ", "100"))
