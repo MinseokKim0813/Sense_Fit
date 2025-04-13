@@ -94,7 +94,13 @@ def show_new_profile_window():
             layout.addWidget(self.title_label)
             layout.addLayout(name_layout)
             layout.addLayout(dpi_layout)
-            layout.addWidget(self.create_button)
+
+            button_layout = QHBoxLayout()
+            button_layout.setAlignment(Qt.AlignCenter)
+            button_layout.addWidget(self.create_button)
+
+            layout.addLayout(button_layout)
+
 
             self.setLayout(layout)
             self.show()
