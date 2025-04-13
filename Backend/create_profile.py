@@ -13,36 +13,57 @@ class profileHandler:
         # Create storage directory if it doesn't exist
         os.makedirs(self.__storage_dir, exist_ok=True)
         
-        # Load profiles from file if it exists  
+        # Load profiles from the file if it exists  
         if os.path.exists(self.__profiles_file):
             with open(self.__profiles_file, "r") as file:
                 self.__profiles = json.load(file)
 
-    def create_profile(self, name, initialDPI):
+        # If file doesn't exist, create the file of an empty list
+        else:
+            with open(self.__profiles_file, "w") as file:
+                json.dump([], file, indent=4)
+
+    def create_profile(self, name: str, initialDPI: str) -> dict:
 
         try:
+            # Check if initialDPI is a number
             for char in initialDPI:
                 if not char.isdigit():
                     raise ValueError("Initial DPI must be a number")
 
             initialDPI = int(initialDPI)
 
+            # Check if name is between 1 and 20 characters
             if not (1 <= len(name) <= 20):
                 raise ValueError("Name must be between 1 and 20 characters")
             
+            # Check if initialDPI is between 100 and 3200
             if not (100 <= initialDPI <= 3200):
                 raise ValueError("Initial DPI must be between 100 and 3200")
             
+            # Check if name contains only letters and numbers
             for char in name:
                 if not char.isalnum() and not char.isspace():
                     raise ValueError("Name must contain only letters and numbers")
+                
+            # Check if profile name already exists
+            for profile in self.__profiles:
+                if profile['name'] == name:
+                    raise ValueError("Profile already exists")
         
-        except ValueError as e:
+        except Exception as e:
             return {"error": str(e)}
 
         new_profile = {}
+
+        # Assign _id to profile for backend internal use
+        if len(self.__profiles) == 0:
+            new_profile['_id'] = 1
+        else:
+            new_profile['_id'] = self.__profiles[-1]['_id'] + 1
+
         new_profile['name'] = name
-        new_profile['initialDPI'] = initialDPI
+        new_profile['DPI'] = initialDPI
         self.__profiles.append(new_profile)
 
         with open(self.__profiles_file, "w") as file:
@@ -50,11 +71,42 @@ class profileHandler:
 
         return {"message": "Profile created successfully", "profile": self.__profiles[-1]}
     
+    def delete_profile(self, name: str) -> dict:
+        for profile in self.__profiles:
+            if profile['name'] == name:
+                self.__profiles.remove(profile)
+
+                with open(self.__profiles_file, "w") as file:
+                    json.dump(self.__profiles, file, indent=4)
+
+                return {"message": "Profile deleted successfully"}
+            
+        return {"error": "Profile not found"}
+    
     def get_profiles(self):
         return self.__profiles
     
+    def find_profile(self, name: str) -> dict:
+        for profile in self.__profiles:
+            if profile['name'] == name:
+                return profile
+        return {"error": "Profile not found"}
+    
+    def update_profile_dpi(self, name: str, new_dpi: int) -> dict:
+        for profile in self.__profiles:
+            if profile['name'] == name:
+                # Check if new_dpi is between 100 and 3200
+                if not (100 <= new_dpi <= 3200):
+                    raise ValueError("New DPI must be between 100 and 3200")
+
+                profile['DPI'] = new_dpi
+
+                with open(self.__profiles_file, "w") as file:
+                    json.dump(self.__profiles, file, indent=4)
+
+                return {"message": "Profile updated successfully"}
+            
+        return {"error": "Profile not found"}
 
 if __name__ == "__main__":
-    profileHandler = profileHandler()
-    profileHandler.create_profile("John", "100")
-    print(profileHandler.get_profiles())
+    pass
