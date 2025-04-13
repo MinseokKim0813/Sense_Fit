@@ -12,7 +12,7 @@ from Frontend.profile_main import ProfileWindow
 from Backend.create_profile import profileHandler
 
 class CreateProfileDialog(QDialog):
-    profile_created = pyqtSignal(str, str)  # name, dpi
+    profile_created = pyqtSignal(dict)  # Profile Object
 
     def __init__(self, profile_handler):
         super().__init__()
@@ -138,5 +138,5 @@ class CreateProfileDialog(QDialog):
             self.error_label.setText(response['error'])
             self.error_label.setVisible(True)
         else:
-            self.profile_created.emit(name, dpi)
+            self.profile_created.emit(response['profile'])
             self.accept()
