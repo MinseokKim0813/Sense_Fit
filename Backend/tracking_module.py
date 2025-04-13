@@ -7,9 +7,18 @@ from PyQt5.QtCore import QTimer  #To create timed updates
 from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget  #Basic PyQt5 GUI elements
 
 class CursorTracker(QWidget):
-    def __init__(self):
+    def __init__(self, profile_id):
         super().__init__()
-        self.log_directory = os.path.join("Backend", "storage", "logs")
+        self.__current_profile = profile_id
+        # self.__cursor_data_points = []
+
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        self.__current_session = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        self.__storage_dir = os.path.join(current_dir, "storage")
+        self.__log_file = os.path.join(self.__storage_dir, f"cursor_log_{self.__current_session}.csv")
+
+        self.__init_csv()
+
         #Set up main window
         self.setWindowTitle("Global Cursor Tracker")                    #Window title
         self.resize(300, 100)                                           #Set window size
@@ -23,22 +32,20 @@ class CursorTracker(QWidget):
         self.setLayout(layout)
 
         # Create the logs directory if it doesn't exist
-        if not os.path.exists(self.log_directory):
-            os.makedirs(self.log_directory)
-
-        self.csv_file = os.path.join(self.log_directory, f"cursor_log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv")
-        self.init_csv()
+        if not os.path.exists(self.__storage_dir):
+            os.makedirs(self.__storage_dir)
 
         #Set up a timer to repeatedly check and update the cursor position
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_cursor_position)         #On timeout, call update function
         self.timer.start(10)                                            #Trigger the timeout every 10 milliseconds (100Hz)
 
-    def init_csv(self):
+    def __init_csv(self):
         # Create the file with the header
         try:
-            with open(self.csv_file, "w", newline='') as file:
+            with open(self.__log_file, "w", newline='') as file:
                 writer = csv.writer(file)
+                writer.writerow(["Profile_ID", self.__current_profile, "Session", self.__current_session])
                 writer.writerow(["Timestamp", "X", "Y"])
         except FileExistsError:
             pass  # File already exists, so do nothing
@@ -48,9 +55,16 @@ class CursorTracker(QWidget):
         pos = pyautogui.position()
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 
-        #Update the label text with the current x and y coordinates
-        self.label.setText(f"Global Cursor Position: x={pos.x}, y={pos.y}")
+        try:
+        # TODO: Check pos is well defined; this means that pos is not None
+            if pos is None:
+                # TODO: Close this module and raise an error; the module must be closed
+                raise ValueError("Encounted an error retriving the cursor position. Please try again.")
+        except Exception as e:
+            print(f"Error: {e}")
+            self.close()
+            return
 
-        with open(self.csv_file, "a", newline='') as file:
+        with open(self.__log_file, "a", newline='') as file:
             writer = csv.writer(file)
             writer.writerow([timestamp, pos.x, pos.y])

@@ -136,7 +136,7 @@ class ProfileWindow(QWidget):
             self.tracking_status_label.setText("Tracking Enabled")
             
             # Start tracking
-            self.tracker = CursorTracker()
+            self.tracker = CursorTracker(self.profile_name)
             # self.tracker.show()
         else:
             self.toggle_button.setText("Off")
