@@ -61,6 +61,10 @@ class profileHandler:
                 if profile['name'] == name:
                     raise ValueError("Profile already exists")
         
+            # Check if there is at most 8 profiles
+            if len(self.__profiles) >= 8:
+                raise ValueError("You can only have at most 8 profiles")
+            
         except Exception as e:
             return {"error": str(e)}
 
