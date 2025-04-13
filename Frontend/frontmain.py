@@ -55,7 +55,6 @@ class MainInterface(QMainWindow):
             self.window_width,
             self.window_height
         )
-
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
 
