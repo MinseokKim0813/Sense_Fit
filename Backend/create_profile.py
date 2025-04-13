@@ -5,14 +5,13 @@ class profileHandler:
     def __init__(self):
         self.__profiles = []
 
-
         current_dir = os.path.dirname(os.path.realpath(__file__))
 
         self.__storage_dir = os.path.join(current_dir, "storage")
         self.__profiles_file = os.path.join(self.__storage_dir, "profiles.json")
         
         # Create storage directory if it doesn't exist
-        os.makedirs(os.path.dirname(self.__storage_dir), exist_ok=True)
+        os.makedirs(self.__storage_dir, exist_ok=True)
         
         # Load profiles from file if it exists  
         if os.path.exists(self.__profiles_file):
