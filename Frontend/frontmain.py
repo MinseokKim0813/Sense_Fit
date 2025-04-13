@@ -5,7 +5,9 @@ from PyQt5.QtWidgets import (
     QDesktopWidget, QPushButton, QFrame, QSpacerItem, QSizePolicy
 )
 from PyQt5.QtCore import Qt, pyqtSignal
-from create_profile import show_new_profile_window
+from create_profile import CreateProfileDialog
+from profile_main import ProfileWindow
+
 
 class AddProfileCard(QFrame):
     clicked = pyqtSignal()
@@ -126,9 +128,12 @@ class MainInterface(QMainWindow):
                 self.grid_layout.addWidget(filler, total_items // columns, col)
 
     def handle_add_profile(self):
-        self.new_profile_window = show_new_profile_window()
-        self.new_profile_window.show()  # show() is already called in the class, but just to be safe
+        dialog = CreateProfileDialog()
+        dialog.profile_created.connect(self.switch_to_profile_page)
+        dialog.exec_()  # block and wait for the dialog to close
 
+    def switch_to_profile_page(self, name, dpi):
+        self.setCentralWidget(ProfileWindow(name, dpi))
 
     def create_profile_card(self, title, width, height):
         card = QFrame()
