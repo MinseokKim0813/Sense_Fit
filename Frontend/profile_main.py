@@ -89,6 +89,12 @@ class ProfileWindow(QWidget):
         self.toggle_button.toggled.connect(self.on_toggle)
         self.toggle_button.setFixedSize(200, 50)
         self.toggle_button.setStyleSheet("font-size: 24px; font-weight: bold; background-color: #3a3a3a; color: white;")
+        
+        # Add tracking status message label
+        self.status_message_label = QLabel("")
+        self.status_message_label.setAlignment(Qt.AlignCenter)
+        self.status_message_label.setStyleSheet("font-size: 16px; color: #4caf50;") # Green color for success
+        self.status_message_label.setVisible(False)
 
         top_button_layout = QHBoxLayout()
         top_button_layout.addStretch()
@@ -108,6 +114,8 @@ class ProfileWindow(QWidget):
         toggle_layout.addWidget(self.tracking_status_label)
         toggle_layout.addSpacing(30)
         toggle_layout.addLayout(toggle_row_layout)
+        toggle_layout.addSpacing(10)
+        toggle_layout.addWidget(self.status_message_label)
 
         main_layout = QVBoxLayout()
         main_layout.addSpacing(10)
@@ -135,8 +143,18 @@ class ProfileWindow(QWidget):
             self.tracking_status_label.setText("Tracking Enabled")
             
             # Start tracking
-            self.tracker = CursorTracker(self.profile['_id'])
-            # self.tracker.show()
+            try:
+                self.tracker = CursorTracker(self.profile['_id'])
+                # Hide any previous message when starting tracking successfully
+                self.status_message_label.setVisible(False)
+            except Exception as e:
+                # Show error message
+                self.status_message_label.setText(f"Failed to start tracking: {str(e)}")
+                self.status_message_label.setStyleSheet("font-size: 16px; color: #ff5252;") # Red for error
+                self.status_message_label.setVisible(True)
+                # Revert toggle button to off state
+                self.toggle_button.setChecked(False)
+                return
         else:
             self.toggle_button.setText("Off")
             self.toggle_button.setStyleSheet("font-size: 24px; font-weight: bold; background-color: #3a3a3a; color: white;")
@@ -144,9 +162,19 @@ class ProfileWindow(QWidget):
 
             # Stop tracking
             if hasattr(self, 'tracker') and self.tracker is not None:
-                self.tracker.close()
-                self.tracker.deleteLater()
-                self.tracker = None
+                try:
+                    self.tracker.close()
+                    self.tracker.deleteLater()
+                    self.tracker = None
+                    # Show success message
+                    self.status_message_label.setText("Tracking stopped successfully")
+                    self.status_message_label.setStyleSheet("font-size: 16px; color: #4caf50;") # Green for success
+                    self.status_message_label.setVisible(True)
+                except Exception as e:
+                    # Show error message
+                    self.status_message_label.setText(f"Failed to stop tracking: {str(e)}")
+                    self.status_message_label.setStyleSheet("font-size: 16px; color: #ff5252;") # Red for error
+                    self.status_message_label.setVisible(True)
 
 
 if __name__ == "__main__":

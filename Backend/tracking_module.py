@@ -17,7 +17,11 @@ class CursorTracker(QWidget):
         self.__storage_dir = os.path.join(current_dir, "storage", "logs")
         self.__log_file = os.path.join(self.__storage_dir, f"cursor_log_{self.__current_session}.csv")
 
-        self.__init_csv()
+        # Initialize CSV file and ensure storage directory exists
+        try:
+            self.__init_csv()
+        except Exception as e:
+            raise Exception(f"Failed to initialize tracking: {str(e)}")
 
         #Set up main window
         self.setWindowTitle("Global Cursor Tracker")                    #Window title
@@ -38,33 +42,42 @@ class CursorTracker(QWidget):
 
     def __init_csv(self):
         # Create the logs directory if it doesn't exist
-        if not os.path.exists(self.__storage_dir):
-            os.makedirs(self.__storage_dir)
-
-        # Create the file with the header
         try:
+            if not os.path.exists(self.__storage_dir):
+                os.makedirs(self.__storage_dir)
+
+            # Create the file with the header
             with open(self.__log_file, "w", newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(["Profile_ID", self.__current_profile, "Session", self.__current_session])
                 writer.writerow(["Timestamp", "X", "Y"])
-        except FileExistsError:
-            pass  # File already exists, so do nothing
+            return True
+        except Exception as e:
+            raise Exception(f"Error creating log file: {str(e)}")
 
     def update_cursor_position(self):
-        #Get the current global position of the mouse cursor
-        pos = pyautogui.position()
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-
         try:
-        # TODO: Check pos is well defined; this means that pos is not None
+            #Get the current global position of the mouse cursor
+            pos = pyautogui.position()
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+
+            # Check if the position is valid
             if pos is None:
-                # TODO: Close this module and raise an error; the module must be closed
-                raise ValueError("Encounted an error retriving the cursor position. Please try again.")
+                raise ValueError("Failed to retrieve cursor position")
+                
+            # Write to the log file
+            with open(self.__log_file, "a", newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow([timestamp, pos.x, pos.y])
+                
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Tracking error: {e}")
+            # Close tracker on error
             self.close()
             return
-
-        with open(self.__log_file, "a", newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([timestamp, pos.x, pos.y])
+    
+    def close(self):
+        # Ensure timer is stopped when closing
+        if hasattr(self, 'timer') and self.timer is not None:
+            self.timer.stop()
+        super().close()
