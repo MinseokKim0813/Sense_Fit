@@ -161,6 +161,7 @@ class ProfileWindow(QWidget):
             self.tracking_status_label.setText("Tracking Disabled")
 
             # Stop tracking
+            # TODO: Implement error handling; need to receive signal with error msg to the main window that the tracker has stopped
             if hasattr(self, 'tracker') and self.tracker is not None:
                 try:
                     self.tracker.close()

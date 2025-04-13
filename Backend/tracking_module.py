@@ -70,6 +70,7 @@ class CursorTracker(QWidget):
                 writer = csv.writer(file)
                 writer.writerow([timestamp, pos.x, pos.y])
                 
+        # TODO: Implement error handling; need to signal with error msg to the main window that the tracker has stopped
         except Exception as e:
             print(f"Tracking error: {e}")
             # Close tracker on error
