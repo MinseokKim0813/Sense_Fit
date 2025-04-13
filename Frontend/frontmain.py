@@ -177,12 +177,50 @@ class MainInterface(QMainWindow):
         dialog.exec_()  # block and wait for the dialog to close
 
     def switch_to_profile_page(self, name, dpi):
-        self.setCentralWidget(ProfileWindow(name, dpi))
+        self.setCentralWidget(ProfileWindow(name, dpi, self))
 
     def create_profile_card(self, profile_name, profile_dpi, width, height):
         card = ProfileCard(profile_name, profile_dpi, width, height)
         card.clicked.connect(self.switch_to_profile_page)
         return card
+    
+    def show_profile_selection(self):
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+
+        self.profiles = profile_handler.get_profiles()
+        self.setup_ui()
+    
+    def setup_ui(self):
+        # Main layout
+        main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+
+        # Title
+        title = QLabel("Select Profile")
+        title.setFixedHeight(60)
+        title.setAlignment(Qt.AlignCenter)
+        title.setStyleSheet("background-color: #2c3e50; color: white; font-size: 24px; font-weight: bold;")
+        main_layout.addWidget(title)
+
+        # Scrollable area for grid
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+
+        self.grid_container = QWidget()
+        self.grid_layout = QGridLayout()
+        self.grid_layout.setSpacing(20)
+        self.grid_layout.setContentsMargins(40, 20, 40, 20)
+        self.grid_container.setLayout(self.grid_layout)
+
+        scroll_area.setWidget(self.grid_container)
+        main_layout.addWidget(scroll_area)
+        self.central_widget.setLayout(main_layout)
+
+        self.refresh_grid()
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
