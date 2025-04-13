@@ -14,7 +14,7 @@ class CursorTracker(QWidget):
 
         current_dir = os.path.dirname(os.path.realpath(__file__))
         self.__current_session = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        self.__storage_dir = os.path.join(current_dir, "storage")
+        self.__storage_dir = os.path.join(current_dir, "storage", "logs")
         self.__log_file = os.path.join(self.__storage_dir, f"cursor_log_{self.__current_session}.csv")
 
         self.__init_csv()
@@ -24,16 +24,12 @@ class CursorTracker(QWidget):
         self.resize(300, 100)                                           #Set window size
 
         # Create a label widget to display the cursor position
-        self.label = QLabel("Cursor position will show here", self)
+        # self.label = QLabel("Cursor position will show here", self)
 
         #Set up the layout and add the label
         layout = QVBoxLayout()
-        layout.addWidget(self.label)
+        # layout.addWidget(self.label)
         self.setLayout(layout)
-
-        # Create the logs directory if it doesn't exist
-        if not os.path.exists(self.__storage_dir):
-            os.makedirs(self.__storage_dir)
 
         #Set up a timer to repeatedly check and update the cursor position
         self.timer = QTimer()
@@ -41,6 +37,10 @@ class CursorTracker(QWidget):
         self.timer.start(10)                                            #Trigger the timeout every 10 milliseconds (100Hz)
 
     def __init_csv(self):
+        # Create the logs directory if it doesn't exist
+        if not os.path.exists(self.__storage_dir):
+            os.makedirs(self.__storage_dir)
+
         # Create the file with the header
         try:
             with open(self.__log_file, "w", newline='') as file:
