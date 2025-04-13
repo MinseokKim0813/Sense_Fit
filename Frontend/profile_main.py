@@ -8,14 +8,13 @@ from PyQt5.QtCore import Qt
 from Backend.tracking_module import *
 
 class ProfileWindow(QWidget):
-    def __init__(self, name, dpi):
+    def __init__(self, profile):
         super().__init__()
-        self.profile_name = name
-        self.dpi_value = dpi
+        self.profile = profile
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle(f"{self.profile_name}'s Profile")
+        self.setWindowTitle(f"{self.profile['name']}'s Profile")
 
         # Get screen size
         screen = QDesktopWidget().screenGeometry()
@@ -41,7 +40,7 @@ class ProfileWindow(QWidget):
         back_button.setFixedSize(120, 40)
         back_button.setStyleSheet("font-size: 18px; background-color: #2c2c2c; color: white;")
         # Title label
-        self.title_label = QLabel(f"{self.profile_name}'s Profile ({self.dpi_value} DPI)")
+        self.title_label = QLabel(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
         self.title_label.setAlignment(Qt.AlignCenter)
         self.title_label.setStyleSheet("font-size: 30px; font-weight: bold;")
 
@@ -136,7 +135,7 @@ class ProfileWindow(QWidget):
             self.tracking_status_label.setText("Tracking Enabled")
             
             # Start tracking
-            self.tracker = CursorTracker(self.profile_name)
+            self.tracker = CursorTracker(self.profile['name'])
             # self.tracker.show()
         else:
             self.toggle_button.setText("Off")
@@ -152,6 +151,6 @@ class ProfileWindow(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = ProfileWindow("Test User", "1200")
+    window = ProfileWindow({"name": "Test User", "DPI": 1200})
     window.show()
     sys.exit(app.exec_())
