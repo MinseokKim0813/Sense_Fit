@@ -44,7 +44,7 @@ def show_new_profile_window():
             self.title_label.setStyleSheet("color: white;")
             self.title_label.setAlignment(Qt.AlignCenter)
 
-            # Name row (40% of the window width)
+            # Name row
             self.name_label = QLabel("Name")
             self.name_label.setFont(input_font)
             self.name_label.setStyleSheet(label_style)
@@ -57,7 +57,7 @@ def show_new_profile_window():
             name_layout.addSpacing(20)
             name_layout.addWidget(self.name_input)
 
-            # DPI row (40% of the window width)
+            # DPI row
             self.dpi_label = QLabel("Current DPI")
             self.dpi_label.setFont(input_font)
             self.dpi_label.setStyleSheet(label_style)
@@ -70,7 +70,7 @@ def show_new_profile_window():
             dpi_layout.addSpacing(20)
             dpi_layout.addWidget(self.dpi_input)
 
-            # Button (centered, 200x80)
+            # Create Button
             self.create_button = QPushButton("Create")
             self.create_button.setFont(input_font)
             self.create_button.setStyleSheet("""
@@ -85,8 +85,9 @@ def show_new_profile_window():
                 }
             """)
             self.create_button.setFixedSize(QSize(200, 80))
+            self.create_button.clicked.connect(self.open_profile_window)
 
-            # Main layout
+            # Layout
             layout = QVBoxLayout()
             layout.setSpacing(40)
             layout.setAlignment(Qt.AlignCenter)
@@ -97,6 +98,13 @@ def show_new_profile_window():
 
             self.setLayout(layout)
             self.show()
-        
-    
-    return NewProfileWindow()  # <- Return instance instead of running sys.exit()
+
+        def open_profile_window(self):
+            # Optional: you can extract the input data here if needed
+            name = self.name_input.text()
+            dpi = self.dpi_input.text()
+            self.profile_window = ProfileWindow()  # You can pass `name` and `dpi` if needed
+            self.profile_window.show()
+            self.close()
+
+    return NewProfileWindow()
