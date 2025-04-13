@@ -47,6 +47,7 @@ class MainInterface(QMainWindow):
         super().__init__()
         self.setWindowTitle("SenseFit")
         self.profiles = profile_handler.get_profiles()
+        # [{id: 1, name: "John", dpi: 100}, {id: 2, name: "Jane", dpi: 200}]
 
         # Center window
         screen = QDesktopWidget().screenGeometry()
@@ -113,8 +114,9 @@ class MainInterface(QMainWindow):
             col = idx % columns
 
             if idx < len(self.profiles):
-                title = self.profiles[idx]
-                card = self.create_profile_card(title, card_width, card_height)
+                profile_name = self.profiles[idx]['name']
+                profile_dpi = self.profiles[idx]['DPI']
+                card = self.create_profile_card(profile_name, profile_dpi, card_width, card_height)
             else:
                 card = AddProfileCard(card_width, card_height)
                 card.clicked.connect(self.handle_add_profile)
@@ -138,7 +140,8 @@ class MainInterface(QMainWindow):
     def switch_to_profile_page(self, name, dpi):
         self.setCentralWidget(ProfileWindow(name, dpi))
 
-    def create_profile_card(self, title, width, height):
+    def create_profile_card(self, profile_name, profile_dpi, width, height):
+
         card = QFrame()
         card.setFrameShape(QFrame.Box)
         card.setLineWidth(1)
@@ -146,7 +149,7 @@ class MainInterface(QMainWindow):
         card.setStyleSheet("background-color: white; border-radius: 8px; padding: 10px;")
 
         layout = QVBoxLayout()
-        label = QLabel(title)
+        label = QLabel(profile_name)
         label.setAlignment(Qt.AlignCenter)
         button = QPushButton("Open")
         layout.addWidget(label)
