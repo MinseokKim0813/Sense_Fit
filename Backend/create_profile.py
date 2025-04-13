@@ -98,7 +98,7 @@ class profileHandler:
         return {"error": "Profile not found"}
     
     def get_profiles(self):
-        print(self.__profiles)
+        #print(self.__profiles)
         return self.__profiles
     
     def find_profile(self, name: str) -> dict:

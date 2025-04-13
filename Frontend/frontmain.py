@@ -42,7 +42,7 @@ class ProfileCard(QFrame):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            print(self.profile_name, self.profile_dpi)
+            #print(self.profile_name, self.profile_dpi)
             self.clicked.emit(self.profile_name, str(self.profile_dpi))
 
 
@@ -190,7 +190,7 @@ class MainInterface(QMainWindow):
         self.setCentralWidget(self.central_widget)
 
         self.profiles = profile_handler.get_profiles()
-        print(self.profiles)
+        #print(self.profiles)
 
         self.setup_ui()
 
