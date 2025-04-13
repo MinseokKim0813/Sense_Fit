@@ -16,7 +16,7 @@ def show_new_profile_window():
             self.initUI()
 
         def initUI(self):
-            self.setWindowTitle("Sense Fit")
+            self.setWindowTitle("SenseFit")
 
             screen = QDesktopWidget().screenGeometry()
             window_width = int(screen.width() * 0.4)
@@ -92,8 +92,18 @@ def show_new_profile_window():
             layout.setSpacing(40)
             layout.setAlignment(Qt.AlignCenter)
             layout.addWidget(self.title_label)
-            layout.addLayout(name_layout)
-            layout.addLayout(dpi_layout)
+            
+            # Centered wrapper for name layout
+            name_wrapper = QWidget()
+            name_wrapper.setLayout(name_layout)
+            name_wrapper.setFixedWidth(int(window_width * 0.6))  # 60% of window width
+            layout.addWidget(name_wrapper, alignment=Qt.AlignCenter)
+
+            # Centered wrapper for DPI layout
+            dpi_wrapper = QWidget()
+            dpi_wrapper.setLayout(dpi_layout)
+            dpi_wrapper.setFixedWidth(int(window_width * 0.6))
+            layout.addWidget(dpi_wrapper, alignment=Qt.AlignCenter)
 
             button_layout = QHBoxLayout()
             button_layout.setAlignment(Qt.AlignCenter)
