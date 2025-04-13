@@ -7,7 +7,10 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, pyqtSignal
 from create_profile import CreateProfileDialog
 from profile_main import ProfileWindow
+from Backend.create_profile import profileHandler
 
+# Create an instance of the profileHandler
+profile_handler = profileHandler()
 
 class AddProfileCard(QFrame):
     clicked = pyqtSignal()
@@ -43,7 +46,7 @@ class MainInterface(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("SenseFit")
-        self.profiles = []  # Store profile names
+        self.profiles = profile_handler.get_profiles()
 
         # Center window
         screen = QDesktopWidget().screenGeometry()
