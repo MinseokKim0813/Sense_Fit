@@ -26,6 +26,10 @@ class profileHandler:
     def create_profile(self, name: str, initialDPI: str) -> dict:
 
         try:
+            # Chick if name or initialDPI is empty
+            if not name or not initialDPI:
+                raise ValueError("Please provide both a name and initial DPI")
+
             # Check if initialDPI is a number
             for char in initialDPI:
                 if not char.isdigit():
