@@ -172,12 +172,13 @@ class MainInterface(QMainWindow):
                 self.grid_layout.addWidget(filler, total_items // columns, col)
 
     def handle_add_profile(self):
-        dialog = CreateProfileDialog()
+        dialog = CreateProfileDialog(profile_handler)
         dialog.profile_created.connect(self.switch_to_profile_page)
         dialog.exec_()  # block and wait for the dialog to close
 
     def switch_to_profile_page(self, name, dpi):
-        self.setCentralWidget(ProfileWindow(name, dpi, self))
+        profile_page = ProfileWindow(name, dpi, self)
+        self.setCentralWidget(profile_page)
 
     def create_profile_card(self, profile_name, profile_dpi, width, height):
         card = ProfileCard(profile_name, profile_dpi, width, height)
@@ -189,8 +190,10 @@ class MainInterface(QMainWindow):
         self.setCentralWidget(self.central_widget)
 
         self.profiles = profile_handler.get_profiles()
+        print(self.profiles)
+
         self.setup_ui()
-    
+
     def setup_ui(self):
         # Main layout
         main_layout = QVBoxLayout()
@@ -219,7 +222,6 @@ class MainInterface(QMainWindow):
         self.central_widget.setLayout(main_layout)
 
         self.refresh_grid()
-
 
 
 if __name__ == "__main__":

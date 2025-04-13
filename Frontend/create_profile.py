@@ -11,13 +11,10 @@ from PyQt5.QtWidgets import QMessageBox
 from Frontend.profile_main import ProfileWindow
 from Backend.create_profile import profileHandler
 
-# Create an instance of the profileHandler
-profile_handler = profileHandler()
-
 class CreateProfileDialog(QDialog):
     profile_created = pyqtSignal(str, str)  # name, dpi
 
-    def __init__(self):
+    def __init__(self, profile_handler):
         super().__init__()
         self.setWindowTitle("SenseFit")
 
@@ -28,6 +25,7 @@ class CreateProfileDialog(QDialog):
         center_y = int((screen.height() - window_height) / 2)
         self.setGeometry(center_x, center_y, window_width, window_height)
         self.setStyleSheet("background-color: #2e2e2e;")
+        self.profile_handler = profile_handler
 
         title_font = QFont('Arial', 32, QFont.Bold)
         input_font = QFont('Arial', 24)
@@ -133,7 +131,7 @@ class CreateProfileDialog(QDialog):
         name = self.name_input.text().strip()
         dpi = self.dpi_input.text().strip()
 
-        response = profile_handler.create_profile(name, dpi)
+        response = self.profile_handler.create_profile(name, dpi)
 
         if 'error' in response:
             # TODO: show a error message in the window but do not resize the modal

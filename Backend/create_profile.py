@@ -26,7 +26,6 @@ class profileHandler:
                 json.dump([], file, indent=4)
 
     def create_profile(self, name: str, initialDPI: str) -> dict:
-
         try:
             # Chick if name or initialDPI is empty
             if not name or not initialDPI:
@@ -79,6 +78,7 @@ class profileHandler:
         new_profile['name'] = name
         new_profile['DPI'] = initialDPI
         self.__profiles.append(new_profile)
+        #print(self.__profiles)
 
         with open(self.__profiles_file, "w") as file:
             json.dump(self.__profiles, file, indent=4)
@@ -98,6 +98,7 @@ class profileHandler:
         return {"error": "Profile not found"}
     
     def get_profiles(self):
+        print(self.__profiles)
         return self.__profiles
     
     def find_profile(self, name: str) -> dict:
