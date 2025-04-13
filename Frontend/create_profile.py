@@ -31,6 +31,7 @@ class CreateProfileDialog(QDialog):
 
         title_font = QFont('Arial', 32, QFont.Bold)
         input_font = QFont('Arial', 24)
+        error_font = QFont('Arial', 16)
         label_style = "color: white;"
         input_style = """
             background-color: #3c3c3c;
@@ -45,6 +46,14 @@ class CreateProfileDialog(QDialog):
         self.title_label.setFont(title_font)
         self.title_label.setStyleSheet("color: white;")
         self.title_label.setAlignment(Qt.AlignCenter)
+        
+        # Error label for displaying validation errors
+        self.error_label = QLabel("")
+        self.error_label.setFont(error_font)
+        self.error_label.setStyleSheet("color: #ff6b6b;")  # Red color for error
+        self.error_label.setAlignment(Qt.AlignCenter)
+        self.error_label.setVisible(False)
+        self.error_label.setWordWrap(True)
 
         self.name_label = QLabel("Name")
         self.name_label.setFont(input_font)
@@ -52,7 +61,6 @@ class CreateProfileDialog(QDialog):
         self.name_input = QLineEdit()
         self.name_input.setFont(input_font)
         self.name_input.setStyleSheet(input_style)
-
         name_layout = QHBoxLayout()
         name_layout.setAlignment(Qt.AlignCenter)
         name_layout.addWidget(self.name_label)
@@ -65,7 +73,6 @@ class CreateProfileDialog(QDialog):
         self.dpi_input = QLineEdit()
         self.dpi_input.setFont(input_font)
         self.dpi_input.setStyleSheet(input_style)
-
         dpi_layout = QHBoxLayout()
         dpi_layout.setAlignment(Qt.AlignCenter)
         dpi_layout.addWidget(self.dpi_label)
@@ -87,13 +94,19 @@ class CreateProfileDialog(QDialog):
         """)
         self.create_button.setFixedSize(QSize(200, 80))
         self.create_button.clicked.connect(self.on_create_clicked)
+        
+        # Connect text changed signals to hide error when user types
+        self.name_input.textChanged.connect(self.hide_error)
+        self.dpi_input.textChanged.connect(self.hide_error)
 
         layout = QVBoxLayout()
         layout.setSpacing(40)
         layout.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.title_label)
+        layout.addWidget(self.error_label)
         layout.addLayout(name_layout)
         layout.addLayout(dpi_layout)
+
         button_layout = QHBoxLayout()
         button_layout.setAlignment(Qt.AlignCenter)
         button_layout.addWidget(self.create_button)
@@ -101,10 +114,21 @@ class CreateProfileDialog(QDialog):
         layout.addLayout(button_layout)
 
         self.setLayout(layout)
+    
+    def hide_error(self):
+        # Hide the error when user types new input
+        self.error_label.setVisible(False)
 
     def on_create_clicked(self):
         name = self.name_input.text().strip()
         dpi = self.dpi_input.text().strip()
-        if name and dpi:
+
+        response = profile_handler.create_profile(name, dpi)
+
+        if 'error' in response:
+            # TODO: show a error message in the window but do not resize the modal
+            self.error_label.setText(response['error'])
+            self.error_label.setVisible(True)
+        else:
             self.profile_created.emit(name, dpi)
             self.accept()
