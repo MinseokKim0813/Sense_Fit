@@ -55,7 +55,7 @@ class MainInterface(QMainWindow):
             self.window_width,
             self.window_height
         )
-
+        self.setStyleSheet("background-color: #1e1e1e; color: white;")
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
 
