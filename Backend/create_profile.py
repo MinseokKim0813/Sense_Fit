@@ -4,15 +4,19 @@ import json
 class profileHandler:
     def __init__(self):
         self.__profiles = []
-        # Ensure we use a consistent path format
-        self.__profile_file = os.path.join("Backend", "storage", "profiles.json")
+
+
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+
+        self.__storage_dir = os.path.join(current_dir, "storage")
+        self.__profiles_file = os.path.join(self.__storage_dir, "profiles.json")
         
         # Create storage directory if it doesn't exist
-        os.makedirs(os.path.dirname(self.__profile_file), exist_ok=True)
+        os.makedirs(os.path.dirname(self.__storage_dir), exist_ok=True)
         
         # Load profiles from file if it exists  
-        if os.path.exists(self.__profile_file):
-            with open(self.__profile_file, "r") as file:
+        if os.path.exists(self.__profiles_file):
+            with open(self.__profiles_file, "r") as file:
                 self.__profiles = json.load(file)
 
     def create_profile(self, name, initialDPI):
@@ -42,7 +46,7 @@ class profileHandler:
         new_profile['initialDPI'] = initialDPI
         self.__profiles.append(new_profile)
 
-        with open(self.__profile_file, "w") as file:
+        with open(self.__profiles_file, "w") as file:
             json.dump(self.__profiles, file, indent=4)
 
         return {"message": "Profile created successfully", "profile": self.__profiles[-1]}
