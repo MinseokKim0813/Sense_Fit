@@ -33,6 +33,12 @@ class ProfileWindow(QWidget):
         # Set modern dark background
         self.setStyleSheet("background-color: #1e1e1e; color: white;")
 
+        # -------- UI Elements --------
+
+        #Back Button
+        back_button = QPushButton("← Back")
+        back_button.setFixedSize(80, 30)
+        back_button.setStyleSheet("font-size: 14px; background-color: #2c2c2c; color: white;")
         # Title label
         self.title_label = QLabel(f"{self.profile_name}'s Profile ({self.dpi_value} DPI)")
         self.title_label.setAlignment(Qt.AlignCenter)
@@ -105,6 +111,7 @@ class ProfileWindow(QWidget):
 
         main_layout = QVBoxLayout()
         main_layout.addSpacing(10)
+        main_layout.addWidget(back_button, alignment=Qt.AlignLeft)
         main_layout.addWidget(self.title_label)
         main_layout.addSpacing(int(window_height * 0.1))
         main_layout.addLayout(top_button_layout)
