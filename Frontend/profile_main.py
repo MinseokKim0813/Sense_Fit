@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 
+from Backend.tracking_module import *
 
 class ProfileWindow(QWidget):
     def __init__(self, name, dpi):
@@ -133,10 +134,20 @@ class ProfileWindow(QWidget):
             self.toggle_button.setText("On")
             self.toggle_button.setStyleSheet("font-size: 24px; font-weight: bold; background-color: #4caf50; color: white;")
             self.tracking_status_label.setText("Tracking Enabled")
+            
+            # Start tracking
+            self.tracker = CursorTracker()
+            # self.tracker.show()
         else:
             self.toggle_button.setText("Off")
             self.toggle_button.setStyleSheet("font-size: 24px; font-weight: bold; background-color: #3a3a3a; color: white;")
             self.tracking_status_label.setText("Tracking Disabled")
+
+            # Stop tracking
+            if hasattr(self, 'tracker') and self.tracker is not None:
+                self.tracker.close()
+                self.tracker.deleteLater()
+                self.tracker = None
 
 
 if __name__ == "__main__":

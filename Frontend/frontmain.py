@@ -5,8 +5,8 @@ from PyQt5.QtWidgets import (
     QDesktopWidget, QPushButton, QFrame, QSpacerItem, QSizePolicy
 )
 from PyQt5.QtCore import Qt, pyqtSignal
-from create_profile import CreateProfileDialog
-from profile_main import ProfileWindow
+from Frontend.create_profile import CreateProfileDialog
+from Frontend.profile_main import ProfileWindow
 from Backend.create_profile import profileHandler
 
 # Create an instance of the profileHandler
