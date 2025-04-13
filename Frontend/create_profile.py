@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (
     QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout,
-    QHBoxLayout, QDesktopWidget
+    QHBoxLayout, QDesktopWidget, QWidget
 )
 from PyQt5.QtCore import Qt, QSize, pyqtSignal
 from PyQt5.QtGui import QFont
@@ -83,8 +83,18 @@ class CreateProfileDialog(QDialog):
         layout.setSpacing(40)
         layout.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.title_label)
-        layout.addLayout(name_layout)
-        layout.addLayout(dpi_layout)
+        # Wrap name layout
+        name_wrapper = QWidget()
+        name_wrapper.setLayout(name_layout)
+        name_wrapper.setFixedWidth(int(window_width * 0.6))  # 60% of window width
+        layout.addWidget(name_wrapper, alignment=Qt.AlignCenter)
+
+        # Wrap dpi layout
+        dpi_wrapper = QWidget()
+        dpi_wrapper.setLayout(dpi_layout)
+        dpi_wrapper.setFixedWidth(int(window_width * 0.6))  # 60% of window width
+        layout.addWidget(dpi_wrapper, alignment=Qt.AlignCenter)
+
         button_layout = QHBoxLayout()
         button_layout.setAlignment(Qt.AlignCenter)
         button_layout.addWidget(self.create_button)
