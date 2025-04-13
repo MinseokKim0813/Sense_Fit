@@ -122,6 +122,11 @@ class MainInterface(QMainWindow):
                 card.clicked.connect(self.handle_add_profile)
 
             self.grid_layout.addWidget(card, row, col)
+        
+        wrapper_layout = QVBoxLayout(self.grid_container)
+        wrapper_layout.setContentsMargins(0, 0, 0, 0)
+        wrapper_layout.addLayout(self.grid_layout)
+        wrapper_layout.addStretch()
 
         # Add invisible fillers to maintain grid shape (fill missing cells in the last row)
         remainder = total_items % columns
@@ -155,6 +160,14 @@ class MainInterface(QMainWindow):
         layout.addWidget(label)
         layout.addWidget(button)
         card.setLayout(layout)
+
+        label.setStyleSheet("font-size: 18px; font-weight: bold; color: black;")
+        dpi_label = QLabel(f"DPI: {profile_dpi}")
+        dpi_label.setAlignment(Qt.AlignCenter)
+        dpi_label.setStyleSheet("font-size: 14px; color: #444444;")
+        layout.addWidget(label)
+        layout.addWidget(dpi_label)
+
         return card
 
 
