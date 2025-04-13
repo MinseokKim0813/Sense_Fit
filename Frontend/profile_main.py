@@ -10,7 +10,7 @@ from Backend.tracking_module import *
 class ProfileWindow(QWidget):
     def __init__(self, name, dpi, main_window=None):
         super().__init__()
-        self.main_interface = main_interface
+        self.main_interface = main_window
         self.profile_name = name
         self.dpi_value = dpi
         self.main_window = main_window
