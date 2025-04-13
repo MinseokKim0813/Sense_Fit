@@ -12,6 +12,40 @@ from Backend.create_profile import profileHandler
 # Create an instance of the profileHandler
 profile_handler = profileHandler()
 
+class ProfileCard(QFrame):
+    clicked = pyqtSignal(str, str)  # name, dpi
+
+    def __init__(self, profile_name, profile_dpi, width, height):
+        super().__init__()
+        self.profile_name = profile_name
+        self.profile_dpi = profile_dpi
+
+        self.setFixedSize(width, height)
+        self.setFrameShape(QFrame.Box)
+        self.setLineWidth(1)
+        self.setStyleSheet("background-color: white; border-radius: 8px; padding: 10px;")
+
+        layout = QVBoxLayout()
+        layout.setAlignment(Qt.AlignCenter)
+
+        name_label = QLabel(profile_name)
+        name_label.setAlignment(Qt.AlignCenter)
+        name_label.setStyleSheet("font-size: 18px; font-weight: bold; color: black;")
+        layout.addWidget(name_label)
+
+        dpi_label = QLabel(f"DPI: {profile_dpi}")
+        dpi_label.setAlignment(Qt.AlignCenter)
+        dpi_label.setStyleSheet("font-size: 14px; color: #444444;")
+        layout.addWidget(dpi_label)
+
+        self.setLayout(layout)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            print(self.profile_name, self.profile_dpi)
+            self.clicked.emit(self.profile_name, str(self.profile_dpi))
+
+
 class AddProfileCard(QFrame):
     clicked = pyqtSignal()
 
@@ -146,30 +180,9 @@ class MainInterface(QMainWindow):
         self.setCentralWidget(ProfileWindow(name, dpi))
 
     def create_profile_card(self, profile_name, profile_dpi, width, height):
-
-        card = QFrame()
-        card.setFrameShape(QFrame.Box)
-        card.setLineWidth(1)
-        card.setFixedSize(width, height)
-        card.setStyleSheet("background-color: white; border-radius: 8px; padding: 10px;")
-
-        layout = QVBoxLayout()
-        label = QLabel(profile_name)
-        label.setAlignment(Qt.AlignCenter)
-        button = QPushButton("Open")
-        layout.addWidget(label)
-        layout.addWidget(button)
-        card.setLayout(layout)
-
-        label.setStyleSheet("font-size: 18px; font-weight: bold; color: black;")
-        dpi_label = QLabel(f"DPI: {profile_dpi}")
-        dpi_label.setAlignment(Qt.AlignCenter)
-        dpi_label.setStyleSheet("font-size: 14px; color: #444444;")
-        layout.addWidget(label)
-        layout.addWidget(dpi_label)
-
+        card = ProfileCard(profile_name, profile_dpi, width, height)
+        card.clicked.connect(self.switch_to_profile_page)
         return card
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
