@@ -13,12 +13,11 @@ from Backend.create_profile import profileHandler
 profile_handler = profileHandler()
 
 class ProfileCard(QFrame):
-    clicked = pyqtSignal(str, str)  # name, dpi
+    clicked = pyqtSignal(dict) # profile object
 
-    def __init__(self, profile_name, profile_dpi, width, height):
+    def __init__(self, profile, width, height):
         super().__init__()
-        self.profile_name = profile_name
-        self.profile_dpi = profile_dpi
+        self.profile = profile
 
         self.setFixedSize(width, height)
         self.setFrameShape(QFrame.Box)
@@ -28,12 +27,12 @@ class ProfileCard(QFrame):
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignCenter)
 
-        name_label = QLabel(profile_name)
+        name_label = QLabel(profile['name'])
         name_label.setAlignment(Qt.AlignCenter)
         name_label.setStyleSheet("font-size: 18px; font-weight: bold; color: black;")
         layout.addWidget(name_label)
 
-        dpi_label = QLabel(f"DPI: {profile_dpi}")
+        dpi_label = QLabel(f"DPI: {profile['DPI']}")
         dpi_label.setAlignment(Qt.AlignCenter)
         dpi_label.setStyleSheet("font-size: 14px; color: #444444;")
         layout.addWidget(dpi_label)
@@ -42,9 +41,7 @@ class ProfileCard(QFrame):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            #print(self.profile_name, self.profile_dpi)
-            self.clicked.emit(self.profile_name, str(self.profile_dpi))
-
+            self.clicked.emit(self.profile)
 
 class AddProfileCard(QFrame):
     clicked = pyqtSignal()
@@ -153,9 +150,10 @@ class MainInterface(QMainWindow):
             col = idx % columns
 
             if idx < len(self.profiles):
-                profile_name = self.profiles[idx]['name']
-                profile_dpi = self.profiles[idx]['DPI']
-                card = self.create_profile_card(profile_name, profile_dpi, card_width, card_height)
+
+                profile = profile_handler.find_profile(self.profiles[idx]['name'])
+
+                card = self.create_profile_card(profile, card_width, card_height)
             else:
                 card = AddProfileCard(card_width, card_height)
                 card.clicked.connect(self.handle_add_profile)
@@ -175,13 +173,13 @@ class MainInterface(QMainWindow):
         dialog = CreateProfileDialog(profile_handler)
         dialog.profile_created.connect(self.switch_to_profile_page)
         dialog.exec_()
-
-    def switch_to_profile_page(self, name, dpi):
-        profile_page = ProfileWindow(name, dpi, self)
+    
+    def switch_to_profile_page(self, profile):
+        profile_page = ProfileWindow(profile, self)
         self.setCentralWidget(profile_page)
 
-    def create_profile_card(self, profile_name, profile_dpi, width, height):
-        card = ProfileCard(profile_name, profile_dpi, width, height)
+    def create_profile_card(self, profile, width, height):
+        card = ProfileCard(profile, width, height)
         card.clicked.connect(self.switch_to_profile_page)
         return card
     

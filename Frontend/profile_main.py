@@ -8,17 +8,16 @@ from PyQt5.QtCore import Qt
 from Backend.tracking_module import *
 
 class ProfileWindow(QWidget):
-    def __init__(self, name, dpi, main_window=None):
+    def __init__(self, profile, main_window=None):
         super().__init__()
         self.main_interface = main_window
-        self.profile_name = name
-        self.dpi_value = dpi
+        self.profile = profile
         self.main_window = main_window
         self.initUI()
 
 
     def initUI(self):
-        self.setWindowTitle(f"{self.profile_name}'s Profile")
+        self.setWindowTitle(f"{self.profile['name']}'s Profile")
 
         # Get screen size
         screen = QDesktopWidget().screenGeometry()
@@ -47,7 +46,7 @@ class ProfileWindow(QWidget):
         back_button.clicked.connect(self.go_back)
 
         # Title label
-        self.title_label = QLabel(f"{self.profile_name}'s Profile ({self.dpi_value} DPI)")
+        self.title_label = QLabel(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
         self.title_label.setAlignment(Qt.AlignCenter)
         self.title_label.setStyleSheet("font-size: 30px; font-weight: bold;")
 
@@ -96,6 +95,12 @@ class ProfileWindow(QWidget):
         self.toggle_button.toggled.connect(self.on_toggle)
         self.toggle_button.setFixedSize(200, 50)
         self.toggle_button.setStyleSheet("font-size: 24px; font-weight: bold; background-color: #3a3a3a; color: white;")
+        
+        # Add tracking status message label
+        self.status_message_label = QLabel("")
+        self.status_message_label.setAlignment(Qt.AlignCenter)
+        self.status_message_label.setStyleSheet("font-size: 16px; color: #4caf50;") # Green color for success
+        self.status_message_label.setVisible(False)
 
         top_button_layout = QHBoxLayout()
         top_button_layout.addStretch()
@@ -115,6 +120,8 @@ class ProfileWindow(QWidget):
         toggle_layout.addWidget(self.tracking_status_label)
         toggle_layout.addSpacing(30)
         toggle_layout.addLayout(toggle_row_layout)
+        toggle_layout.addSpacing(10)
+        toggle_layout.addWidget(self.status_message_label)
 
         main_layout = QVBoxLayout()
         main_layout.addSpacing(10)
@@ -134,10 +141,10 @@ class ProfileWindow(QWidget):
         main_layout.addStretch()
 
         self.setLayout(main_layout)
+
+
     def go_back(self):
         self.main_interface.build_profile_grid()
-
-
 
 
     def on_toggle(self, checked):
@@ -147,26 +154,43 @@ class ProfileWindow(QWidget):
             self.tracking_status_label.setText("Tracking Enabled")
             
             # Start tracking
-            self.tracker = CursorTracker()
-            # self.tracker.show()
+            try:
+                self.tracker = CursorTracker(self.profile['_id'])
+                # Hide any previous message when starting tracking successfully
+                self.status_message_label.setVisible(False)
+            except Exception as e:
+                # Show error message
+                self.status_message_label.setText(f"Failed to start tracking: {str(e)}")
+                self.status_message_label.setStyleSheet("font-size: 16px; color: #ff5252;") # Red for error
+                self.status_message_label.setVisible(True)
+                # Revert toggle button to off state
+                self.toggle_button.setChecked(False)
+                return
         else:
             self.toggle_button.setText("Off")
             self.toggle_button.setStyleSheet("font-size: 24px; font-weight: bold; background-color: #3a3a3a; color: white;")
             self.tracking_status_label.setText("Tracking Disabled")
 
             # Stop tracking
+            # TODO: Implement error handling; need to receive signal with error msg to the main window that the tracker has stopped
             if hasattr(self, 'tracker') and self.tracker is not None:
-                self.tracker.close()
-                self.tracker.deleteLater()
-                self.tracker = None
-
-    def go_back(self):
-        if self.main_window:
-            self.main_window.show_profile_selection()
+                try:
+                    self.tracker.close()
+                    self.tracker.deleteLater()
+                    self.tracker = None
+                    # Show success message
+                    self.status_message_label.setText("Tracking stopped successfully")
+                    self.status_message_label.setStyleSheet("font-size: 16px; color: #4caf50;") # Green for success
+                    self.status_message_label.setVisible(True)
+                except Exception as e:
+                    # Show error message
+                    self.status_message_label.setText(f"Failed to stop tracking: {str(e)}")
+                    self.status_message_label.setStyleSheet("font-size: 16px; color: #ff5252;") # Red for error
+                    self.status_message_label.setVisible(True)
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = ProfileWindow("Test User", "1200")
+    window = ProfileWindow({"name": "Test User", "DPI": 1200})
     window.show()
     sys.exit(app.exec_())
