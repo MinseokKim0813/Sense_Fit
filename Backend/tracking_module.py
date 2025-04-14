@@ -49,11 +49,14 @@ class CursorTracker(QWidget):
             # Create the file with the header
             with open(self.__log_file, "w", newline='') as file:
                 writer = csv.writer(file)
-                writer.writerow(["Profile_ID", self.__current_profile, "Session", self.__current_session])
-                writer.writerow(["Timestamp", "X", "Y"])
+                # writer.writerow(["Profile_ID", self.__current_profile, "Session", self.__current_session])
+                writer.writerow(["timestamp", "X", "Y"])
             return True
         except Exception as e:
             raise Exception(f"Error creating log file: {str(e)}")
+
+    def get_current_session(self):
+        return self.__current_session
 
     def update_cursor_position(self):
         try:

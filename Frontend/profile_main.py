@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 
-from Backend.tracking_module import *
+from Backend.tracking_module import CursorTracker
 from Backend.analyze_module import *
 
 class ProfileWindow(QWidget):
@@ -14,6 +14,9 @@ class ProfileWindow(QWidget):
         self.main_interface = main_window
         self.profile = profile
         self.main_window = main_window
+        self.cursor_tracker = None
+        self.analyze_module = None
+        self.current_session = None
         self.initUI()
 
 
@@ -156,7 +159,8 @@ class ProfileWindow(QWidget):
             
             # Start tracking
             try:
-                self.tracker = CursorTracker(self.profile['_id'])
+                self.cursor_tracker = CursorTracker(self.profile['_id'])
+                self.current_session = self.cursor_tracker.get_current_session()
                 # Hide any previous message when starting tracking successfully
                 self.status_message_label.setVisible(False)
             except Exception as e:
@@ -174,28 +178,30 @@ class ProfileWindow(QWidget):
 
             # Stop tracking
             # TODO: Implement error handling; need to receive signal with error msg to the main window that the tracker has stopped
-            if hasattr(self, 'tracker') and self.tracker is not None:
+            if hasattr(self, 'cursor_tracker') and self.cursor_tracker is not None:
                 try:
-                    self.tracker.close()
-                    self.tracker.deleteLater()
-                    self.tracker = None
+                    self.cursor_tracker.close()
+                    self.cursor_tracker.deleteLater()
+                    self.cursor_tracker = None
                     # Show success message
                     self.status_message_label.setText("Tracking stopped successfully")
                     self.status_message_label.setStyleSheet("font-size: 16px; color: #4caf50;") # Green for success
                     self.status_message_label.setVisible(True)
 
-                    # Start analyzing
-                    # TODO:
-                    # 1. Right now it gets the latest csv tracking file path. It finds the latest from looking at each file name because it has timestamp.
-                    # 2. It only gets the file path for now. I think it will be better to pass the file content instead of filename.
-                    print(retrieve_tracking_data(self.profile))
-                    
                 except Exception as e:
                     # Show error message
                     self.status_message_label.setText(f"Failed to stop tracking: {str(e)}")
                     self.status_message_label.setStyleSheet("font-size: 16px; color: #ff5252;") # Red for error
                     self.status_message_label.setVisible(True)
 
+                # Start analyzing
+                # TODO:
+                # 1. Right now it gets the latest csv tracking file path. It finds the latest from looking at each file name because it has timestamp.
+                    # Reply from JY: Since we now which timestamp the tracking started, we can just pass it to the analyze module.
+                # 2. It only gets the file path for now. I think it will be better to pass the file content instead of filename.
+                    # Reply from JY: No need; the frontend don't need to know the file content, it wants to know the analysis result to pass it to the recommendation module.
+                self.analyze_module = AnalyzeModule(self.profile['_id'], self.current_session)
+                # print(retrieve_tracking_data(self.profile))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
