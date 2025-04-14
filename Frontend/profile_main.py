@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 
 from Backend.tracking_module import *
+from Backend.analyze_module import *
 
 class ProfileWindow(QWidget):
     def __init__(self, profile, main_window=None):
@@ -182,6 +183,13 @@ class ProfileWindow(QWidget):
                     self.status_message_label.setText("Tracking stopped successfully")
                     self.status_message_label.setStyleSheet("font-size: 16px; color: #4caf50;") # Green for success
                     self.status_message_label.setVisible(True)
+
+                    # Start analyzing
+                    # TODO:
+                    # 1. Right now it gets the latest csv tracking file path. It finds the latest from looking at each file name because it has timestamp.
+                    # 2. It only gets the file path for now. I think it will be better to pass the file content instead of filename.
+                    print(retrieve_tracking_data(self.profile))
+                    
                 except Exception as e:
                     # Show error message
                     self.status_message_label.setText(f"Failed to stop tracking: {str(e)}")

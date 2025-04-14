@@ -15,7 +15,7 @@ class CursorTracker(QWidget):
         current_dir = os.path.dirname(os.path.realpath(__file__))
         self.__current_session = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         self.__storage_dir = os.path.join(current_dir, "storage", "logs")
-        self.__log_file = os.path.join(self.__storage_dir, f"cursor_log_{self.__current_session}.csv")
+        self.__log_file = os.path.join(self.__storage_dir, f"id_{self.__current_profile}_cursor_log_{self.__current_session}.csv")
 
         # Initialize CSV file and ensure storage directory exists
         try:
