@@ -2,6 +2,8 @@ import os
 from datetime import datetime
 import csv
 import math
+import pandas as pd
+import numpy as np
 
 class AnalyzeModule:
     def __init__(self, profile_id: int, session: str):
@@ -45,6 +47,54 @@ class AnalyzeModule:
     def validate_cursor_positions(self):
         # TODO: Implement data validation mentioned in the test cases 12
         pass
+
+
+    def get_pause_segments(self, threshold: int = 5):
+        """
+        Finds all pause segments where the cursor moved within a small threshold
+        (X and Y changes are less than or equal to the threshold).
+
+        Args:
+            threshold (int): Maximum allowed pixel movement to consider as pause.
+
+        Returns:
+            list of dict: Each dict has 'start_index', 'end_index', 'x', 'y'.
+        """
+        df = pd.read_csv(self.__log_file)
+
+        pause_segments = []
+        start_idx = None
+
+        for i in range(1, len(df)):
+            dx = abs(df.loc[i, 'X'] - df.loc[i - 1, 'X'])
+            dy = abs(df.loc[i, 'Y'] - df.loc[i - 1, 'Y'])
+            within_threshold = dx <= threshold and dy <= threshold
+
+            if within_threshold:
+                if start_idx is None:
+                    start_idx = i - 1
+            else:
+                if start_idx is not None:
+                    pause_segments.append({
+                        "start_index": int(start_idx),
+                        "end_index": int(i - 1),
+                        "x": int(df.loc[start_idx, 'X']),
+                        "y": int(df.loc[start_idx, 'Y'])
+                    })
+
+                    start_idx = None
+
+        # Handle final pause at end
+        if start_idx is not None:
+            pause_segments.append({
+                "start_index": start_idx,
+                "end_index": len(df) - 1,
+                "x": int(df.loc[start_idx, 'X']),
+                "y": int(df.loc[start_idx, 'Y'])
+            })
+
+        self.pause_points_list = pause_segments
+        return pause_segments
 
     # Returns a list of indices of the 'valid' clicked positions
     def find_clicked_positions(self) -> list[int]:

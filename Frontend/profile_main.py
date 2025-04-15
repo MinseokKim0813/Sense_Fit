@@ -195,13 +195,13 @@ class ProfileWindow(QWidget):
                     self.status_message_label.setVisible(True)
 
                 # Start analyzing
-                # TODO:
-                # 1. Right now it gets the latest csv tracking file path. It finds the latest from looking at each file name because it has timestamp.
-                    # Reply from JY: Since we now which timestamp the tracking started, we can just pass it to the analyze module.
-                # 2. It only gets the file path for now. I think it will be better to pass the file content instead of filename.
-                    # Reply from JY: No need; the frontend don't need to know the file content, it wants to know the analysis result to pass it to the recommendation module.
+                
                 self.analyze_module = AnalyzeModule(self.profile['_id'], self.current_session)
-                # print(retrieve_tracking_data(self.profile))
+
+                # Get pause points list
+                self.analyze_module.get_pause_segments()
+                print(self.analyze_module.pause_points_list)
+                # print(retrieve_tracking_data(self.profle))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
