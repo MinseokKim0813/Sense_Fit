@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 import csv
+import math
 
 class AnalyzeModule:
     def __init__(self, profile_id: int, session: str):
@@ -23,17 +24,15 @@ class AnalyzeModule:
                     cursor_log['timestamp'] = row[0]
                     cursor_log['x'] = row[1]
                     cursor_log['y'] = row[2]
+                    cursor_log['clicked'] = row[3]
 
                     self.__cursor_log.append(cursor_log)
 
             file.close()
+
         except Exception as e:
             # Here we need to catch error from missing connectivity to the storage (Test Case 9)
             raise Exception(f"Error reading tracking log file: {str(e)}")
-
-    def analyze_tracking_data(self) -> dict:
-        # TODO: Make algorithm to analyze the tracking data
-        pass
 
     def validate_data_length(self):
         # TODO: Implement data validation mentioned in the test cases 10
@@ -47,35 +46,33 @@ class AnalyzeModule:
         # TODO: Implement data validation mentioned in the test cases 12
         pass
 
+    # Returns a list of indices of the 'valid' clicked positions
+    def find_clicked_positions(self) -> list[int]:
+        clicked_positions = []
 
-# TODO: Do we need this?
-# Parse timestamps and get the latest file
-def extract_timestamp(file_path):
-    # Example: id_2_cursor_log_2025-04-14_23-33-29.csv
-    filename = os.path.basename(file_path)
-    try:
-        timestamp_str = filename.split("cursor_log_")[1].replace(".csv", "")
-        return datetime.strptime(timestamp_str, "%Y-%m-%d_%H-%M-%S")
-    except (IndexError, ValueError):
-        return datetime.min  # fallback if format is off
+        for i in range(len(self.__cursor_log)):
+            if self.__cursor_log[i]['clicked'] == '1':
+                clicked_positions.append({**self.__cursor_log[i], 'index': i})
+        
+        # Remove clicks that are too close to each other (0.5 seconds) to count double clicks as one click
+            time_before = datetime.strptime(clicked_positions[i - 1]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
+            time_now = datetime.strptime(clicked_positions[i]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
+            if ((time_now - time_before).total_seconds() <= 0.5):
+                clicked_positions[i]['index'] = -1
+
+        clicked_positions = [data_point['index'] for data_point in clicked_positions if data_point['index'] != -1]
+        
+        return clicked_positions
+
+    def analyze_tracking_data(self) -> dict:
+        analysis_result = {}
+
+        # TODO: Make algorithm to analyze the tracking data
+        clicked_positions = self.find_clicked_positions()
+
+        return analysis_result
+
+    def get_angle(self, dy: int, dx: int) -> float:
+        return math.atan2(dy, dx) * (180 / math.pi)
 
 
-# TODO: Should we keep this since the TrackingModule can handle this?
-def retrieve_tracking_data(profile):
-    profile_id = profile["_id"]
-    log_dir = "Backend/storage/logs"
-    matching_files = []
-
-    # Get all the tracking file paths for the profile
-    for filename in os.listdir(log_dir):
-        if filename.startswith(f"id_{profile_id}") and filename.endswith(".csv"):
-            file_path = os.path.join(log_dir, filename)
-            matching_files.append(file_path)
-    
-
-    if matching_files:
-        latest_file = max(matching_files, key=extract_timestamp)
-    else:
-        latest_file = None
-
-    return latest_file
