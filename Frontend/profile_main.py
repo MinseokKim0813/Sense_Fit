@@ -200,7 +200,7 @@ class ProfileWindow(QWidget):
 
                 # Get pause points list
                 self.analyze_module.get_pause_segments()
-                print(self.analyze_module.pause_points_list)
+                # print(self.analyze_module.pause_points_list)
                 # print(retrieve_tracking_data(self.profle))
 
 if __name__ == "__main__":

@@ -20,13 +20,15 @@ class AnalyzeModule:
         try:
             with open(self.__log_file, "r") as file:
                 reader = csv.reader(file)
+                
+                next(reader) # Skip the first row (header)
 
                 for row in reader:
                     cursor_log = {}
                     cursor_log['timestamp'] = row[0]
-                    cursor_log['x'] = row[1]
-                    cursor_log['y'] = row[2]
-                    cursor_log['clicked'] = row[3]
+                    cursor_log['x'] = int(row[1])
+                    cursor_log['y'] = int(row[2])
+                    cursor_log['clicked'] = int(row[3])
 
                     self.__cursor_log.append(cursor_log)
 
@@ -60,14 +62,14 @@ class AnalyzeModule:
         Returns:
             list of dict: Each dict has 'start_index', 'end_index', 'x', 'y'.
         """
-        df = pd.read_csv(self.__log_file)
+        data_points = self.__cursor_log
 
         pause_segments = []
         start_idx = None
 
-        for i in range(1, len(df)):
-            dx = abs(df.loc[i, 'X'] - df.loc[i - 1, 'X'])
-            dy = abs(df.loc[i, 'Y'] - df.loc[i - 1, 'Y'])
+        for i in range(1, len(data_points)):
+            dx = abs(data_points[i]['x'] - data_points[i - 1]['x'])
+            dy = abs(data_points[i]['y'] - data_points[i - 1]['y'])
             within_threshold = dx <= threshold and dy <= threshold
 
             if within_threshold:
@@ -75,12 +77,17 @@ class AnalyzeModule:
                     start_idx = i - 1
             else:
                 if start_idx is not None:
-                    pause_segments.append({
-                        "start_index": int(start_idx),
-                        "end_index": int(i - 1),
-                        "x": int(df.loc[start_idx, 'X']),
-                        "y": int(df.loc[start_idx, 'Y'])
-                    })
+
+                    timestamp_end = datetime.strptime(data_points[i - 1]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
+                    timestamp_start = datetime.strptime(data_points[start_idx]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
+
+                    if ((timestamp_end - timestamp_start).total_seconds() > 0.5):
+                        pause_segments.append({
+                            "start_index": start_idx,
+                            "end_index": i - 1,
+                            "x": int(data_points[start_idx]['x']),
+                            "y": int(data_points[start_idx]['y'])
+                        })
 
                     start_idx = None
 
@@ -88,12 +95,12 @@ class AnalyzeModule:
         if start_idx is not None:
             pause_segments.append({
                 "start_index": start_idx,
-                "end_index": len(df) - 1,
-                "x": int(df.loc[start_idx, 'X']),
-                "y": int(df.loc[start_idx, 'Y'])
+                "end_index": len(data_points) - 1,
+                "x": int(data_points[start_idx]['x']),
+                "y": int(data_points[start_idx]['y'])
             })
 
-        self.pause_points_list = pause_segments
+        self.__pause_points_list = pause_segments
         return pause_segments
 
     # Returns a list of indices of the 'valid' clicked positions
@@ -101,7 +108,7 @@ class AnalyzeModule:
         clicked_positions = []
 
         for i in range(len(self.__cursor_log)):
-            if self.__cursor_log[i]['clicked'] == '1':
+            if self.__cursor_log[i]['clicked'] == 1:
                 clicked_positions.append({**self.__cursor_log[i], 'index': i})
         
         # Remove clicks that are too close to each other (0.5 seconds) to count double clicks as one click
@@ -125,4 +132,6 @@ class AnalyzeModule:
     def get_angle(self, dy: int, dx: int) -> float:
         return math.atan2(dy, dx) * (180 / math.pi)
 
-
+if __name__ == "__main__":
+    analyze_module = AnalyzeModule(6, "2025-04-15_22-52-05")
+    print(analyze_module.get_pause_segments(10))
