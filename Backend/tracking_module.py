@@ -5,6 +5,7 @@ from datetime import datetime
 import pyautogui  #For accessing the global mouse position
 from PyQt5.QtCore import QTimer  #To create timed updates
 from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget  #Basic PyQt5 GUI elements
+from pynput.mouse import Controller as MouseController, Listener as MouseListener, Button
 
 class CursorTracker(QWidget):
     def __init__(self, profile_id):
@@ -17,6 +18,9 @@ class CursorTracker(QWidget):
         self.__storage_dir = os.path.join(current_dir, "storage", "logs")
         self.__log_file = os.path.join(self.__storage_dir, f"id_{self.__current_profile}_cursor_log_{self.__current_session}.csv")
 
+        self.clicked_flag = False  #For tracking mouse clicked
+        self.mouse_listener = MouseListener(on_click=self.on_click) #defining mouse_listener
+        
         # Initialize CSV file and ensure storage directory exists
         try:
             self.__init_csv()
@@ -26,7 +30,7 @@ class CursorTracker(QWidget):
         #Set up main window
         self.setWindowTitle("Global Cursor Tracker")                    #Window title
         self.resize(300, 100)                                           #Set window size
-
+        
         # Create a label widget to display the cursor position
         # self.label = QLabel("Cursor position will show here", self)
 
@@ -40,6 +44,8 @@ class CursorTracker(QWidget):
         self.timer.timeout.connect(self.update_cursor_position)         #On timeout, call update function
         self.timer.start(10)                                            #Trigger the timeout every 10 milliseconds (100Hz)
 
+        #Starts listening to mouse clicks
+        self.mouse_listener.start()  
     def __init_csv(self):
         # Create the logs directory if it doesn't exist
         try:
@@ -50,10 +56,14 @@ class CursorTracker(QWidget):
             with open(self.__log_file, "w", newline='') as file:
                 writer = csv.writer(file)
                 # writer.writerow(["Profile_ID", self.__current_profile, "Session", self.__current_session])
-                writer.writerow(["timestamp", "X", "Y"])
+                writer.writerow(["timestamp", "X", "Y", "clicked"])
             return True
         except Exception as e:
             raise Exception(f"Error creating log file: {str(e)}")
+        
+    def on_click(self, x, y, button, pressed):
+        if button == Button.left and pressed:
+            self.clicked_flag = True  # Set flag true briefly
 
     def get_current_session(self):
         return self.__current_session
@@ -67,11 +77,13 @@ class CursorTracker(QWidget):
             # Check if the position is valid
             if pos is None:
                 raise ValueError("Failed to retrieve cursor position")
-                
+            
+            clicked = 1 if self.clicked_flag else 0
+            self.clicked_flag = False   
             # Write to the log file
             with open(self.__log_file, "a", newline='') as file:
                 writer = csv.writer(file)
-                writer.writerow([timestamp, pos.x, pos.y])
+                writer.writerow([timestamp, pos.x, pos.y, clicked])
                 
         # TODO: Implement error handling; need to signal with error msg to the main window that the tracker has stopped
         except Exception as e:
