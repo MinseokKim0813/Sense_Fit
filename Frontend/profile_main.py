@@ -223,7 +223,7 @@ class ProfileWindow(QWidget):
                     self.analysis_error_label.setText(f"Cursor movement analysis failed: {error_message}")
                     self.analysis_error_label.setVisible(True)
                 else:
-                    self.analyze_module.get_pause_segments()
+                    self.analyze_module.analyze_tracking_data()
                     # print(self.analyze_module.pause_points_list)
 
 if __name__ == "__main__":
