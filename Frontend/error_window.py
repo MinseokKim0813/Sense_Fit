@@ -18,7 +18,8 @@ class ErrorPopup(QDialog):
                 color: white;
             }
             QLabel#message {
-                font-size: 16px;
+                padding-top: 10px;
+                font-size: 18px;
                 color: #cccccc;
             }
             QPushButton {
@@ -33,7 +34,9 @@ class ErrorPopup(QDialog):
                 background-color:rgb(175, 28, 31);
             }
         """)
-        self.setFixedSize(500, 220)
+        # self.setFixedSize(500, 250)
+        self.setMinimumWidth(500)
+        self.setMinimumHeight(250)
         self.setWindowFlags(Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint)
 
         layout = QVBoxLayout()
