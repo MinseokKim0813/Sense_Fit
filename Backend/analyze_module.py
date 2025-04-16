@@ -89,6 +89,10 @@ class AnalyzeModule:
 
         # Phase 1: Check if the cursor position exists and is in integers
         try:
+            last_x_point = data_points[0]['x']
+            last_y_point = data_points[0]['y']
+            moved = False
+
             for data_point in data_points:
                 if (not data_point['x'] or not data_point['y']):
                     return False
@@ -108,6 +112,15 @@ class AnalyzeModule:
                 # TODO: Do not hardcode the screen resolution
                 if (data_point['x'] < 0 or data_point['x'] >= self.screen_width or data_point['y'] < 0 or data_point['y'] >= self.screen_height):
                     return False
+
+                # Phase 3: Check if the cursor positions have moved at all
+                if (int(last_x_point) != int(data_point['x']) or int(last_y_point) != int(data_point['y'])):
+                    moved = True
+                last_x_point = data_point['x']
+                last_y_point = data_point['y']
+
+            if not moved:
+                return False
 
         except Exception as e:
             return False
