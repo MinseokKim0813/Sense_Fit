@@ -1,12 +1,16 @@
 import sys
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QPushButton,
-    QVBoxLayout, QHBoxLayout, QLabel, QDesktopWidget
+    QVBoxLayout, QHBoxLayout, QLabel, QDesktopWidget, QMessageBox
 )
 from PyQt5.QtCore import Qt
 
 from Backend.tracking_module import CursorTracker
 from Backend.analyze_module import *
+from Frontend.error_window import *
+
+
+
 
 class ProfileWindow(QWidget):
     def __init__(self, profile, main_window=None):
@@ -218,10 +222,12 @@ class ProfileWindow(QWidget):
 
                 # Check if data points are valid
                 if ('error' in self.analyze_module.handle_error()):
+
                     # Display error message in the UI
                     error_message = self.analyze_module.handle_error()['error']
-                    self.analysis_error_label.setText(f"Cursor movement analysis failed: {error_message}")
-                    self.analysis_error_label.setVisible(True)
+
+                    error_popup = ErrorPopup(message=error_message)
+                    error_popup.exec_()
                 else:
                     self.analyze_module.get_pause_segments()
                     # print(self.analyze_module.pause_points_list)
