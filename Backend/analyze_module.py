@@ -25,6 +25,11 @@ class AnalyzeModule:
                 next(reader) # Skip the first row (header)
 
                 for row in reader:
+                    #print(row)
+                    if len(row) != 4:
+                        #print(row)
+                        continue
+
                     cursor_log = {}
                     cursor_log['timestamp'] = row[0]
                     cursor_log['x'] = row[1]
@@ -98,7 +103,7 @@ class AnalyzeModule:
 
                 # Phase 2: Check if the cursor position is within the screen
                 # TODO: Do not hardcode the screen resolution
-                if (data_point['x'] < 0 or data_point['x'] > 1920 or data_point['y'] < 0 or data_point['y'] > 1080):
+                if (data_point['x'] < 0 or data_point['x'] > 2560 or data_point['y'] < 0 or data_point['y'] > 2440):
                     return False
 
         except Exception as e:
@@ -196,4 +201,6 @@ class AnalyzeModule:
 
 if __name__ == "__main__":
     # Test AnalyzeModule here
+    am = AnalyzeModule(3, "2025-04-16_19-04-37")
+    am.handle_error()
     pass
