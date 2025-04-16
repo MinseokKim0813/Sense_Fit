@@ -5,8 +5,6 @@ import math
 import pandas as pd
 import numpy as np
 
-from PyQt5.QtWidgets import QDesktopWidget
-
 class AnalyzeModule:
     def __init__(self, profile_id: int, session: str, screen_width: int, screen_height: int) -> None:
         self.screen_width = screen_width
@@ -88,9 +86,6 @@ class AnalyzeModule:
 
     def validate_cursor_positions(self) -> bool:
         data_points = self.__cursor_log
-        screen = QDesktopWidget().screenGeometry()
-        width = screen.width()
-        height = screen.height()
 
         # Phase 1: Check if the cursor position exists and is in integers
         try:
@@ -111,7 +106,7 @@ class AnalyzeModule:
 
                 # Phase 2: Check if the cursor position is within the screen
                 # TODO: Do not hardcode the screen resolution
-                if (data_point['x'] < 0 or data_point['x'] > self.screen_width or data_point['y'] < 0 or data_point['y'] > self.screen_height):
+                if (data_point['x'] < 0 or data_point['x'] >= self.screen_width or data_point['y'] < 0 or data_point['y'] >= self.screen_height):
                     return False
 
         except Exception as e:

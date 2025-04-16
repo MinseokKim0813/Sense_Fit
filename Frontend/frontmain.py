@@ -222,7 +222,6 @@ class MainInterface(QMainWindow):
         self.refresh_grid()
 
 
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainInterface()
