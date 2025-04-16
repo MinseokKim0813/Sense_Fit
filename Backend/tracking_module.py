@@ -108,7 +108,7 @@ def stubbing_null_position(null_file_path, saving_file):
             pos = each_position[1]
 
             # Check if the position is valid
-            if pos is None:
+            if pos is None or pos[0] is None or pos[1]:
                 raise ValueError("Failed to retrieve cursor position")
                 return
             
@@ -127,5 +127,11 @@ def stubbing_null_position(null_file_path, saving_file):
 
 if __name__ == "__main__":
 
-    # This should raise "Failed to retrieve cursor position"
-    stubbing_null_position([["2025-04-15 21:37:03.109395",[944,894]], ["2025-04-15 21:37:03.118977",None],["2025-04-15 21:37:03.129300",[944,894]]], "./storage/logs/stubbing_file")
+    # These should raise "Failed to retrieve cursor position"
+    stubbing_null_position([["2025-04-15 21:37:03.109395",[944,894]], ["2025-04-15 21:37:03.118977",None]],"./storage/logs/stubbing_file")
+
+    stubbing_null_position([["2025-04-15 21:37:03.109395",[944,894]], ["2025-04-15 21:37:03.129300",[None,894]]], "./storage/logs/stubbing_file")
+
+    stubbing_null_position([["2025-04-15 21:37:03.109395",[944,894]], ["2025-04-15 21:37:03.118977",[944,None]]], "./storage/logs/stubbing_file")
+    
+    stubbing_null_position([["2025-04-15 21:37:03.109395",[944,894]], [None,[944,894]]], "./storage/logs/stubbing_file")
