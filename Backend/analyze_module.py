@@ -89,7 +89,7 @@ class AnalyzeModule:
     def validate_cursor_positions(self) -> bool:
         data_points = self.__cursor_log
 
-        # Phase 1: Check if the cursor position exists and is in integers
+        # Check if the cursor position exists and is in integers
         try:
             for data_point in data_points:
                 if (not data_point['x'] or not data_point['y']):
@@ -106,8 +106,7 @@ class AnalyzeModule:
                 else:
                     data_point['clicked'] = 0
 
-                # Phase 2: Check if the cursor position is within the screen
-                # TODO: Do not hardcode the screen resolution
+                #Check if the cursor position is within the screen
                 if (data_point['x'] < 0 or data_point['x'] >= self.screen_width or data_point['y'] < 0 or data_point['y'] >= self.screen_height):
                     return False
 
