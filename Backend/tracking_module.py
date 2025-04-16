@@ -104,8 +104,13 @@ def stubbing_null_position(null_file_path, saving_file):
     try:
         # Get the tracking values
         for each_position in null_file_path:
+            if not each_position:
+                raise ValueError("Failed to retrieve cursor position")
+                return
+                
             timestamp = each_position[0]
-            pos = each_position[1]
+            x_pos = each_position[1]
+            y_pos = each_position[2]
 
             # Check if the position is valid
             if pos is None or pos[0] is None or pos[1]:
@@ -128,10 +133,10 @@ def stubbing_null_position(null_file_path, saving_file):
 if __name__ == "__main__":
 
     # These should raise "Failed to retrieve cursor position"
-    stubbing_null_position([["2025-04-15 21:37:03.109395",[944,894]], ["2025-04-15 21:37:03.118977",None]],"./storage/logs/stubbing_file")
+    stubbing_null_position([["2025-04-15 21:37:03.109395",944,894], None],"./storage/logs/stubbing_file")
 
-    stubbing_null_position([["2025-04-15 21:37:03.109395",[944,894]], ["2025-04-15 21:37:03.129300",[None,894]]], "./storage/logs/stubbing_file")
+    stubbing_null_position([["2025-04-15 21:37:03.109395",944,894], ["2025-04-15 21:37:03.129300",None,894]], "./storage/logs/stubbing_file")
 
-    stubbing_null_position([["2025-04-15 21:37:03.109395",[944,894]], ["2025-04-15 21:37:03.118977",[944,None]]], "./storage/logs/stubbing_file")
+    stubbing_null_position([["2025-04-15 21:37:03.109395",944,894], ["2025-04-15 21:37:03.118977",944,None]], "./storage/logs/stubbing_file")
     
-    stubbing_null_position([["2025-04-15 21:37:03.109395",[944,894]], [None,[944,894]]], "./storage/logs/stubbing_file")
+    stubbing_null_position([["2025-04-15 21:37:03.109395",944,894], [None,944,894]], "./storage/logs/stubbing_file")
