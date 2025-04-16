@@ -120,7 +120,7 @@ def stubbing_null_position(null_file_path, saving_file):
             # Write to the log file
             with open(saving_file, "a", newline='') as file:
                 writer = csv.writer(file)
-                writer.writerow([timestamp, pos[0], pos[1]])
+                writer.writerow([timestamp, x_pos, y_pos])
             
     # TODO: Implement error handling; need to signal with error msg to the main window that the tracker has stopped
     except Exception as e:
