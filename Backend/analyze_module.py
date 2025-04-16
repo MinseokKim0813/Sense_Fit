@@ -6,12 +6,13 @@ import pandas as pd
 import numpy as np
 
 class AnalyzeModule:
-    def __init__(self, profile_id: int, session: str):
+    def __init__(self, profile_id: int, session: str) -> None:
         current_dir = os.path.dirname(os.path.realpath(__file__))
         self.__storage_dir = os.path.join(current_dir, "storage", "logs")
         self.__log_file = os.path.join(self.__storage_dir, f"id_{profile_id}_cursor_log_{session}.csv")
+        self.__error = None
 
-        # if self.__log_file is not found, raise an error
+        # if self.__log_file is not found, raise an error (Test Case 9, in progress)
         if not os.path.exists(self.__log_file):
             raise Exception(f"Tracking log file not found: {self.__log_file}")
 
@@ -26,32 +27,93 @@ class AnalyzeModule:
                 for row in reader:
                     cursor_log = {}
                     cursor_log['timestamp'] = row[0]
-                    cursor_log['x'] = int(row[1])
-                    cursor_log['y'] = int(row[2])
-                    cursor_log['clicked'] = int(row[3])
+                    cursor_log['x'] = row[1]
+                    cursor_log['y'] = row[2]
+                    cursor_log['clicked'] = row[3]
 
                     self.__cursor_log.append(cursor_log)
 
             file.close()
 
+            if (not self.validate_data_length()):
+                raise Exception("Cursor tracking data is not sufficient. Please make sure the tracking persists for at least 1 second.")
+
+            if (not self.validate_timestamps()):
+                raise Exception("The timestamp of the tracking data is missing or invalid. Please try again.")
+
+            if (not self.validate_cursor_positions()):
+                raise Exception("The data points of the tracking data are missing, invalid, or out of range. Please try again.")
+
         except Exception as e:
-            # Here we need to catch error from missing connectivity to the storage (Test Case 9)
-            raise Exception(f"Error reading tracking log file: {str(e)}")
+            print("Data points assertion failed for AnalyzeModule: ", e)
+            self.__error = str(e)
 
-    def validate_data_length(self):
-        # TODO: Implement data validation mentioned in the test cases 10
-        pass
+    def validate_data_length(self) -> bool:
+        # The tracking data must have at least 100 data points
+        return len(self.__cursor_log) >= 100
 
-    def validate_timestamps(self):
-        # TODO: Implement data validation mentioned in the test cases 11
-        pass
+    def validate_timestamps(self) -> bool:
 
-    def validate_cursor_positions(self):
-        # TODO: Implement data validation mentioned in the test cases 12
-        pass
+        data_points = self.__cursor_log
 
+        # Phase 1: Check if the timestamp is missing or invalid
+        for i in range(len(data_points)):
+            if (not data_points[i]['timestamp']):
+                return False
+            else:
+                try:
+                    datetime.strptime(data_points[i]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
+                except ValueError:
+                    return False
+        
+        # Phase 2: Check if the timestamps are consistent
+        for i in range(1, len(data_points)):
+            timestamp_current = datetime.strptime(data_points[i]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
+            timestamp_before = datetime.strptime(data_points[i - 1]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
 
-    def get_pause_segments(self, threshold: int = 5):
+            if (timestamp_current < timestamp_before):
+                return False
+        
+        return True
+
+    def validate_cursor_positions(self) -> bool:
+        data_points = self.__cursor_log
+
+        # Phase 1: Check if the cursor position exists and is in integers
+        try:
+            for data_point in data_points:
+                if (not data_point['x'] or not data_point['y']):
+                    return False
+                
+                # If the data point is not an integer, the assertion fails (see exception)
+                # Otherwise, the data point is type-casted to an integer
+                data_point['x'] = int(data_point['x'])
+                data_point['y'] = int(data_point['y'])
+
+                # if the "clicked" entry is not valid, set it to 0
+                if (data_point['clicked'] == '0' or data_point['clicked'] == '1'):
+                    data_point['clicked'] = int(data_point['clicked'])
+                else:
+                    data_point['clicked'] = 0;
+
+                # Phase 2: Check if the cursor position is within the screen
+                # TODO: Do not hardcode the screen resolution
+                if (data_point['x'] < 0 or data_point['x'] > 1920 or data_point['y'] < 0 or data_point['y'] > 1080):
+                    return False
+
+        except Exception as e:
+            return False
+
+        return True
+
+    # Error handler to be used in the frontend
+    def handle_error(self):
+        if self.__error:
+            return {"error": self.__error}
+        else:
+            return {"message": "Data points are valid!"}
+
+    def get_pause_segments(self, threshold: int = 5) -> list[dict]:
         """
         Finds all pause segments where the cursor moved within a small threshold
         (X and Y changes are less than or equal to the threshold).
@@ -133,5 +195,5 @@ class AnalyzeModule:
         return math.atan2(dy, dx) * (180 / math.pi)
 
 if __name__ == "__main__":
-    analyze_module = AnalyzeModule(6, "2025-04-15_22-52-05")
-    print(analyze_module.get_pause_segments(10))
+    # Test AnalyzeModule here
+    pass

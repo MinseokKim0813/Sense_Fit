@@ -199,6 +199,7 @@ class ProfileWindow(QWidget):
                 self.analyze_module = AnalyzeModule(self.profile['_id'], self.current_session)
 
                 # Get pause points list
+                # TODO: If Data points are not valid, do not analyze to preven errors
                 self.analyze_module.get_pause_segments()
                 # print(self.analyze_module.pause_points_list)
                 # print(retrieve_tracking_data(self.profle))
