@@ -113,7 +113,7 @@ def stubbing_null_position(null_file_path, saving_file):
             y_pos = each_position[2]
 
             # Check if the position is valid
-            if pos is None or pos[0] is None or pos[1]:
+            if x_pos is None or y_pos is None:
                 raise ValueError("Failed to retrieve cursor position")
                 return
             
