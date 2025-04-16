@@ -118,7 +118,8 @@ class AnalyzeModule:
     def validate_extreme_movements(self):
         data_points = self.__cursor_log
 
-        moved = False
+        cursor_moved_flag = False
+        cursor_paused_flag = False
 
         for i in range(0,len(data_points)-1):
                 x_pos1 = data_points[i]['x']
@@ -128,16 +129,23 @@ class AnalyzeModule:
 
                 distance_traveled = (x_pos2-x_pos1)**2 + (y_pos2-y_pos1)**2
 
-                #for abrupt change in cursor position
+                # for abrupt change in cursor position
                 if(distance_traveled >= 250000):
                     return False
 
-                #Check if the cursor positions have moved at all
+                # Check if the cursor positions have moved at all
                 if (x_pos1 != x_pos2 or y_pos1 != y_pos2):
-                    moved  = True
+                    cursor_moved_flag = True
+
+                # Check if the cursor ever paused
+                if (x_pos1 == x_pos2 and y_pos1 == y_pos2):
+                    cursor_paused_flag = True
+
+        if not cursor_moved_flag:
+            return False
         
-        if not moved:
-            return moved
+        if not cursor_paused_flag:
+            return False
         
         return True
 
