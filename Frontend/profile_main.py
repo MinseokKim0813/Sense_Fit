@@ -105,6 +105,12 @@ class ProfileWindow(QWidget):
         self.status_message_label.setAlignment(Qt.AlignCenter)
         self.status_message_label.setStyleSheet("font-size: 16px; color: #4caf50;") # Green color for success
         self.status_message_label.setVisible(False)
+        
+        # Add analysis error message label
+        self.analysis_error_label = QLabel("")
+        self.analysis_error_label.setAlignment(Qt.AlignCenter)
+        self.analysis_error_label.setStyleSheet("font-size: 16px; color: #ff5252;") # Red color for errors
+        self.analysis_error_label.setVisible(False)
 
         top_button_layout = QHBoxLayout()
         top_button_layout.addStretch()
@@ -120,13 +126,6 @@ class ProfileWindow(QWidget):
         toggle_row_layout.addWidget(self.toggle_button)
         toggle_row_layout.addStretch()
 
-        toggle_layout = QVBoxLayout()
-        toggle_layout.addWidget(self.tracking_status_label)
-        toggle_layout.addSpacing(30)
-        toggle_layout.addLayout(toggle_row_layout)
-        toggle_layout.addSpacing(10)
-        toggle_layout.addWidget(self.status_message_label)
-
         main_layout = QVBoxLayout()
         main_layout.addSpacing(10)
         # Horizontal layout for back button with left spacing
@@ -140,10 +139,29 @@ class ProfileWindow(QWidget):
         main_layout.addWidget(self.title_label)
         main_layout.addSpacing(int(window_height * 0.1))
         main_layout.addLayout(top_button_layout)
-        main_layout.addSpacing(int(window_height * 0.4))
-        main_layout.addLayout(toggle_layout)
-        main_layout.addStretch()
-
+        main_layout.addSpacing(int(window_height * 0.2))
+        
+        # Add tracking status label first
+        main_layout.addWidget(self.tracking_status_label)
+        
+        # Add the toggle controls
+        main_layout.addLayout(toggle_row_layout)
+        
+        # Add a fixed height container for status messages below the toggle button
+        status_container = QVBoxLayout()
+        status_container.addWidget(self.status_message_label)
+        status_container.addWidget(self.analysis_error_label)
+        
+        # Create a container widget with fixed height to hold the status messages
+        status_widget = QWidget()
+        status_widget.setLayout(status_container)
+        status_widget.setFixedHeight(int(window_height * 0.1))  # Fixed height for message area
+        
+        main_layout.addWidget(status_widget)
+        
+        # Add minimal spacing instead of a full stretch to reduce bottom padding
+        main_layout.addSpacing(20)  # Small fixed spacing instead of stretch
+        
         self.setLayout(main_layout)
 
 
@@ -163,6 +181,7 @@ class ProfileWindow(QWidget):
                 self.current_session = self.cursor_tracker.get_current_session()
                 # Hide any previous message when starting tracking successfully
                 self.status_message_label.setVisible(False)
+                self.analysis_error_label.setVisible(False)
             except Exception as e:
                 # Show error message
                 self.status_message_label.setText(f"Failed to start tracking: {str(e)}")
@@ -199,13 +218,13 @@ class ProfileWindow(QWidget):
 
                 # Check if data points are valid
                 if ('error' in self.analyze_module.handle_error()):
-                    # Here we need to show an error message to the user
-                    print("Error in data points: ", self.analyze_module.handle_error()['error']) # Replace this with a proper error message box
-                
+                    # Display error message in the UI
+                    error_message = self.analyze_module.handle_error()['error']
+                    self.analysis_error_label.setText(f"Cursor movement analysis failed: {error_message}")
+                    self.analysis_error_label.setVisible(True)
                 else:
                     self.analyze_module.get_pause_segments()
                     # print(self.analyze_module.pause_points_list)
-                    # print(retrieve_tracking_data(self.profle))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
