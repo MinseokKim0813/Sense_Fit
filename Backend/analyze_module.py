@@ -53,7 +53,7 @@ class AnalyzeModule:
                 raise Exception("The data points of the tracking data are missing, invalid, or out of range. Please try again.")
             
             if (not self.validate_extreme_movements()):
-                raise Exception("Unusual cursor movement detected. Please try again with natural movement behavior.")
+                raise Exception("Unusual cursor movement (No movement, Abrupt movement, Restless movement) detected. Please try again with natural movement behavior.")
 
         except Exception as e:
             print("Data points assertion failed for AnalyzeModule: ", e)
