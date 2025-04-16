@@ -194,15 +194,18 @@ class ProfileWindow(QWidget):
                     self.status_message_label.setStyleSheet("font-size: 16px; color: #ff5252;") # Red for error
                     self.status_message_label.setVisible(True)
 
-                # Start analyzing
-                
+                # Start analyzing                
                 self.analyze_module = AnalyzeModule(self.profile['_id'], self.current_session)
 
-                # Get pause points list
-                # TODO: If Data points are not valid, do not analyze to preven errors
-                self.analyze_module.get_pause_segments()
-                # print(self.analyze_module.pause_points_list)
-                # print(retrieve_tracking_data(self.profle))
+                # Check if data points are valid
+                if ('error' in self.analyze_module.handle_error()):
+                    # Here we need to show an error message to the user
+                    print("Error in data points: ", self.analyze_module.handle_error()['error']) # Replace this with a proper error message box
+                
+                else:
+                    self.analyze_module.get_pause_segments()
+                    # print(self.analyze_module.pause_points_list)
+                    # print(retrieve_tracking_data(self.profle))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
