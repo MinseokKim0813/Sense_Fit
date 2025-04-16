@@ -238,7 +238,7 @@ class AnalyzeModule:
             while end_position >= j:
                 dx = data_points[end_position - j]['x'] - data_points[end_position - i]['x']
                 dy = data_points[end_position - j]['y'] - data_points[end_position - i]['y']
-                slope_now = self.get_slope(dx,dy)
+                slope_now = self.angle_diff(dx,dy)
                 
                 if (dx != 0 or dy != 0):
                     if slope_before is not None:
