@@ -51,6 +51,9 @@ class AnalyzeModule:
 
             if (not self.validate_cursor_positions()):
                 raise Exception("The data points of the tracking data are missing, invalid, or out of range. Please try again.")
+            
+            if (not self.validate_extreme_movements()):
+                raise Exception("Unusual cursor movement detected. Please try again with natural movement behavior.")
 
         except Exception as e:
             print("Data points assertion failed for AnalyzeModule: ", e)
@@ -81,7 +84,6 @@ class AnalyzeModule:
 
             if (timestamp_current < timestamp_before):
                 return False
-        
         return True
 
     def validate_cursor_positions(self) -> bool:
@@ -89,10 +91,6 @@ class AnalyzeModule:
 
         # Phase 1: Check if the cursor position exists and is in integers
         try:
-            last_x_point = data_points[0]['x']
-            last_y_point = data_points[0]['y']
-            moved = False
-
             for data_point in data_points:
                 if (not data_point['x'] or not data_point['y']):
                     return False
@@ -113,18 +111,34 @@ class AnalyzeModule:
                 if (data_point['x'] < 0 or data_point['x'] >= self.screen_width or data_point['y'] < 0 or data_point['y'] >= self.screen_height):
                     return False
 
-                # Phase 3: Check if the cursor positions have moved at all
-                if (int(last_x_point) != int(data_point['x']) or int(last_y_point) != int(data_point['y'])):
-                    moved = True
-                last_x_point = data_point['x']
-                last_y_point = data_point['y']
-
-            if not moved:
-                return False
-
         except Exception as e:
             return False
+        return True
+    
+    def validate_extreme_movements(self):
+        data_points = self.__cursor_log
 
+        moved = False
+
+        for i in range(0,len(data_points)-1):
+                x_pos1 = data_points[i]['x']
+                y_pos1 = data_points[i]['y']
+                x_pos2 = data_points[i+1]['x']
+                y_pos2 = data_points[i+1]['y']
+
+                distance_traveled = (x_pos2-x_pos1)**2 + (y_pos2-y_pos1)**2
+
+                #for abrupt change in cursor position
+                if(distance_traveled >= 250000):
+                    return False
+
+                #Check if the cursor positions have moved at all
+                if (x_pos1 != x_pos2 or y_pos1 != y_pos2):
+                    moved  = True
+        
+        if not moved:
+            return moved
+        
         return True
 
     # Error handler to be used in the frontend
