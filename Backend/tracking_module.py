@@ -97,3 +97,35 @@ class CursorTracker(QWidget):
         if hasattr(self, 'timer') and self.timer is not None:
             self.timer.stop()
         super().close()
+
+
+# Stubbing function for testing how null cursor position is handled
+def stubbing_null_position(null_file_path, saving_file):
+    try:
+        # Get the tracking values
+        for each_position in null_file_path:
+            timestamp = each_position[0]
+            pos = each_position[1]
+
+            # Check if the position is valid
+            if pos is None:
+                raise ValueError("Failed to retrieve cursor position")
+                return
+            
+            # Write to the log file
+            with open(saving_file, "a", newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow([timestamp, pos[0], pos[1]])
+            
+    # TODO: Implement error handling; need to signal with error msg to the main window that the tracker has stopped
+    except Exception as e:
+        print(f"Tracking error: {e}")
+
+        return
+
+
+
+if __name__ == "__main__":
+
+    # This should raise "Failed to retrieve cursor position"
+    stubbing_null_position([["2025-04-15 21:37:03.109395",[944,894]], ["2025-04-15 21:37:03.118977",None],["2025-04-15 21:37:03.129300",[944,894]]], "./storage/logs/stubbing_file")
