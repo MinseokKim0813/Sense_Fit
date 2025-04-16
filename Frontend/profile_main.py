@@ -25,16 +25,16 @@ class ProfileWindow(QWidget):
 
         # Get screen size
         screen = QDesktopWidget().screenGeometry()
-        screen_width = screen.width()
-        screen_height = screen.height()
+        self.screen_width = screen.width()
+        self.screen_height = screen.height()
 
         # Set window size to 80% of screen
-        window_width = int(screen_width * 0.8)
-        window_height = int(screen_height * 0.8)
+        window_width = int(self.screen_width * 0.8)
+        window_height = int(self.screen_height * 0.8)
         self.resize(window_width, window_height)
         self.move(
-            int((screen_width - window_width) / 2),
-            int((screen_height - window_height) / 2)
+            int((self.screen_width - window_width) / 2),
+            int((self.screen_height - window_height) / 2)
         )
 
         # Set modern dark background
@@ -194,8 +194,8 @@ class ProfileWindow(QWidget):
                     self.status_message_label.setStyleSheet("font-size: 16px; color: #ff5252;") # Red for error
                     self.status_message_label.setVisible(True)
 
-                # Start analyzing                
-                self.analyze_module = AnalyzeModule(self.profile['_id'], self.current_session)
+                # Start analyzing
+                self.analyze_module = AnalyzeModule(self.profile['_id'], self.current_session, self.screen_width, self.screen_height)
 
                 # Check if data points are valid
                 if ('error' in self.analyze_module.handle_error()):

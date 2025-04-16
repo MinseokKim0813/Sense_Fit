@@ -5,8 +5,13 @@ import math
 import pandas as pd
 import numpy as np
 
+from PyQt5.QtWidgets import QDesktopWidget
+
 class AnalyzeModule:
-    def __init__(self, profile_id: int, session: str) -> None:
+    def __init__(self, profile_id: int, session: str, screen_width: int, screen_height: int) -> None:
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+
         current_dir = os.path.dirname(os.path.realpath(__file__))
         self.__storage_dir = os.path.join(current_dir, "storage", "logs")
         self.__log_file = os.path.join(self.__storage_dir, f"id_{profile_id}_cursor_log_{session}.csv")
@@ -83,6 +88,9 @@ class AnalyzeModule:
 
     def validate_cursor_positions(self) -> bool:
         data_points = self.__cursor_log
+        screen = QDesktopWidget().screenGeometry()
+        width = screen.width()
+        height = screen.height()
 
         # Phase 1: Check if the cursor position exists and is in integers
         try:
@@ -99,11 +107,11 @@ class AnalyzeModule:
                 if (data_point['clicked'] == '0' or data_point['clicked'] == '1'):
                     data_point['clicked'] = int(data_point['clicked'])
                 else:
-                    data_point['clicked'] = 0;
+                    data_point['clicked'] = 0
 
                 # Phase 2: Check if the cursor position is within the screen
                 # TODO: Do not hardcode the screen resolution
-                if (data_point['x'] < 0 or data_point['x'] > 2560 or data_point['y'] < 0 or data_point['y'] > 2440):
+                if (data_point['x'] < 0 or data_point['x'] > self.screen_width or data_point['y'] < 0 or data_point['y'] > self.screen_height):
                     return False
 
         except Exception as e:
