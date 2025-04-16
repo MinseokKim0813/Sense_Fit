@@ -10,8 +10,6 @@ from Backend.analyze_module import *
 from Frontend.error_window import *
 
 
-
-
 class ProfileWindow(QWidget):
     def __init__(self, profile, main_window=None):
         super().__init__()
@@ -21,6 +19,7 @@ class ProfileWindow(QWidget):
         self.cursor_tracker = None
         self.analyze_module = None
         self.current_session = None
+        self.error_flag = False
         self.initUI()
 
 
@@ -183,9 +182,24 @@ class ProfileWindow(QWidget):
             try:
                 self.cursor_tracker = CursorTracker(self.profile['_id'])
                 self.current_session = self.cursor_tracker.get_current_session()
+                
+                if 'error' in self.cursor_tracker.handle_error():
+                    self.error_flag = True
+                    error_message = self.cursor_tracker.handle_error()['error']
+                    
+                    self.toggle_button.setChecked(False)
+                    self.toggle_button.setText("Off")
+                    self.toggle_button.setStyleSheet("font-size: 24px; font-weight: bold; background-color: #3a3a3a; color: white;")
+                    self.tracking_status_label.setText("Tracking Disabled")
+                    
+                    error_popup = ErrorPopup(message=error_message)
+                    error_popup.exec_()
+                    return
+
                 # Hide any previous message when starting tracking successfully
                 self.status_message_label.setVisible(False)
                 self.analysis_error_label.setVisible(False)
+
             except Exception as e:
                 # Show error message
                 self.status_message_label.setText(f"Failed to start tracking: {str(e)}")
@@ -198,6 +212,10 @@ class ProfileWindow(QWidget):
             self.toggle_button.setText("Off")
             self.toggle_button.setStyleSheet("font-size: 24px; font-weight: bold; background-color: #3a3a3a; color: white;")
             self.tracking_status_label.setText("Tracking Disabled")
+
+            if (self.error_flag):
+                self.error_flag = False
+                return
 
             # Stop tracking
             # TODO: Implement error handling; need to receive signal with error msg to the main window that the tracker has stopped

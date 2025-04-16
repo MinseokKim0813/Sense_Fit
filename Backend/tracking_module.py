@@ -6,11 +6,14 @@ import pyautogui  #For accessing the global mouse position
 from PyQt5.QtCore import QTimer  #To create timed updates
 from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget  #Basic PyQt5 GUI elements
 from pynput.mouse import Controller as MouseController, Listener as MouseListener, Button
+from collections import namedtuple
+
 
 class CursorTracker(QWidget):
     def __init__(self, profile_id):
         super().__init__()
         self.__current_profile = profile_id
+        self.__error = None
         # self.__cursor_data_points = []
 
         current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -40,12 +43,14 @@ class CursorTracker(QWidget):
         self.setLayout(layout)
 
         #Set up a timer to repeatedly check and update the cursor position
+        self.update_cursor_position()
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_cursor_position)         #On timeout, call update function
         self.timer.start(10)                                            #Trigger the timeout every 10 milliseconds (100Hz)
 
         #Starts listening to mouse clicks
         self.mouse_listener.start()  
+
     def __init_csv(self):
         # Create the logs directory if it doesn't exist
         try:
@@ -74,8 +79,22 @@ class CursorTracker(QWidget):
             pos = pyautogui.position()
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 
+            # Stubbing test (uncomment one at a time)
+            Point = namedtuple('Point', ['x', 'y'])
+            # # case 1: position is null
+            # pos = None
+
+            # # case 2: x position is null
+            # pos = Point(None, pos.y)
+            
+            # # case 3: y position is null
+            # pos = Point(pos.x, None)
+
+            # # case 4: timestamp is null
+            # timestamp = None
+
             # Check if the position is valid
-            if pos is None:
+            if pos is None or pos.x is None or pos.y is None or timestamp is None:
                 raise ValueError("Failed to retrieve cursor position")
             
             clicked = 1 if self.clicked_flag else 0
@@ -88,6 +107,7 @@ class CursorTracker(QWidget):
         # TODO: Implement error handling; need to signal with error msg to the main window that the tracker has stopped
         except Exception as e:
             print(f"Tracking error: {e}")
+            self.__error = str(e)
             # Close tracker on error
             self.close()
             return
@@ -98,45 +118,8 @@ class CursorTracker(QWidget):
             self.timer.stop()
         super().close()
 
-
-# Stubbing function for testing how null cursor position is handled
-def stubbing_null_position(null_file_path, saving_file):
-    try:
-        # Get the tracking values
-        for each_position in null_file_path:
-            if not each_position:
-                raise ValueError("Failed to retrieve cursor position")
-                return
-                
-            timestamp = each_position[0]
-            x_pos = each_position[1]
-            y_pos = each_position[2]
-
-            # Check if the position is valid
-            if x_pos is None or y_pos is None:
-                raise ValueError("Failed to retrieve cursor position")
-                return
-            
-            # Write to the log file
-            with open(saving_file, "a", newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow([timestamp, x_pos, y_pos])
-            
-    # TODO: Implement error handling; need to signal with error msg to the main window that the tracker has stopped
-    except Exception as e:
-        print(f"Tracking error: {e}")
-
-        return
-
-
-
-if __name__ == "__main__":
-
-    # These should raise "Failed to retrieve cursor position"
-    stubbing_null_position([["2025-04-15 21:37:03.109395",944,894], None],"./storage/logs/stubbing_file")
-
-    stubbing_null_position([["2025-04-15 21:37:03.109395",944,894], ["2025-04-15 21:37:03.129300",None,894]], "./storage/logs/stubbing_file")
-
-    stubbing_null_position([["2025-04-15 21:37:03.109395",944,894], ["2025-04-15 21:37:03.118977",944,None]], "./storage/logs/stubbing_file")
-    
-    stubbing_null_position([["2025-04-15 21:37:03.109395",944,894], [None,944,894]], "./storage/logs/stubbing_file")
+    def handle_error(self):
+        if self.__error:
+            return {"error": self.__error}
+        else:
+            return {}

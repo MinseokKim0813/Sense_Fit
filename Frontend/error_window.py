@@ -47,8 +47,6 @@ class ErrorPopup(QDialog):
         icon_pixmap = QPixmap(icon_path)
         icon_pixmap = icon_pixmap.scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         icon_label.setPixmap(icon_pixmap)
-        print("Looking for icon at:", icon_path)
-        print("Exists:", os.path.exists(icon_path))
 
         title_label = QLabel("Ooops!")
         title_label.setObjectName("title")
