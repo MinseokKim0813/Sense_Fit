@@ -234,13 +234,17 @@ class AnalyzeModule:
         prev_click_point = 0
         overshoot_flag = False
 
-
+        # Each click point will become the end_position of a trajectory segment for analysis
         for end_position in end_positions:
             segment = {"start_index": None, "end_index": None, "PPnums": 0, "OSP_index": None}
+
+            # Remove consecutive identical coordinates at the end of the segment (where the cursor was stationary)
             while (end_position > 0 and data_points[end_position]['x'] == data_points[end_position - 1]['x'] and data_points[end_position]['y'] == data_points[end_position - 1]['y']):
                 end_position -= 1
 
+            # Ignore all the pausing points in the segment
             while end_position >= j:
+                # Boundary check to prevent duplicate starting points
                 if prev_click_point < end_position - j:
                     dx = data_points[end_position - j]['x'] - data_points[end_position - i]['x']
                     dy = data_points[end_position - j]['y'] - data_points[end_position - i]['y']
@@ -253,7 +257,7 @@ class AnalyzeModule:
                     slope_now = self.get_angle_from_delta(dx,dy)
 
                     if slope_before is not None:
-                        # check for overshoot
+                        # Check if the slope abruptly changes (meaning that the cursor is overshooting)
                         if not overshoot_flag:
                             if 130 <= self.angle_diff(slope_before,slope_now):
                                 overshoot_flag = True
@@ -267,7 +271,8 @@ class AnalyzeModule:
                             segment['start_index'] = (end_position - i)
                             segment['end_index'] = end_position
                             break
-                        
+
+                    # Update the slope before the next iteration
                     slope_before = slope_now
                     i += 25
                     j += 25
@@ -275,6 +280,8 @@ class AnalyzeModule:
                     segment['start_index'] = [end_position - i]
                     segment['end_index'] = [end_position]
                     break
+            
+            # Reset the variables for the next segment
             i = 0
             j = 25
             slope_before = None
