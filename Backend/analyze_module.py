@@ -225,7 +225,7 @@ class AnalyzeModule:
         
         return clicked_positions
     
-    def analyze_all_segment(self, end_positions) -> list[int]:
+    def analyze_all_segment(self, end_positions) -> list[dict]:
         #variables
         all_segment = []                                    #return list of objects "segment"
         data_points = self.__cursor_log                     #call data points
@@ -302,6 +302,10 @@ class AnalyzeModule:
             for each in self.__pause_points_list:
                 if each["start_index"] == 0:
                     continue
+
+                if segment["OSP_index"] is not None:
+                    if each["start_index"] <= segment["OSP_index"] <= each["end_index"]:
+                        continue
 
                 print(each, startindex, endindex)
                 if startindex <= each["start_index"] and endindex >= each["end_index"]:
