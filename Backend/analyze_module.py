@@ -268,15 +268,18 @@ class AnalyzeModule:
                                 j += 25
                                 continue
 
+                        #if the angle diff is more than 30 degrees, the system identifies the second latest cursor data point as the start point for the corresponding endpoint
                         if self.angle_diff(slope_before, slope_now) > 30:
-                            segment['start_index'] = (end_position - i)
-                            segment['end_index'] = end_position
+                            segment['start_index'] = (end_position - i)         #add second latest cursor data index as the segment's start index
+                            segment['end_index'] = end_position                 #add the current end point index to segment's end_index
                             break
 
                     # Update the slope before the next iteration
                     slope_before = slope_now
                     i += 25
                     j += 25
+
+                #if goes beyond boundary save analyzed start_index and end_index for the segment
                 else:
                     segment['start_index'] = [end_position - i]
                     segment['end_index'] = [end_position]
