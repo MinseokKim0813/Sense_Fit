@@ -237,8 +237,8 @@ class AnalyzeModule:
         for end_position in end_positions:
             while (end_position > 0 and data_points[end_position]['x'] == data_points[end_position - 1]['x'] and data_points[end_position]['y'] == data_points[end_position - 1]['y']):
                 end_position -= 1
+
             while end_position >= j:
-                
                 if prev_click_point < end_position - j:
                     dx = data_points[end_position - j]['x'] - data_points[end_position - i]['x']
                     dy = data_points[end_position - j]['y'] - data_points[end_position - i]['y']
@@ -249,7 +249,14 @@ class AnalyzeModule:
                         continue
 
                     slope_now = self.get_angle_from_delta(dx,dy)
+
                     if slope_before is not None:
+                        #check for overshoot
+                        if 150 <= self.is_overshoot(slope_before,slope_now) <= 210:
+                            i += 1
+                            j += 1
+                            continue
+
                         if self.angle_diff(slope_before, slope_now) > 30:
                             start_positions.append(data_points[end_position - i])
                             break
@@ -284,6 +291,10 @@ class AnalyzeModule:
     
     def is_paused(self, dx, dy):
         return dx == 0 and dy == 0
+    
+    def is_overshoot(self, slope_before, slope_now):
+        diff = self.angle_diff(slope_before, slope_now)
+        return diff
 
 if __name__ == "__main__":
     # Test AnalyzeModule here
