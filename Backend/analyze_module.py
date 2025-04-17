@@ -238,13 +238,17 @@ class AnalyzeModule:
             while end_position >= j:
                 dx = data_points[end_position - j]['x'] - data_points[end_position - i]['x']
                 dy = data_points[end_position - j]['y'] - data_points[end_position - i]['y']
-                slope_now = self.get_angle_from_delta(dx,dy)
                 
-                if (dx != 0 or dy != 0):
-                    if slope_before is not None:
-                        if self.angle_diff(slope_before, slope_now) > 30:
-                            start_positions.append(data_points[end_position - i])
-                            break
+                if self.is_paused(dx,dy):
+                    i += 1
+                    j += 1
+                    continue
+
+                slope_now = self.get_angle_from_delta(dx,dy)
+                if slope_before is not None:
+                    if self.angle_diff(slope_before, slope_now) > 30:
+                        start_positions.append(data_points[end_position - i])
+                        break
                     
                 slope_before = slope_now
                 i += 25
@@ -270,6 +274,9 @@ class AnalyzeModule:
     
     def angle_diff(self, a1, a2):
         return min(abs(a1 - a2), 360 - abs(a1 - a2))
+    
+    def is_paused(self, dx, dy):
+        return dx == 0 and dy == 0
 
 if __name__ == "__main__":
     # Test AnalyzeModule here
