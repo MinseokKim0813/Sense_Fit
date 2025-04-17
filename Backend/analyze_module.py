@@ -44,7 +44,7 @@ class AnalyzeModule:
             file.close()
 
             if (not self.validate_data_length()):
-                raise Exception("Cursor tracking data is not sufficient. Please make sure the tracking persists for at least 1 second.")
+                raise Exception("Cursor tracking data is not sufficient. Please make sure the tracking persists for at least 10 second.")
 
             if (not self.validate_timestamps()):
                 raise Exception("The timestamp of the tracking data is missing or invalid. Please try again.")
