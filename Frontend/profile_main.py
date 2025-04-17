@@ -19,7 +19,6 @@ class ProfileWindow(QWidget):
         self.cursor_tracker = None
         self.analyze_module = None
         self.current_session = None
-        self.error_flag = False
         self.initUI()
 
 
@@ -184,16 +183,13 @@ class ProfileWindow(QWidget):
                 self.current_session = self.cursor_tracker.get_current_session()
                 
                 if 'error' in self.cursor_tracker.handle_error():
-                    self.error_flag = True
                     error_message = self.cursor_tracker.handle_error()['error']
-                    
+                    error_popup = ErrorPopup(message=error_message)
+                    error_popup.exec_()
                     self.toggle_button.setChecked(False)
                     self.toggle_button.setText("Off")
                     self.toggle_button.setStyleSheet("font-size: 24px; font-weight: bold; background-color: #3a3a3a; color: white;")
-                    self.tracking_status_label.setText("Tracking Disabled")
-                    
-                    error_popup = ErrorPopup(message=error_message)
-                    error_popup.exec_()
+                    self.tracking_status_label.setText("Tracking Disabled")   
                     return
 
                 # Hide any previous message when starting tracking successfully
@@ -212,10 +208,6 @@ class ProfileWindow(QWidget):
             self.toggle_button.setText("Off")
             self.toggle_button.setStyleSheet("font-size: 24px; font-weight: bold; background-color: #3a3a3a; color: white;")
             self.tracking_status_label.setText("Tracking Disabled")
-
-            if (self.error_flag):
-                self.error_flag = False
-                return
 
             # Stop tracking
             # TODO: Implement error handling; need to receive signal with error msg to the main window that the tracker has stopped
