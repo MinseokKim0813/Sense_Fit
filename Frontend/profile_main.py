@@ -168,6 +168,10 @@ class ProfileWindow(QWidget):
 
 
     def go_back(self):
+
+        if (self.cursor_tracker is not None):
+            return
+
         self.main_interface.build_profile_grid()
 
 
