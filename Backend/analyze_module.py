@@ -298,7 +298,7 @@ class AnalyzeModule:
             startindex = segment["start_index"]
             endindex = segment["end_index"]
             for each in self.__pause_points_list:
-                if startindex <=each["start_index"] and endindex >= each["end_index"]:
+                if startindex <= each["start_index"] and endindex >= each["end_index"]:
                     segment["PPnums"] += 1
 
             # Reset the variables for the next segment
@@ -312,13 +312,11 @@ class AnalyzeModule:
         return all_segment
 
     def analyze_tracking_data(self) -> dict:
-        analysis_result = {}
-
         # TODO: Make algorithm to analyze the tracking data
         end_positions = self.find_end_points()
         all_segment = self.analyze_all_segment(end_positions)
         print(all_segment)
-        return analysis_result
+        return all_segment
     
     def get_angle_from_delta(self,dx, dy):
         angle = math.atan2(dy, dx) * (180 / math.pi)
