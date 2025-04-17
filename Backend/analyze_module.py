@@ -302,12 +302,12 @@ class AnalyzeModule:
                 if each["start_index"] == 0:
                     continue
 
-                if startindex <= each["start_index"] and endindex >= each["end_index"]:
-                    segment["PPnums"] += 1
-
                 if segment["OSP_index"] is not None:
                     if each["start_index"] <= segment["OSP_index"] <= each["end_index"]:
                         continue              
+
+                if startindex <= each["start_index"] and endindex >= each["end_index"]:
+                    segment["PPnums"] += 1
 
             # Reset the variables for the next segment
             i = 0
