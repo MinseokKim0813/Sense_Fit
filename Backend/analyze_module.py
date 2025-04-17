@@ -263,7 +263,8 @@ class AnalyzeModule:
                         if not overshoot_flag:
                             if 130 <= self.angle_diff(slope_before,slope_now):
                                 overshoot_flag = True
-                                # print("overshoot", data_points[enprintd_position - i])
+                                # print("overshoot", data_points[end_position - i])
+                                segment['OSP_index'] = (end_position - i)
                                 slope_before = slope_now
                                 i += 25
                                 j += 25
