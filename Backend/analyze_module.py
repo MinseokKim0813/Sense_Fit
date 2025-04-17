@@ -185,7 +185,7 @@ class AnalyzeModule:
                     timestamp_end = datetime.strptime(data_points[i - 1]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
                     timestamp_start = datetime.strptime(data_points[start_idx]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
 
-                    if ((timestamp_end - timestamp_start).total_seconds() > 0.5):
+                    if ((timestamp_end - timestamp_start).total_seconds() > 0.2):
                         pause_segments.append({
                             "start_index": start_idx,
                             "end_index": i - 1,
@@ -297,7 +297,12 @@ class AnalyzeModule:
             #for counting pausepoints in one segment
             startindex = segment["start_index"]
             endindex = segment["end_index"]
+
+            print(self.__pause_points_list)
+
             for each in self.__pause_points_list:
+
+                print(each, startindex, endindex)
                 if startindex <= each["start_index"] and endindex >= each["end_index"]:
                     segment["PPnums"] += 1
 
