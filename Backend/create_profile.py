@@ -30,6 +30,19 @@ class profileHandler:
             # Chick if name or initialDPI is empty
             if not name or not initialDPI:
                 raise ValueError("Please provide both a name and initial DPI")
+            
+            # Check if name contains only letters and numbers
+            for char in name:
+                if not is_alphanumeric(char) and not char.isspace():
+                    raise ValueError("Name must contain only letters and numbers")
+            
+            # Check if name does not contain only spaces
+            if name.isspace():
+                raise ValueError("Name cannot contain only spaces")
+            
+            # Check if name is between 1 and 20 characters
+            if not (1 <= len(name) <= 20):
+                raise ValueError("Name must be between 1 and 20 characters")
 
             # Check if initialDPI is a number
             for char in initialDPI:
@@ -37,23 +50,10 @@ class profileHandler:
                     raise ValueError("Initial DPI must be a number")
 
             initialDPI = int(initialDPI)
-
-            # Check if name is between 1 and 20 characters
-            if not (1 <= len(name) <= 20):
-                raise ValueError("Name must be between 1 and 20 characters")
             
             # Check if initialDPI is between 100 and 3200
             if not (100 <= initialDPI <= 3200):
                 raise ValueError("Initial DPI must be between 100 and 3200")
-            
-            # Check if name contains only letters and numbers
-            for char in name:
-                if not is_alphanumeric(char) and not char.isspace():
-                    raise ValueError("Name must contain only letters and numbers")
-                
-            # Check if name does not contain only spaces
-            if name.isspace():
-                raise ValueError("Name cannot contain only spaces")
                 
             # Check if profile name already exists
             for profile in self.__profiles:

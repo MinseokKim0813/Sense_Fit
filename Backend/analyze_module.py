@@ -61,6 +61,7 @@ class AnalyzeModule:
 
     def validate_data_length(self) -> bool:
         # The tracking data must have at least 100 data points
+        #TODO: change validate data length to 1000
         return len(self.__cursor_log) >= 100
 
     def validate_timestamps(self) -> bool:
@@ -303,7 +304,7 @@ class AnalyzeModule:
                 if each["start_index"] == 0:
                     continue
 
-                print(each, startindex, endindex)
+                # print(each, startindex, endindex)
                 if startindex <= each["start_index"] and endindex >= each["end_index"]:
                     segment["PPnums"] += 1
 

@@ -83,6 +83,7 @@ class CursorTracker(QWidget):
             Point = namedtuple('Point', ['x', 'y'])
             # # case 1: position is null
             # pos = None
+            # timestamp = None
 
             # # case 2: x position is null
             # pos = Point(None, pos.y)
@@ -94,8 +95,11 @@ class CursorTracker(QWidget):
             # timestamp = None
 
             # Check if the position is valid
+            if pos is None and timestamp is None:
+                raise ValueError("Memory Shortage Detected, tracking has been disabled. Clicking OK will start analysis with existing data.")
+            
             if pos is None or pos.x is None or pos.y is None or timestamp is None:
-                raise ValueError("Failed to retrieve cursor position")
+                raise ValueError("Failed to retrieve cursor position. Clicking OK will start analysis with existing data.")
             
             clicked = 1 if self.clicked_flag else 0
             self.clicked_flag = False   
