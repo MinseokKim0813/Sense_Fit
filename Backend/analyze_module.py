@@ -297,10 +297,11 @@ class AnalyzeModule:
             #for counting pausepoints in one segment
             startindex = segment["start_index"]
             endindex = segment["end_index"]
-
             print(self.__pause_points_list)
 
             for each in self.__pause_points_list:
+                if each["start_index"] == 0:
+                    continue
 
                 print(each, startindex, endindex)
                 if startindex <= each["start_index"] and endindex >= each["end_index"]:
