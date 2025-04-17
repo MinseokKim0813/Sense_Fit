@@ -231,32 +231,39 @@ class AnalyzeModule:
         i = 0
         j = 25
         slope_before = None
+        prev_click_point = 0
+        
 
         for end_position in end_positions:
             while (end_position > 0 and data_points[end_position]['x'] == data_points[end_position - 1]['x'] and data_points[end_position]['y'] == data_points[end_position - 1]['y']):
                 end_position -= 1
             while end_position >= j:
-                dx = data_points[end_position - j]['x'] - data_points[end_position - i]['x']
-                dy = data_points[end_position - j]['y'] - data_points[end_position - i]['y']
                 
-                if self.is_paused(dx,dy):
-                    i += 1
-                    j += 1
-                    continue
-
-                slope_now = self.get_angle_from_delta(dx,dy)
-                if slope_before is not None:
-                    if self.angle_diff(slope_before, slope_now) > 30:
-                        start_positions.append(data_points[end_position - i])
-                        break
+                if prev_click_point < end_position - j:
+                    dx = data_points[end_position - j]['x'] - data_points[end_position - i]['x']
+                    dy = data_points[end_position - j]['y'] - data_points[end_position - i]['y']
                     
-                slope_before = slope_now
-                i += 25
-                j += 25
+                    if self.is_paused(dx,dy):
+                        i += 1
+                        j += 1
+                        continue
+
+                    slope_now = self.get_angle_from_delta(dx,dy)
+                    if slope_before is not None:
+                        if self.angle_diff(slope_before, slope_now) > 30:
+                            start_positions.append(data_points[end_position - i])
+                            break
+                        
+                    slope_before = slope_now
+                    i += 25
+                    j += 25
+                else:
+                    start_positions.append(data_points[prev_click_point])
+                    break
             i = 0
             j = 25
             slope_before = None
-
+            prev_click_point = end_position
         return start_positions
 
     def analyze_tracking_data(self) -> dict:
