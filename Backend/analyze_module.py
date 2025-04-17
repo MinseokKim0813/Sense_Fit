@@ -89,7 +89,7 @@ class AnalyzeModule:
     def validate_cursor_positions(self) -> bool:
         data_points = self.__cursor_log
 
-        # Phase 1: Check if the cursor position exists and is in integers
+        # Check if the cursor position exists and is in integers
         try:
             for data_point in data_points:
                 if (not data_point['x'] or not data_point['y']):
@@ -106,8 +106,7 @@ class AnalyzeModule:
                 else:
                     data_point['clicked'] = 0
 
-                # Phase 2: Check if the cursor position is within the screen
-                # TODO: Do not hardcode the screen resolution
+                #Check if the cursor position is within the screen
                 if (data_point['x'] < 0 or data_point['x'] >= self.screen_width or data_point['y'] < 0 or data_point['y'] >= self.screen_height):
                     return False
 
@@ -209,36 +208,101 @@ class AnalyzeModule:
         return pause_segments
 
     # Returns a list of indices of the 'valid' clicked positions
-    def find_clicked_positions(self) -> list[int]:
+    def find_end_points(self) -> list[int]:
         clicked_positions = []
 
         for i in range(len(self.__cursor_log)):
             if self.__cursor_log[i]['clicked'] == 1:
                 clicked_positions.append({**self.__cursor_log[i], 'index': i})
         
-        # Remove clicks that are too close to each other (0.5 seconds) to count double clicks as one click
-            time_before = datetime.strptime(clicked_positions[i - 1]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
-            time_now = datetime.strptime(clicked_positions[i]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
-            if ((time_now - time_before).total_seconds() <= 0.5):
-                clicked_positions[i]['index'] = -1
+        # TODO: Remove clicks that are too close to each other (0.5 seconds) to count double clicks as one click
+            # time_before = datetime.strptime(clicked_positions[i - 1]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
+            # time_now = datetime.strptime(clicked_positions[i]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
+            # if ((time_now - time_before).total_seconds() <= 0.5):
+            #     clicked_positions[i]['index'] = -1
 
         clicked_positions = [data_point['index'] for data_point in clicked_positions if data_point['index'] != -1]
         
         return clicked_positions
+    
+    def find_start_points(self, end_positions) -> list[int]:
+        start_positions = []
+        data_points = self.__cursor_log
+        i = 0
+        j = 25
+        slope_before = None
+        prev_click_point = 0
+        overshoot_flag = False
+
+        for end_position in end_positions:
+            while (end_position > 0 and data_points[end_position]['x'] == data_points[end_position - 1]['x'] and data_points[end_position]['y'] == data_points[end_position - 1]['y']):
+                end_position -= 1
+
+            while end_position >= j:
+                if prev_click_point < end_position - j:
+                    dx = data_points[end_position - j]['x'] - data_points[end_position - i]['x']
+                    dy = data_points[end_position - j]['y'] - data_points[end_position - i]['y']
+                    
+                    if self.is_paused(dx,dy):
+                        i += 1
+                        j += 1
+                        continue
+
+                    slope_now = self.get_angle_from_delta(dx,dy)
+
+                    if slope_before is not None:
+                        # check for overshoot
+                        if not overshoot_flag:
+                            if 130 <= self.angle_diff(slope_before,slope_now):
+                                overshoot_flag = True
+                                # print("overshoot", data_points[end_position - i])
+                                slope_before = slope_now
+                                i += 25
+                                j += 25
+                                continue
+
+                        if self.angle_diff(slope_before, slope_now) > 30:
+                            start_positions.append(data_points[end_position - i])
+                            break
+                        
+                    slope_before = slope_now
+                    i += 25
+                    j += 25
+                else:
+                    start_positions.append(data_points[prev_click_point])
+                    break
+            i = 0
+            j = 25
+            slope_before = None
+            prev_click_point = end_position
+            overshoot_flag = False
+        return start_positions
 
     def analyze_tracking_data(self) -> dict:
         analysis_result = {}
 
         # TODO: Make algorithm to analyze the tracking data
-        clicked_positions = self.find_clicked_positions()
-
+        end_positions = self.find_end_points()
+        start_positions = self.find_start_points(end_positions)
+        print(start_positions)
         return analysis_result
-
-    def get_angle(self, dy: int, dx: int) -> float:
-        return math.atan2(dy, dx) * (180 / math.pi)
+    
+    def get_angle_from_delta(self,dx, dy):
+        angle = math.atan2(dy, dx) * (180 / math.pi)
+        if (angle < 0):
+            angle += 360
+        return angle
+    
+    def angle_diff(self, a1, a2):
+        diff = abs(a1 - a2)
+        if diff > 180:
+            diff = 360 - diff
+        return diff
+    
+    def is_paused(self, dx, dy):
+        return dx == 0 and dy == 0
 
 if __name__ == "__main__":
     # Test AnalyzeModule here
-    am = AnalyzeModule(3, "2025-04-16_19-04-37")
-    am.handle_error()
-    pass
+    am = AnalyzeModule(1, "2025-04-17_00-56-53", 5000, 4000)
+    #print(am.get_slope(-1,-5))
