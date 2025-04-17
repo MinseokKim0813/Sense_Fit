@@ -253,7 +253,7 @@ class AnalyzeModule:
                     if slope_before is not None:
                         # check for overshoot
                         if not overshoot_flag:
-                            if 150 <= self.angle_diff(slope_before,slope_now):
+                            if 130 <= self.angle_diff(slope_before,slope_now):
                                 overshoot_flag = True
                                 # print("overshoot", data_points[end_position - i])
                                 slope_before = slope_now
