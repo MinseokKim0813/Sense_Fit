@@ -232,6 +232,7 @@ class AnalyzeModule:
         j = 25
         slope_before = None
         prev_click_point = 0
+        overshoot_flag = False
 
         for end_position in end_positions:
             while (end_position > 0 and data_points[end_position]['x'] == data_points[end_position - 1]['x'] and data_points[end_position]['y'] == data_points[end_position - 1]['y']):
@@ -250,11 +251,15 @@ class AnalyzeModule:
                     slope_now = self.get_angle_from_delta(dx,dy)
 
                     if slope_before is not None:
-                        #check for overshoot
-                        # if 150 <= self.angle_diff(slope_before,slope_now) <= 210:
-                        #     i += 1
-                        #     j += 1
-                        #     continue
+                        # check for overshoot
+                        if not overshoot_flag:
+                            if 150 <= self.angle_diff(slope_before,slope_now):
+                                overshoot_flag = True
+                                # print("overshoot", data_points[end_position - i])
+                                slope_before = slope_now
+                                i += 25
+                                j += 25
+                                continue
 
                         if self.angle_diff(slope_before, slope_now) > 30:
                             start_positions.append(data_points[end_position - i])
@@ -270,6 +275,7 @@ class AnalyzeModule:
             j = 25
             slope_before = None
             prev_click_point = end_position
+            overshoot_flag = False
         return start_positions
 
     def analyze_tracking_data(self) -> dict:
@@ -288,7 +294,10 @@ class AnalyzeModule:
         return angle
     
     def angle_diff(self, a1, a2):
-        return abs(a1 - a2)
+        diff = abs(a1 - a2)
+        if diff > 180:
+            diff = 360 - diff
+        return diff
     
     def is_paused(self, dx, dy):
         return dx == 0 and dy == 0
