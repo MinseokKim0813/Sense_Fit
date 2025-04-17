@@ -226,13 +226,14 @@ class AnalyzeModule:
         return clicked_positions
     
     def analyze_all_segment(self, end_positions) -> list[int]:
-        all_segment = []
-        data_points = self.__cursor_log
-        i = 0
-        j = 25
-        slope_before = None
-        prev_click_point = 0
-        overshoot_flag = False
+        #variables
+        all_segment = []                                    #return list of objects "segment"
+        data_points = self.__cursor_log                     #call data points
+        i = 0                                               #pointer for the nearer cursor data
+        j = 25                                              #pointer for further cursor data
+        slope_before = None                                 #to compare two slopes
+        prev_click_point = 0                                #to make sure the start for an end point comes after the previous end point
+        overshoot_flag = False                              #to detect overshoot existence
 
         # Each click point will become the end_position of a trajectory segment for analysis
         for end_position in end_positions:
