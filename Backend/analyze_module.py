@@ -216,13 +216,16 @@ class AnalyzeModule:
             if self.__cursor_log[i]['clicked'] == 1:
                 clicked_positions.append({**self.__cursor_log[i], 'index': i})
         
-        # TODO: Remove clicks that are too close to each other (0.5 seconds) to count double clicks as one click
-            # time_before = datetime.strptime(clicked_positions[i - 1]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
-            # time_now = datetime.strptime(clicked_positions[i]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
-            # if ((time_now - time_before).total_seconds() <= 0.5):
-            #     clicked_positions[i]['index'] = -1
+        # TODO: Remove clicks that are too close to each other (0.4 seconds) to count double clicks as one click
+        for i in range(1, len(clicked_positions)):
+            time_before = datetime.strptime(clicked_positions[i - 1]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
+            time_now = datetime.strptime(clicked_positions[i]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
+            if ((time_now - time_before).total_seconds() <= 0.4):
+                clicked_positions[i]['index'] = -1
 
         clicked_positions = [data_point['index'] for data_point in clicked_positions if data_point['index'] != -1]
+
+        print("CLICKED:", clicked_positions)
         
         return clicked_positions
     
