@@ -238,7 +238,7 @@ class AnalyzeModule:
             while end_position >= j:
                 dx = data_points[end_position - j]['x'] - data_points[end_position - i]['x']
                 dy = data_points[end_position - j]['y'] - data_points[end_position - i]['y']
-                slope_now = self.angle_diff(dx,dy)
+                slope_now = self.get_angle_from_delta(dx,dy)
                 
                 if (dx != 0 or dy != 0):
                     if slope_before is not None:
@@ -263,6 +263,10 @@ class AnalyzeModule:
         start_positions = self.find_start_points(end_positions)
         print(start_positions)
         return analysis_result
+    
+    def get_angle_from_delta(self,dx, dy):
+        angle = math.atan2(dy, dx) * (180 / math.pi)
+        return angle
     
     def angle_diff(self, a1, a2):
         return min(abs(a1 - a2), 360 - abs(a1 - a2))
