@@ -265,7 +265,7 @@ class AnalyzeModule:
                             if 130 <= self.angle_diff(slope_before,slope_now):
                                 overshoot_flag = True
                                 #for debug
-                                print("overshoot", data_points[end_position - i])
+                                #print("overshoot", data_points[end_position - i])
                                 segment['OSP_index'] = (end_position - i)
                                 slope_before = slope_now
                                 i += 25
@@ -297,17 +297,13 @@ class AnalyzeModule:
             #for counting pausepoints in one segment
             startindex = segment["start_index"]
             endindex = segment["end_index"]
-            print(self.__pause_points_list)
+            #print(self.__pause_points_list)
 
             for each in self.__pause_points_list:
                 if each["start_index"] == 0:
                     continue
 
-                if segment["OSP_index"] is not None:
-                    if each["start_index"] <= segment["OSP_index"] <= each["end_index"]:
-                        continue
-
-                print(each, startindex, endindex)
+                #print(each, startindex, endindex)
                 if startindex <= each["start_index"] and endindex >= each["end_index"]:
                     segment["PPnums"] += 1
 
@@ -325,7 +321,7 @@ class AnalyzeModule:
         # TODO: Make algorithm to analyze the tracking data
         end_positions = self.find_end_points()
         all_segment = self.analyze_all_segment(end_positions)
-        print(all_segment)
+        #print(all_segment)
         return all_segment
     
     def get_angle_from_delta(self,dx, dy):

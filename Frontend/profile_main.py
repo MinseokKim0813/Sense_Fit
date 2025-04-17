@@ -247,8 +247,8 @@ class ProfileWindow(QWidget):
                     error_popup = ErrorPopup(message=error_message)
                     error_popup.exec_()
                 else:
-                    self.analyze_module.analyze_tracking_data()
-                    # print(self.analyze_module.pause_points_list)
+                    movement_data = self.analyze_module.analyze_tracking_data()
+                    print(movement_data)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
