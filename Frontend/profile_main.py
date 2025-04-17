@@ -49,7 +49,7 @@ class ProfileWindow(QWidget):
         back_button.clicked.connect(self.go_back)
         back_button.setFixedSize(120, 40)
         back_button.setStyleSheet("font-size: 18px; background-color: #2c2c2c; color: white;")
-        back_button.clicked.connect(self.go_back)
+        
 
         # Title label
         self.title_label = QLabel(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
@@ -168,8 +168,14 @@ class ProfileWindow(QWidget):
 
 
     def go_back(self):
-
-        if (self.cursor_tracker is not None):
+        try:
+            if self.cursor_tracker is not None:
+                error_popup = ErrorPopup("Please stop tracking before going back.")
+                error_popup.exec_()
+                return
+        except Exception as e:
+            error_popup = ErrorPopup(f"Unexpected error: {str(e)}")
+            error_popup.exec_()
             return
 
         self.main_interface.build_profile_grid()
