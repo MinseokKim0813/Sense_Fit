@@ -250,6 +250,7 @@ class AnalyzeModule:
                     dx = data_points[end_position - j]['x'] - data_points[end_position - i]['x']
                     dy = data_points[end_position - j]['y'] - data_points[end_position - i]['y']
                     
+                    #check for pause points, and disregard these points
                     if self.is_paused(dx,dy):
                         i += 1
                         j += 1
