@@ -283,8 +283,8 @@ class AnalyzeModule:
 
                 #if goes beyond boundary save analyzed start_index and end_index for the segment
                 else:
-                    segment['start_index'] = [end_position - i]
-                    segment['end_index'] = [end_position]
+                    segment['start_index'] = (end_position - i)
+                    segment['end_index'] = end_position
                     break
             
             # Reset the variables for the next segment
