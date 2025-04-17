@@ -56,7 +56,7 @@ class AnalyzeModule:
                 raise Exception("Unusual cursor movement (No movement, Abrupt movement, Restless movement) detected. Please try again with natural movement behavior.")
 
         except Exception as e:
-            print("Data points assertion failed for AnalyzeModule: ", e)
+            #print("Data points assertion failed for AnalyzeModule: ", e)
             self.__error = str(e)
 
     def validate_data_length(self) -> bool:
@@ -225,8 +225,8 @@ class AnalyzeModule:
         
         return clicked_positions
     
-    def find_start_points(self, end_positions) -> list[int]:
-        start_positions = []
+    def analyze_all_segment(self, end_positions) -> list[int]:
+        all_segment = []
         data_points = self.__cursor_log
         i = 0
         j = 25
@@ -235,6 +235,7 @@ class AnalyzeModule:
         overshoot_flag = False
 
         for end_position in end_positions:
+            segment = {"start_index": None, "end_index": None, "PPnums": 0, "OSP_index": None}
             while (end_position > 0 and data_points[end_position]['x'] == data_points[end_position - 1]['x'] and data_points[end_position]['y'] == data_points[end_position - 1]['y']):
                 end_position -= 1
 
@@ -255,28 +256,32 @@ class AnalyzeModule:
                         if not overshoot_flag:
                             if 130 <= self.angle_diff(slope_before,slope_now):
                                 overshoot_flag = True
-                                # print("overshoot", data_points[end_position - i])
+                                # print("overshoot", data_points[enprintd_position - i])
                                 slope_before = slope_now
                                 i += 25
                                 j += 25
                                 continue
 
                         if self.angle_diff(slope_before, slope_now) > 30:
-                            start_positions.append(data_points[end_position - i])
+                            segment['start_index'] = (end_position - i)
+                            segment['end_index'] = end_position
                             break
                         
                     slope_before = slope_now
                     i += 25
                     j += 25
                 else:
-                    start_positions.append(data_points[prev_click_point])
+                    segment['start_index'] = [end_position - i]
+                    segment['end_index'] = [end_position]
                     break
             i = 0
             j = 25
             slope_before = None
             prev_click_point = end_position
             overshoot_flag = False
-        return start_positions
+            all_segment.append(segment)
+
+        return all_segment
 
     def analyze_tracking_data(self) -> dict:
         analysis_result = {}
