@@ -243,7 +243,7 @@ class AnalyzeModule:
             while (end_position > 0 and data_points[end_position]['x'] == data_points[end_position - 1]['x'] and data_points[end_position]['y'] == data_points[end_position - 1]['y']):
                 end_position -= 1
 
-            # Ignore all the pausing points in the segment
+            # Boundary check to prevent negative index
             while end_position >= j:
                 # Boundary check to prevent duplicate starting points
                 if prev_click_point < end_position - j:
@@ -288,6 +288,11 @@ class AnalyzeModule:
                     segment['end_index'] = end_position
                     break
             
+            # If index becomes negative, the start_index of the segment is 0
+            if end_position < j:
+                segment['start_index'] = 0
+                segment['end_index'] = end_position
+
             # Reset the variables for the next segment
             i = 0
             j = 25
