@@ -234,6 +234,7 @@ class AnalyzeModule:
         slope_before = None                                 #to compare two slopes
         prev_click_point = 0                                #to make sure the start for an end point comes after the previous end point
         overshoot_flag = False                              #to detect overshoot existence
+        self.get_pause_segments()                           #updates __pause_point_list
 
         # Each click point will become the end_position of a trajectory segment for analysis
         for end_position in end_positions:
@@ -294,6 +295,13 @@ class AnalyzeModule:
                 segment['end_index'] = end_position
 
             # Reset the variables for the next segment
+            startindex = segment["start_index"]
+            endindex = segment["end_index"]
+            for each in self.__pause_points_list:
+                if startindex <=each["start_index"] and endindex >= each["end_index"]:
+                    segment["PPnums"] += 1
+
+
             i = 0
             j = 25
             slope_before = None
