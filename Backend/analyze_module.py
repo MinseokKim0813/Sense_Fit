@@ -294,14 +294,14 @@ class AnalyzeModule:
                 segment['start_index'] = 0
                 segment['end_index'] = end_position
 
-            # Reset the variables for the next segment
+            #for counting pausepoints in one segment
             startindex = segment["start_index"]
             endindex = segment["end_index"]
             for each in self.__pause_points_list:
                 if startindex <=each["start_index"] and endindex >= each["end_index"]:
                     segment["PPnums"] += 1
 
-
+            # Reset the variables for the next segment
             i = 0
             j = 25
             slope_before = None
