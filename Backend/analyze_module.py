@@ -234,6 +234,7 @@ class AnalyzeModule:
         prev_click_point = 0
         overshoot_flag = False
 
+
         for end_position in end_positions:
             segment = {"start_index": None, "end_index": None, "PPnums": 0, "OSP_index": None}
             while (end_position > 0 and data_points[end_position]['x'] == data_points[end_position - 1]['x'] and data_points[end_position]['y'] == data_points[end_position - 1]['y']):
@@ -288,8 +289,8 @@ class AnalyzeModule:
 
         # TODO: Make algorithm to analyze the tracking data
         end_positions = self.find_end_points()
-        start_positions = self.find_start_points(end_positions)
-        print(start_positions)
+        all_segment = self.analyze_all_segment(end_positions)
+        print(all_segment)
         return analysis_result
     
     def get_angle_from_delta(self,dx, dy):
