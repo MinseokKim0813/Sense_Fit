@@ -15,7 +15,7 @@ class AnalyzeModule:
         self.__log_file = os.path.join(self.__storage_dir, f"id_{profile_id}_cursor_log_{session}.csv")
         self.__error = None
 
-        # if self.__log_file is not found, raise an error (Test Case 9, in progress)
+        # if self.__log_file is not found, raise an error (Test Case 9)
         if not os.path.exists(self.__log_file):
             raise Exception(f"Tracking log file not found: {self.__log_file}")
 
@@ -52,11 +52,11 @@ class AnalyzeModule:
             if (not self.validate_cursor_positions()):
                 raise Exception("The data points of the tracking data are missing, invalid, or out of range. Please try again.")
             
-            if (not self.validate_extreme_movements()):
-                raise Exception("Unusual cursor movement (No movement, Abrupt movement, Restless movement) detected. Please try again with natural movement behavior.")
+            check_extreme_movements = self.validate_extreme_movements()
+            if ("error" in check_extreme_movements):
+                raise Exception(check_extreme_movements["error"] + " Please try again with natural movement behavior.")
 
         except Exception as e:
-            #print("Data points assertion failed for AnalyzeModule: ", e)
             self.__error = str(e)
 
     def validate_data_length(self) -> bool:
@@ -115,7 +115,7 @@ class AnalyzeModule:
             return False
         return True
     
-    def validate_extreme_movements(self):
+    def validate_extreme_movements(self) -> dict:
         data_points = self.__cursor_log
 
         cursor_moved_flag = False
@@ -131,7 +131,7 @@ class AnalyzeModule:
 
                 # for abrupt change in cursor position
                 if(distance_traveled >= 250000):
-                    return False
+                    return {"error": "Unusual cursor movement (Abrupt movement) detected."}
 
                 # Check if the cursor positions have moved at all
                 if (x_pos1 != x_pos2 or y_pos1 != y_pos2):
@@ -142,12 +142,12 @@ class AnalyzeModule:
                     cursor_paused_flag = True
 
         if not cursor_moved_flag:
-            return False
+            return {"error": "Unusual cursor movement (No movement) detected."}
         
         if not cursor_paused_flag:
-            return False
+            return {"error": "Unusual cursor movement (Restless movement) detected."}
         
-        return True
+        return {"message": "Cursor movement is valid"}
 
     # Error handler to be used in the frontend
     def handle_error(self):
