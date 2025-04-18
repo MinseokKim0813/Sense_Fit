@@ -41,15 +41,15 @@ class Popup(QDialog):
 
         layout = QVBoxLayout()
 
-        # Icon and "Ooops!" text
+        # Icon and text
         top_layout = QHBoxLayout()
         icon_label = QLabel()
         
-        # current_dir = os.path.dirname(os.path.abspath(__file__))
-        # icon_path = os.path.join(current_dir, "Images", "warning.png")
-        # icon_pixmap = QPixmap(icon_path)
-        # icon_pixmap = icon_pixmap.scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        # icon_label.setPixmap(icon_pixmap)
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        icon_path = os.path.join(current_dir, "Images", "check.png")
+        icon_pixmap = QPixmap(icon_path)
+        icon_pixmap = icon_pixmap.scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        icon_label.setPixmap(icon_pixmap)
 
         title_label = QLabel(title)
         title_label.setObjectName("title")
