@@ -31,9 +31,11 @@ Built using:
   - Consistent timestamps
   - Reasonable screen positions
   - No unrealistic cursor jumps or endless jittering  
+
 ✅ Post-tracking analysis:
   - Find where users **paused** during movement
   - Detect **overshoot corrections** when moving toward targets
+
 ✅ Clear separation between **Frontend** (UI) and **Backend** (tracking, analysis logic)
 
 ---
