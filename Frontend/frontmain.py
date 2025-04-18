@@ -188,7 +188,6 @@ class MainInterface(QMainWindow):
         self.setCentralWidget(self.central_widget)
 
         self.profiles = profile_handler.get_profiles()
-        #print(self.profiles)
 
         self.setup_ui()
 

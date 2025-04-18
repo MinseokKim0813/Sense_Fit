@@ -28,9 +28,7 @@ class AnalyzeModule:
                 next(reader) # Skip the first row (header)
 
                 for row in reader:
-                    #print(row)
                     if len(row) != 4:
-                        #print(row)
                         continue
 
                     cursor_log = {}
@@ -224,8 +222,6 @@ class AnalyzeModule:
                 clicked_positions[i]['index'] = -1
 
         clicked_positions = [data_point['index'] for data_point in clicked_positions if data_point['index'] != -1]
-
-        print("CLICKED:", clicked_positions)
         
         return clicked_positions
     
@@ -347,5 +343,4 @@ class AnalyzeModule:
 
 if __name__ == "__main__":
     # Test AnalyzeModule here
-    am = AnalyzeModule(1, "2025-04-17_00-56-53", 5000, 4000)
-    #print(am.get_slope(-1,-5))
+    pass
