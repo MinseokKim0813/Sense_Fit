@@ -99,7 +99,7 @@ class CursorTracker(QWidget):
                 raise ValueError("Memory Shortage Detected, tracking has been disabled. Clicking OK will start analysis with existing data.")
             
             if pos is None or pos.x is None or pos.y is None or timestamp is None:
-                raise ValueError("Failed to retrieve cursor position. Clicking OK will start analysis with existing data.")
+                raise ValueError("Invalid data detected within the tracked data. Tracking has been disabled. Clicking OK will start analysis with existing data.")
             
             clicked = 1 if self.clicked_flag else 0
             self.clicked_flag = False   
