@@ -156,11 +156,3 @@ Sense_Fit/
 
 - Primary Developers: **Kyrie Park**, **Yongje Jeon**, **Junyong Moon**, **Minseok Kim**
 - Special thanks to the iterative brainstorming and prototyping sessions!
-
----
-
-# ✨ Let's keep building!
-
----
-
----
