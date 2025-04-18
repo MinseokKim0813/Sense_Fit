@@ -23,20 +23,20 @@ Built using:
 
 ## Features
 
-✅ Create multiple user profiles (Name + DPI)  
-✅ Real-time global mouse cursor tracking  
-✅ Automatic session logging (timestamp, X, Y, click status)  
-✅ Intelligent data validation:
+- Create multiple user profiles (Name + DPI)  
+- Real-time global mouse cursor tracking  
+- Automatic session logging (timestamp, X, Y, click status)  
+- Intelligent data validation:
   - Minimum data length
   - Consistent timestamps
   - Reasonable screen positions
   - No unrealistic cursor jumps or endless jittering  
 
-✅ Post-tracking analysis:
+- Post-tracking analysis:
   - Find where users **paused** during movement
   - Detect **overshoot corrections** when moving toward targets
 
-✅ Clear separation between **Frontend** (UI) and **Backend** (tracking, analysis logic)
+- Clear separation between **Frontend** (UI) and **Backend** (tracking, analysis logic)
 
 ---
 
@@ -49,7 +49,20 @@ Built using:
 
 ## Installation
 
-### 1. Set up a virtual environment
+You will use **terminal** to set up and run the application.
+
+First, move to your desired repository:
+```
+cd /path/to/dir
+```
+
+### 1. Clone this repository
+```
+git clone https://github.com/MinseokKim0813/Sense_Fit.git
+cd Sense_Fit
+```
+
+### 2. Set up a virtual environment
 
 #### On Windows
 ```bash
@@ -67,7 +80,7 @@ You should see `(.venv)` appear in your terminal prompt.
 
 ---
 
-### 2. Install dependencies
+### 3. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
@@ -85,6 +98,7 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
+*If it does not work, try `python3 main.py`*
 
 This will launch the **Profile Selection Page**.  
 From there, you can create new profiles and start tracking sessions.
@@ -119,7 +133,7 @@ Sense_Fit/
 
 ## How It Works (Brief)
 
-- **Create a Profile** → Select a profile → **Start tracking**.
+- **Create a Profile** or Select a profile → **Start tracking**.
 - The system records **(timestamp, x, y, click status)** every few milliseconds.
 - After stopping tracking, the system:
   - Validates collected data.
@@ -140,7 +154,7 @@ Sense_Fit/
 
 ## Authors
 
-- Primary Developer: **Kyrie Park**, **Yongje Jeon**, **Junyong Moon**, **Minseok Kim**
+- Primary Developers: **Kyrie Park**, **Yongje Jeon**, **Junyong Moon**, **Minseok Kim**
 - Special thanks to the iterative brainstorming and prototyping sessions!
 
 ---
