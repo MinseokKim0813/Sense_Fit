@@ -8,6 +8,7 @@ from PyQt5.QtCore import Qt
 from Backend.tracking_module import CursorTracker
 from Backend.analyze_module import *
 from Frontend.error_window import *
+from Frontend.alert_window import *
 
 
 class ProfileWindow(QWidget):
@@ -251,6 +252,11 @@ class ProfileWindow(QWidget):
                 else:
                     movement_data = self.analyze_module.analyze_tracking_data()
                     print(movement_data)
+
+                    # Display window to ask if the user wants to proceed to calculation
+                    alert_message = "We have analyzed your movement for the current session. Would you like us to recommend a DPI that fits better based on your movement?"
+                    dpi_popup = Popup(alert_message, "Movement Analyzed", "Get DPI")
+                    dpi_popup.exec_()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
