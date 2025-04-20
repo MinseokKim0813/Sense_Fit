@@ -266,7 +266,7 @@ class ProfileWindow(QWidget):
                         print(DPI_calculation_module.calculate_dpi())
                     else:
                         self.status_message_label.setText("DPI not calculated")
-                        self.status_message_label.setStyleSheet("font-size: 16px; color: #FFA500;") # Orange for warning
+                        self.status_message_label.setStyleSheet("font-size: 16px; color: #FCAE1E;") # Warm Orange for warning
                         self.status_message_label.setVisible(True)
 
 if __name__ == "__main__":
