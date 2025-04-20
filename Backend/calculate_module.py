@@ -34,5 +34,28 @@ class DPICalculationModule:
                 
                 
     def calculate_dpi(self) -> int:
-        return 1500
+        suggestion = 0
+
+        #TODO: if statement check nullity
+        for seg in self.__movement_data:
+            pass
             
+    
+    def calculate_paused(self, PDList : list[float], TD : float) -> float:
+        avg_paused = 0
+
+        for PD in PDList:
+            avg_paused += PD
+
+        avg_paused /= len(PDList)
+
+        return TD/avg_paused
+    
+    # OSD is start point to overshoot occured point
+    def calculate_OS(self, OSD: float, TD : float) -> float:
+        return TD/OSD
+    
+    def calculate_mix(self, PDList : list[float], OSD: float, TD : float):
+        paused = self.calculate_paused(PDList, TD)
+        OSed = self.calculate_OS(OSD, TD)
+        return (paused + OSed)/2

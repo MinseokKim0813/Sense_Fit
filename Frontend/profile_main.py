@@ -252,7 +252,7 @@ class ProfileWindow(QWidget):
                     error_popup.exec_()
                 else:
                     movement_data = self.analyze_module.analyze_tracking_data()
-                    print(movement_data)
+                    #print(movement_data)
 
                     # Display window to ask if the user wants to proceed to calculation
                     alert_message = "We have analyzed your movement for the current session. Would you like us to recommend a DPI that fits better based on your movement?"
@@ -263,7 +263,7 @@ class ProfileWindow(QWidget):
                     if dpi_popup.result() == QDialog.Accepted:
                         # TODO: Implement calculation
                         DPI_calculation_module = DPICalculationModule(self.profile, self.current_session, movement_data)
-                        print(DPI_calculation_module.calculate_dpi())
+                        #print(DPI_calculation_module.calculate_dpi())
                     else:
                         self.status_message_label.setText("DPI not calculated")
                         self.status_message_label.setStyleSheet("font-size: 16px; color: #FCAE1E;") # Warm Orange for warning
