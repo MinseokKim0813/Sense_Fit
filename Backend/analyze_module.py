@@ -340,6 +340,14 @@ class AnalyzeModule:
     
     def is_paused(self, dx, dy):
         return dx == 0 and dy == 0
+    
+    def get_distance(self, index1, index2):
+        x1 = self.__cursor_log[index1]["x"]
+        x2 = self.__cursor_log[index2]["x"]
+        y1 = self.__cursor_log[index1]["y"]
+        y2 = self.__cursor_log[index2]["y"]
+
+        return math.sqrt((x1-x2)**2 + (y1-y2)**2)
 
 if __name__ == "__main__":
     # Test AnalyzeModule here
