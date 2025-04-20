@@ -6,7 +6,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 
 from Backend.tracking_module import CursorTracker
-from Backend.analyze_module import *
+from Backend.analyze_module import AnalyzeModule
+from Backend.calculate_module import DPICalculationModule
 from Frontend.error_window import *
 from Frontend.alert_window import *
 
@@ -257,6 +258,16 @@ class ProfileWindow(QWidget):
                     alert_message = "We have analyzed your movement for the current session. Would you like us to recommend a DPI that fits better based on your movement?"
                     dpi_popup = Popup(alert_message, "Movement Analyzed", "Get DPI")
                     dpi_popup.exec_()
+
+                    # If user clicks "Get DPI", proceed to calculation
+                    if dpi_popup.result() == QDialog.Accepted:
+                        # TODO: Implement calculation
+                        DPI_calculation_module = DPICalculationModule(self.profile, self.current_session, movement_data)
+                        print(DPI_calculation_module.calculate_dpi())
+                    else:
+                        self.status_message_label.setText("DPI not calculated")
+                        self.status_message_label.setStyleSheet("font-size: 16px; color: #FFA500;") # Orange for warning
+                        self.status_message_label.setVisible(True)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
