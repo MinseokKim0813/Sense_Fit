@@ -255,7 +255,7 @@ class ProfileWindow(QWidget):
 
                     # Display window to ask if the user wants to proceed to calculation
                     alert_message = "We have analyzed your movement for the current session. Would you like us to recommend a DPI that fits better based on your movement?"
-                    dpi_popup = Popup(alert_message, "Movement Analyzed", "Get DPI")
+                    dpi_popup = Popup(alert_message, "Movement Analyzed", "Get DPI", "No")
                     dpi_popup.exec_()
 
 if __name__ == "__main__":

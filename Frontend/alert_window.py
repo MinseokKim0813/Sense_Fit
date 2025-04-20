@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 import os
 
 class Popup(QDialog):
-    def __init__(self, message="Default Message", title="Alert", button_message="OK"):
+    def __init__(self, message="Default Message", title="Alert", ok_button_text="OK", no_button_text="NO"):
         super().__init__()
         self.setWindowTitle(title)
         self.setStyleSheet("""
@@ -32,6 +32,7 @@ class Popup(QDialog):
             }
             QPushButton:hover {
                 background-color: #cccccc;
+                color: black;
             }
         """)
         # self.setFixedSize(500, 250)
@@ -65,14 +66,23 @@ class Popup(QDialog):
         message_label.setWordWrap(True)
 
         # Button
-        button = QPushButton(button_message)
+        button_layout = QHBoxLayout()
+        no_button = QPushButton(no_button_text)
+        ok_button = QPushButton(ok_button_text)
 
-        button.clicked.connect(self.accept)
 
+        no_button.clicked.connect(self.reject)   # Will close with reject()
+        ok_button.clicked.connect(self.accept)   # Will close with accept()
+
+        button_layout.addWidget(no_button)
+        button_layout.addStretch()
+        button_layout.addWidget(ok_button)
+
+        # Assemble main layout
         layout.addLayout(top_layout)
         layout.addSpacing(10)
         layout.addWidget(message_label)
-        layout.addSpacing(20)
-        layout.addWidget(button, alignment=Qt.AlignRight)
+        layout.addStretch()
+        layout.addLayout(button_layout)
 
         self.setLayout(layout)

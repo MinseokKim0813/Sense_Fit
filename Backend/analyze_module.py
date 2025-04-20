@@ -60,7 +60,7 @@ class AnalyzeModule:
     def validate_data_length(self) -> bool:
         # The tracking data must have at least 100 data points
         # TODO: For testing purposes, change the minimum data length to 100
-        return len(self.__cursor_log) >= 1000
+        return len(self.__cursor_log) >= 100
 
     def validate_timestamps(self) -> bool:
 
