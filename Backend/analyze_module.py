@@ -348,6 +348,15 @@ class AnalyzeModule:
         y2 = self.__cursor_log[index2]["y"]
 
         return math.sqrt((x1-x2)**2 + (y1-y2)**2)
+    
+    def get_pause_distance(self, startpoint):
+        paused_points = self.get_pause_segments()                           #updates __pause_point_list
+        PDList = []
+        #TODO: find a way to filter out OS and the last PD as pause point
+        PDList.append(self.get_distance(paused_points[0], startpoint))
+        for i in range(1,len(self.__pause_points_list)):
+            self.get_distance(paused_points[i-1], paused_points[i])
+
 
 if __name__ == "__main__":
     # Test AnalyzeModule here
