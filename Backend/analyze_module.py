@@ -238,7 +238,7 @@ class AnalyzeModule:
 
         # Each click point will become the end_position of a trajectory segment for analysis
         for end_position in end_positions:
-            segment = {"start_index": None, "end_index": None, "PD_list": [], "OS_distance": None}
+            segment = {"start_index": None, "end_index": None, "PD_list": [], "OS_distance": None, "TD": None}
 
             # Remove consecutive identical coordinates at the end of the segment (where the cursor was stationary)
             while (end_position > 0 and data_points[end_position]['x'] == data_points[end_position - 1]['x'] and data_points[end_position]['y'] == data_points[end_position - 1]['y']):
@@ -317,6 +317,8 @@ class AnalyzeModule:
             if segment['OS_distance'] is not None:
                 segment['OS_distance'] = self.get_distance(segment["end_index"], segment['OS_distance'])
 
+            segment['TD'] = self.get_distance(segment["start_index"], segment["end_index"])
+            print("TD", segment['TD'])
 
             # Reset the variables for the next segment
             i = 0
