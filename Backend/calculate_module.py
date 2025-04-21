@@ -31,15 +31,31 @@ class DPICalculationModule:
 
         except Exception as e:
             self.__error = f"Failed to read tracking data: {str(e)}"
-                
+
+        self.dpi = self.calculate_dpi()
                 
     def calculate_dpi(self) -> int:
         suggestion = 0
+        count = 0
 
-        #TODO: if statement check nullity
         for seg in self.__movement_data:
-            pass
-            
+            #when mix
+            if len(seg["PD_list"]) != 0 and seg["OS_distnace"] is not None:
+                temp = self.calculate_mix(seg["PD_list"], seg["OS_distance"], seg["TD"])
+                count += 1
+            #when only over shoot exist
+            elif len(seg["PD_list"]) == 0:
+                temp = self.calculate_OS(seg["OS_distance"], seg["TD"])
+                count += 1
+            #when only over paused exist
+            elif seg["OS_distnace"] is None:
+                temp = self.calculate_paused(seg["PD_list"], seg["TD"])
+                count += 1
+            else:
+                continue
+            suggestion += temp
+
+        return suggestion/count
     
     def calculate_paused(self, PDList : list[float], TD : float) -> float:
         avg_paused = 0
