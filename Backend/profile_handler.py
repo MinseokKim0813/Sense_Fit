@@ -3,7 +3,7 @@ import json
 
 def is_alphanumeric(char: str) -> bool:
     return (ord('a') <= ord(char) <= ord('z')) or (ord('A') <= ord(char) <= ord('Z')) or (ord('0') <= ord(char) <= ord('9'))
-class profileHandler:
+class ProfileHandler:
     def __init__(self):
         self.__profiles = []
 
@@ -77,6 +77,7 @@ class profileHandler:
 
         new_profile['name'] = name
         new_profile['DPI'] = initialDPI
+        new_profile['DPI_history'] = [initialDPI]
         self.__profiles.append(new_profile)
 
         with open(self.__profiles_file, "w") as file:
@@ -120,7 +121,21 @@ class profileHandler:
                 return {"message": "Profile updated successfully"}
             
         return {"error": "Profile not found"}
+    
+    def update_dpi(self, profile_id: int, dpi: int) -> dict:
+        for profile in self.__profiles:
+            
+            if profile['_id'] == profile_id:
+                profile['DPI'] = dpi
+                profile['DPI_history'].append(dpi)
 
+                with open(self.__profiles_file, "w") as file:
+                    json.dump(self.__profiles, file, indent=4)
+
+                return {"message": "Profile updated successfully"}
+            
+        return {"error": "Profile not found"}
+    
 if __name__ == "__main__":
     # Test create_profile here
     pass

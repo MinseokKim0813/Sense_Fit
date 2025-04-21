@@ -7,10 +7,10 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, pyqtSignal
 from Frontend.create_profile import CreateProfileDialog
 from Frontend.profile_main import ProfileWindow
-from Backend.create_profile import profileHandler
+from Backend.profile_handler import ProfileHandler
 
 # Create an instance of the profileHandler
-profile_handler = profileHandler()
+profile_handler = ProfileHandler()
 
 class ProfileCard(QFrame):
     clicked = pyqtSignal(dict) # profile object

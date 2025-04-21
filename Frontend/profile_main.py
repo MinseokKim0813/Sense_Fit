@@ -10,7 +10,7 @@ from Backend.analyze_module import AnalyzeModule
 from Backend.calculate_module import DPICalculationModule
 from Frontend.error_window import *
 from Frontend.alert_window import *
-
+from Backend.profile_handler import ProfileHandler
 
 class ProfileWindow(QWidget):
     def __init__(self, profile, main_window=None):
@@ -21,6 +21,7 @@ class ProfileWindow(QWidget):
         self.cursor_tracker = None
         self.analyze_module = None
         self.current_session = None
+        self.profile_handler = ProfileHandler()
         self.initUI()
 
 
@@ -263,6 +264,10 @@ class ProfileWindow(QWidget):
                     if dpi_popup.result() == QDialog.Accepted:
                         # TODO: Implement calculation
                         DPI_calculation_module = DPICalculationModule(self.profile, self.current_session, movement_data)
+                        print("DPI", DPI_calculation_module.dpi)
+
+                        # TODO: Handle saving dpi for the profile
+                        self.profile_handler.update_dpi(self.profile['_id'], DPI_calculation_module.dpi)
                         #print(DPI_calculation_module.calculate_dpi())
                     else:
                         self.status_message_label.setText("DPI not calculated")

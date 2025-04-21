@@ -9,7 +9,7 @@ from PyQt5.QtCore import Qt, QSize, pyqtSignal
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QMessageBox
 from Frontend.profile_main import ProfileWindow
-from Backend.create_profile import profileHandler
+from Backend.profile_handler import ProfileHandler
 
 class CreateProfileDialog(QDialog):
     profile_created = pyqtSignal(dict)  # Profile Object

@@ -40,7 +40,7 @@ class DPICalculationModule:
 
         for seg in self.__movement_data:
             #when mix
-            if len(seg["PD_list"]) != 0 and seg["OS_distnace"] is not None:
+            if len(seg["PD_list"]) != 0 and seg["OS_distance"] is not None:
                 temp = self.calculate_mix(seg["PD_list"], seg["OS_distance"], seg["TD"])
                 count += 1
             #when only over shoot exist
@@ -48,14 +48,14 @@ class DPICalculationModule:
                 temp = self.calculate_OS(seg["OS_distance"], seg["TD"])
                 count += 1
             #when only over paused exist
-            elif seg["OS_distnace"] is None:
+            elif seg["OS_distance"] is None:
                 temp = self.calculate_paused(seg["PD_list"], seg["TD"])
                 count += 1
             else:
                 continue
             suggestion += temp
 
-        return suggestion/count
+        return self.__current_profile['DPI'] * (suggestion/count)
     
     def calculate_paused(self, PDList : list[float], TD : float) -> float:
         avg_paused = 0
