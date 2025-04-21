@@ -370,7 +370,8 @@ class AnalyzeModule:
         paused_points_within_segment = [startpoint]
         for each in paused_points:
             if startpoint <= each["start_index"] and endpoint >= each["end_index"]:
-                if (not (each["start_index"] <= OS_index <= each["end_index"])
+                # Skip OS_index check if OS_index is None
+                if OS_index is None or (not (each["start_index"] <= OS_index <= each["end_index"])
                     and not (each["start_index"] <= endpoint <= each["end_index"])):
                     paused_points_within_segment.append(each["start_index"])
 
