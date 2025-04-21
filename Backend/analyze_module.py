@@ -238,8 +238,7 @@ class AnalyzeModule:
 
         # Each click point will become the end_position of a trajectory segment for analysis
         for end_position in end_positions:
-            segment = {"start_index": None, "end_index": None, "PPnums": 0, "OS_distance": None}
-            # segment = {"start_index": None, "end_index": None, "PD_list": [], "OS_distance": None}
+            segment = {"start_index": None, "end_index": None, "PD_list": [], "OS_distance": None}
 
             # Remove consecutive identical coordinates at the end of the segment (where the cursor was stationary)
             while (end_position > 0 and data_points[end_position]['x'] == data_points[end_position - 1]['x'] and data_points[end_position]['y'] == data_points[end_position - 1]['y']):
@@ -267,6 +266,8 @@ class AnalyzeModule:
                                 overshoot_flag = True
                                 #for debug
                                 #print("overshoot", data_points[end_position - i])
+                                #TODO: Fix false overshoot, like if overshoot is too large, filter it out
+                                print("Overshoot detected at", end_position - i)
                                 segment['OS_distance'] = (end_position - i) # temporily use index as distance
                                 slope_before = slope_now
                                 i += 25
@@ -296,22 +297,22 @@ class AnalyzeModule:
                 segment['end_index'] = end_position
 
             #for counting pausepoints in one segment
-            startindex = segment["start_index"]
-            endindex = segment["end_index"]
+            segment["PD_list"] = self.get_pause_distance(segment["start_index"], segment["end_index"], segment["OS_distance"])
+            # startindex = segment["start_index"]
+            # endindex = segment["end_index"]
 
-            for each in self.__pause_points_list:
-                if each["start_index"] == 0:
-                    continue
+            # for each in self.__pause_points_list:
+            #     if each["start_index"] == 0:
+            #         continue
 
-                if segment["OS_distance"] is not None:
-                    if each["start_index"] <= segment["OS_distance"] <= each["end_index"]:
-                        continue              
+            #     if segment["OS_distance"] is not None:
+            #         if each["start_index"] <= segment["OS_distance"] <= each["end_index"]:
+            #             continue              
 
-                if startindex <= each["start_index"] and endindex >= each["end_index"]:
-                    segment["PPnums"] += 1
+            #     if startindex <= each["start_index"] and endindex >= each["end_index"]:
+            #         segment["PPnums"] += 1
 
             # Update OS_distance to the distance between the start and end of the segment
-            print(segment['OS_distance'], segment["end_index"])
 
             if segment['OS_distance'] is not None:
                 segment['OS_distance'] = self.get_distance(segment["end_index"], segment['OS_distance'])
@@ -359,13 +360,22 @@ class AnalyzeModule:
 
         return math.sqrt((x1-x2)**2 + (y1-y2)**2)
     
-    def get_pause_distance(self, startpoint):
+    def get_pause_distance(self, startpoint: int, endpoint: int, OS_index: int) -> list[int]:
         paused_points = self.get_pause_segments()                           #updates __pause_point_list
         PDList = []
+        
         #TODO: find a way to filter out OS and the last PD as pause point
-        PDList.append(self.get_distance(paused_points[0], startpoint))
-        for i in range(1,len(self.__pause_points_list)):
-            self.get_distance(paused_points[i-1], paused_points[i])
+        paused_points_within_segment = [startpoint]
+        for each in paused_points:
+            if startpoint <= each["start_index"] and endpoint >= each["end_index"]:
+                if (not (each["start_index"] <= OS_index <= each["end_index"])
+                    and not (each["start_index"] <= endpoint <= each["end_index"])):
+                    paused_points_within_segment.append(each["start_index"])
+
+        for i in range(1, len(paused_points_within_segment)):
+            PDList.append(self.get_distance(paused_points_within_segment[i-1], paused_points_within_segment[i]))
+
+        return PDList
 
 
 if __name__ == "__main__":
