@@ -44,11 +44,11 @@ class DPICalculationModule:
                 temp = self.calculate_mix(seg["PD_list"], seg["OS_distance"], seg["TD"])
                 count += 1
             #when only over shoot exist
-            elif len(seg["PD_list"]) == 0:
+            elif len(seg["PD_list"]) == 0 and seg["OS_distance"] is not None:
                 temp = self.calculate_OS(seg["OS_distance"], seg["TD"])
                 count += 1
             #when only over paused exist
-            elif seg["OS_distance"] is None:
+            elif len(seg["PD_list"]) != 0 and seg["OS_distance"] is None:
                 temp = self.calculate_paused(seg["PD_list"], seg["TD"])
                 count += 1
             else:
