@@ -238,7 +238,8 @@ class AnalyzeModule:
 
         # Each click point will become the end_position of a trajectory segment for analysis
         for end_position in end_positions:
-            segment = {"start_index": None, "end_index": None, "PPnums": 0, "OSP_index": None}
+            segment = {"start_index": None, "end_index": None, "PPnums": 0, "OS_distance": None}
+            # segment = {"start_index": None, "end_index": None, "PD_list": [], "OS_distance": None}
 
             # Remove consecutive identical coordinates at the end of the segment (where the cursor was stationary)
             while (end_position > 0 and data_points[end_position]['x'] == data_points[end_position - 1]['x'] and data_points[end_position]['y'] == data_points[end_position - 1]['y']):
@@ -266,7 +267,7 @@ class AnalyzeModule:
                                 overshoot_flag = True
                                 #for debug
                                 #print("overshoot", data_points[end_position - i])
-                                segment['OSP_index'] = (end_position - i)
+                                segment['OS_distance'] = (end_position - i) # temporily use index as distance
                                 slope_before = slope_now
                                 i += 25
                                 j += 25
@@ -302,12 +303,19 @@ class AnalyzeModule:
                 if each["start_index"] == 0:
                     continue
 
-                if segment["OSP_index"] is not None:
-                    if each["start_index"] <= segment["OSP_index"] <= each["end_index"]:
+                if segment["OS_distance"] is not None:
+                    if each["start_index"] <= segment["OS_distance"] <= each["end_index"]:
                         continue              
 
                 if startindex <= each["start_index"] and endindex >= each["end_index"]:
                     segment["PPnums"] += 1
+
+            # Update OS_distance to the distance between the start and end of the segment
+            print(segment['OS_distance'], segment["end_index"])
+
+            if segment['OS_distance'] is not None:
+                segment['OS_distance'] = self.get_distance(segment["end_index"], segment['OS_distance'])
+
 
             # Reset the variables for the next segment
             i = 0
@@ -317,6 +325,8 @@ class AnalyzeModule:
             overshoot_flag = False
             all_segment.append(segment)
 
+
+        print(all_segment)
         return all_segment
 
     def analyze_tracking_data(self) -> dict:
