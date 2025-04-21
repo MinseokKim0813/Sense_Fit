@@ -376,7 +376,10 @@ class AnalyzeModule:
                     paused_points_within_segment.append(each["start_index"])
 
         for i in range(1, len(paused_points_within_segment)):
-            PDList.append(self.get_distance(paused_points_within_segment[i-1], paused_points_within_segment[i]))
+            distance = self.get_distance(paused_points_within_segment[i-1], paused_points_within_segment[i])
+            # Only add non-zero distances to avoid 0.0 in PDList
+            if distance > 0:
+                PDList.append(distance)
 
         return PDList
 
