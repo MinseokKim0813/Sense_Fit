@@ -55,7 +55,10 @@ class DPICalculationModule:
                 continue
             suggestion += temp
 
-        return self.__current_profile['DPI'] * (suggestion/count)
+        if (count == 0 or suggestion == 0):
+            return self.__current_profile['DPI']
+        else:
+            return self.__current_profile['DPI'] * (suggestion/count)
     
     def calculate_paused(self, PDList : list[float], TD : float) -> float:
         avg_paused = 0
