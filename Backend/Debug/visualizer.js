@@ -5,6 +5,40 @@ function b64DecodeUnicode(str) {
     }).join(''));
 }
 
+function getDistance(point1, point2) {
+    return Math.sqrt((point1.x - point2.x) ** 2 + (point1.y - point2.y) ** 2).toFixed(2);
+}
+
+// Add analysis result of the tracking data
+function addInfo(analysis_result) {
+    analysis_result.forEach(segment => {
+        console.log(segment);
+       let anchorPoint = segment['start_index']
+       let currentPoint = anchorPoint;
+
+       console.log(segment['PD_list']);
+
+       for (const targetDistance of segment['PD_list']) {
+            while (getDistance(dataPoints[currentPoint], dataPoints[anchorPoint]) < targetDistance) {
+                currentPoint++;
+            }
+            
+            console.log("hit!")
+            // Draw a circle at the current point
+            ctx.beginPath();
+            ctx.arc(dataPoints[currentPoint].x, dataPoints[currentPoint].y, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+            ctx.closePath();
+
+            anchorPoint = currentPoint;
+        }
+    });
+
+}
+
+let dataPoints = [];
+
 document.getElementById('csv-file').style.display = 'block';
 document.getElementById('csv-file').style.margin = 'auto';
 document.getElementById('csv-file').style.marginBottom = '10px';
@@ -27,7 +61,7 @@ reader.addEventListener('load', (event) => {
     const result_base_64 = event.target.result;
     const result_decoded = b64DecodeUnicode(result_base_64.split(',')[1]);
 
-    let dataPoints = result_decoded.split('\n').map(line => {
+    dataPoints = result_decoded.split('\n').map(line => {
         const [_, x, y, clicked] = line.split(',');
         return { x: parseInt(x), y: parseInt(y), clicked: clicked?.trim() == 1 };
     });
