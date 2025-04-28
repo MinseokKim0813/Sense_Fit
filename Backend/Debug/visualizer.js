@@ -12,7 +12,7 @@ function getDistance(point1, point2) {
 // Add analysis result of the tracking data
 function addInfo(analysis_result_string) {
 
-    analysis_result_string = analysis_result_string.replace("None", "null").replace(/\'/g, '"');
+    analysis_result_string = analysis_result_string.replace(/None/g, "null").replace(/\'/g, '"');
     analysis_result = JSON.parse(analysis_result_string);
 
     analysis_result.forEach(segment => {
@@ -45,7 +45,7 @@ function addInfo(analysis_result_string) {
             anchorPoint = segment['end_index'];
             currentPoint = anchorPoint;
 
-            while (getDistance(dataPoints[currentPoint], dataPoints[anchorPoint]) < segment['OS_distance']) {
+            while (getDistance(dataPoints[currentPoint], dataPoints[anchorPoint]) < segment['OS_distance'] * 0.98) {
                 currentPoint--;
             }
 
