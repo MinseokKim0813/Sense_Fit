@@ -27,19 +27,38 @@ reader.addEventListener('load', (event) => {
     const result_base_64 = event.target.result;
     const result_decoded = b64DecodeUnicode(result_base_64.split(',')[1]);
 
-    const dataPoints = result_decoded.split('\n').map(line => {
-        const [timestamp, x, y, clicked] = line.split(',');
-        return { x: parseInt(x), y: parseInt(y), clicked: clicked === '1' };
+    let dataPoints = result_decoded.split('\n').map(line => {
+        const [_, x, y, clicked] = line.split(',');
+        return { x: parseInt(x), y: parseInt(y), clicked: clicked?.trim() == 1 };
     });
+    
+    ctx.strokeStyle = 'black';
+    ctx.strokeWidth = 1;
 
-    console.log(dataPoints)
+    dataPoints = dataPoints.slice(1);
+
+    ctx.beginPath();
+    ctx.arc(dataPoints[0].x, dataPoints[0].y, 8, 0, 2 * Math.PI);
+    ctx.fillStyle = 'blue';
+    ctx.fill();
+    ctx.closePath();
+
     ctx.beginPath();
     ctx.moveTo(dataPoints[0].x, dataPoints[0].y);
-
-
-
     for (const point of dataPoints) {
         ctx.lineTo(point.x, point.y);
+    }
+
+    ctx.stroke();
+
+    for (const point of dataPoints) {
+        if (point.clicked) {
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = 'black';
+            ctx.fill();
+            ctx.closePath();
+        }
     }
 
     ctx.stroke();
