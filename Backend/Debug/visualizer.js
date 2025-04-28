@@ -10,13 +10,17 @@ function getDistance(point1, point2) {
 }
 
 // Add analysis result of the tracking data
-function addInfo(analysis_result) {
-    analysis_result.forEach(segment => {
-        console.log(segment);
-       let anchorPoint = segment['start_index']
-       let currentPoint = anchorPoint;
+function addInfo(analysis_result_string) {
 
-       console.log(segment['PD_list']);
+    analysis_result_string = analysis_result_string.replace("None", "null").replace(/\'/g, '"');
+    analysis_result = JSON.parse(analysis_result_string);
+
+    analysis_result.forEach(segment => {
+        
+        console.log(segment);
+        
+        let anchorPoint = segment['start_index']
+        let currentPoint = anchorPoint;
 
        for (const targetDistance of segment['PD_list']) {
             while (getDistance(dataPoints[currentPoint], dataPoints[anchorPoint]) < targetDistance) {
@@ -26,12 +30,33 @@ function addInfo(analysis_result) {
             console.log("hit!")
             // Draw a circle at the current point
             ctx.beginPath();
-            ctx.arc(dataPoints[currentPoint].x, dataPoints[currentPoint].y, 5, 0, 2 * Math.PI);
+            ctx.arc(dataPoints[currentPoint].x, dataPoints[currentPoint].y, 8, 0, 2 * Math.PI);
             ctx.fillStyle = 'red';
             ctx.fill();
             ctx.closePath();
 
             anchorPoint = currentPoint;
+        }
+
+        
+        // Draw a circle at the OS point (if OS_distance existes)
+        if (segment['OS_distance'] != null) {
+            
+            anchorPoint = segment['end_index'];
+            currentPoint = anchorPoint;
+
+            while (getDistance(dataPoints[currentPoint], dataPoints[anchorPoint]) < segment['OS_distance']) {
+                currentPoint--;
+            }
+
+            console.log("OS hit!")
+
+            
+            ctx.beginPath();
+            ctx.arc(dataPoints[currentPoint].x, dataPoints[currentPoint].y, 8, 0, 2 * Math.PI);
+            ctx.fillStyle = 'green';
+            ctx.fill();
+            ctx.closePath();
         }
     });
 
@@ -72,7 +97,7 @@ reader.addEventListener('load', (event) => {
     dataPoints = dataPoints.slice(1);
 
     ctx.beginPath();
-    ctx.arc(dataPoints[0].x, dataPoints[0].y, 8, 0, 2 * Math.PI);
+    ctx.arc(dataPoints[0].x, dataPoints[0].y, 15, 0, 2 * Math.PI);
     ctx.fillStyle = 'blue';
     ctx.fill();
     ctx.closePath();
@@ -88,7 +113,7 @@ reader.addEventListener('load', (event) => {
     for (const point of dataPoints) {
         if (point.clicked) {
             ctx.beginPath();
-            ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+            ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
             ctx.fillStyle = 'black';
             ctx.fill();
             ctx.closePath();
