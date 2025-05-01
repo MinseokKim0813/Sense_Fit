@@ -1,5 +1,7 @@
 import os
 import csv
+import math
+
 class DPICalculationModule:
     def __init__(self, current_profile, current_session, movement_data):
         self.__current_profile = current_profile
@@ -58,7 +60,8 @@ class DPICalculationModule:
         if (count == 0 or suggestion == 0):
             return self.__current_profile['DPI']
         else:
-            return self.__current_profile['DPI'] * (suggestion/count)
+            print(suggestion, count, suggestion/count)
+            return math.floor(self.__current_profile['DPI'] * (suggestion/count) / 10) * 10
     
     def calculate_paused(self, PDList : list[float], TD : float) -> float:
         avg_paused = 0
@@ -70,9 +73,9 @@ class DPICalculationModule:
 
         return TD/avg_paused
     
-    # OSD is start point to overshoot occured point
-    def calculate_OS(self, OSD: float, TD : float) -> float:
-        return TD/OSD
+    # OS_distance is the distance between the click point and the overshoot occured point
+    def calculate_OS(self, OS_distance: float, TD : float) -> float:
+        return TD / (OS_distance + TD)
     
     def calculate_mix(self, PDList : list[float], OSD: float, TD : float):
         paused = self.calculate_paused(PDList, TD)
