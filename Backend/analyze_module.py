@@ -154,7 +154,7 @@ class AnalyzeModule:
         else:
             return {"message": "Data points are valid!"}
 
-    def get_pause_segments(self, threshold: int = 5) -> list[dict]:
+    def get_pause_segments(self, threshold: int = 15) -> list[dict]:
         """
         Finds all pause segments where the cursor moved within a small threshold
         (X and Y changes are less than or equal to the threshold).
@@ -232,7 +232,7 @@ class AnalyzeModule:
         all_segment = []                                    #return list of objects "segment"
         data_points = self.__cursor_log                     #call data points
         i = 0                                               #pointer for the nearer cursor data
-        j = 50                                              #pointer for further cursor data
+        j = 25                                              #pointer for further cursor data
         slope_before = None                                 #to compare two slopes
         prev_click_point = 0                                #to make sure the start for an end point comes after the previous end point
         overshoot_flag = False                              #to detect overshoot existence
@@ -265,7 +265,7 @@ class AnalyzeModule:
                     if slope_before is not None:
                         # Check if the slope abruptly changes (meaning that the cursor is overshooting)
                         if not overshoot_flag:
-                            if 170 <= self.angle_diff(slope_before, slope_now):
+                            if 130 <= self.angle_diff(slope_before, slope_now):
                                 overshoot_flag = True
                                 #for debug
                                 #print("overshoot", data_points[end_position - i])
@@ -273,20 +273,21 @@ class AnalyzeModule:
                                 # print("Overshoot detected at", end_position - i)
                                 segment['OS_distance'] = (end_position - i) # temporily use index as distance
                                 slope_before = slope_now
-                                i += 50
-                                j += 50
+                                i += 25
+                                j += 25
                                 continue
 
                         #if the angle diff is more than 30 degrees, the system identifies the second latest cursor data point as the start point for the corresponding endpoint
                         if self.angle_diff(slope_before, slope_now) > 30:
+
                             segment['start_index'] = (end_position - i)         #add second latest cursor data index as the segment's start index
                             segment['end_index'] = end_position                 #add the current end point index to segment's end_index
                             break
 
                     # Update the slope before the next iteration
                     slope_before = slope_now
-                    i += 50
-                    j += 50
+                    i += 25
+                    j += 25
 
                 #if goes beyond boundary save analyzed start_index and end_index for the segment
                 else:
@@ -325,7 +326,7 @@ class AnalyzeModule:
 
             # Reset the variables for the next segment
             i = 0
-            j = 50
+            j = 25
             slope_before = None
             prev_click_point = end_position
             overshoot_flag = False
@@ -355,7 +356,10 @@ class AnalyzeModule:
         return diff
     
     def is_paused(self, dx, dy):
-        return dx == 0 and dy == 0
+        distance = math.sqrt(dx**2 + dy**2)
+        threshold = 15
+        within_threshold = distance <= threshold
+        return within_threshold
     
     def get_distance(self, index1, index2):
         x1 = self.__cursor_log[index1]["x"]
