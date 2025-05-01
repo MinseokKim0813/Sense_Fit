@@ -269,6 +269,8 @@ class ProfileWindow(QWidget):
                         # TODO: Handle saving dpi for the profile
                         self.profile['DPI'] = DPI_calculation_module.dpi
                         self.profile_handler.update_dpi(self.profile['_id'], DPI_calculation_module.dpi)
+                        # Update the title label with the new DPI
+                        self.title_label.setText(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
                         #print(DPI_calculation_module.calculate_dpi())
                     else:
                         self.status_message_label.setText("DPI not calculated")
