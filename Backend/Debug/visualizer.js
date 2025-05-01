@@ -22,7 +22,13 @@ function addInfo(analysis_result_string) {
         let anchorPoint = segment['start_index']
         let currentPoint = anchorPoint;
 
-       for (const targetDistance of segment['PD_list']) {
+        ctx.beginPath();
+        ctx.arc(dataPoints[anchorPoint].x, dataPoints[anchorPoint].y, 8, 0, 2 * Math.PI);
+        ctx.fillStyle = 'orange';
+        ctx.fill();
+        ctx.closePath();
+
+        for (const targetDistance of segment['PD_list']) {
             while (getDistance(dataPoints[currentPoint], dataPoints[anchorPoint]) < targetDistance) {
                 currentPoint++;
             }
