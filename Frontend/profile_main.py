@@ -267,6 +267,7 @@ class ProfileWindow(QWidget):
                         print("DPI", DPI_calculation_module.dpi)
 
                         # TODO: Handle saving dpi for the profile
+                        self.profile['DPI'] = DPI_calculation_module.dpi
                         self.profile_handler.update_dpi(self.profile['_id'], DPI_calculation_module.dpi)
                         #print(DPI_calculation_module.calculate_dpi())
                     else:
