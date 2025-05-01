@@ -10,6 +10,7 @@ from Backend.analyze_module import AnalyzeModule
 from Backend.calculate_module import DPICalculationModule
 from Frontend.error_window import *
 from Frontend.alert_window import *
+from Frontend.alert_window_one_button import *
 from Backend.profile_handler import ProfileHandler
 
 class ProfileWindow(QWidget):
@@ -266,21 +267,25 @@ class ProfileWindow(QWidget):
                         DPI_calculation_module = DPICalculationModule(self.profile, self.current_session, movement_data)
                         print("DPI", DPI_calculation_module.dpi)
 
-                        # TODO: Handle saving dpi for the profile
-                        self.profile['DPI'] = DPI_calculation_module.dpi['DPI_recommendation']
-                        self.profile_handler.update_dpi(self.profile['_id'], DPI_calculation_module.dpi['DPI_recommendation'])
-                        # Update the title label with the new DPI
-                        self.title_label.setText(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
-
-                        # If calculated DPI is in invalid range, show error message
-                        flag = True
-                        if (flag):
+                        if (DPI_calculation_module.dpi['out_of_bounds_flag'] == True):
                             # Display error message in the UI
-                            error_message = f"Calculated DPI is {self.profile['DPI']}. \nThis is outside the valid range:(100,3200).\nWe did not update your DPI. We suggest you to try again."
+                            error_message = f"Our calculated DPI is {DPI_calculation_module.dpi["DPI_recommendation"]}. \nThis is outside the valid range: (100-3200).\nWe did not update your DPI. Please try again."
 
                             error_popup = ErrorPopup(message=error_message)
                             error_popup.exec_()
 
+                            return
+
+                        elif (DPI_calculation_module.dpi['large_diff_flag'] == True):
+                            # Display window to ask if the user wants to proceed to calculation
+                            alert_message = f"Our calculated DPI is {DPI_calculation_module.dpi['DPI_recommendation']}. \nKeep in mind that this is a large difference from your current DPI: {self.profile['DPI']}.\n"
+                            large_diff_popup = Popup_OK_Only(alert_message, "Warning", "Large Difference", "OK")
+                            large_diff_popup.exec_()
+
+                        self.profile['DPI'] = DPI_calculation_module.dpi['DPI_recommendation']
+                        self.profile_handler.update_dpi(self.profile['_id'], DPI_calculation_module.dpi['DPI_recommendation'])
+                        # Update the title label with the new DPI
+                        self.title_label.setText(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
 
                         #print(DPI_calculation_module.calculate_dpi())
                     else:
