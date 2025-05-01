@@ -60,7 +60,13 @@ class DPICalculationModule:
         if (count == 0 or suggestion == 0):
             return self.__current_profile['DPI']
         else:
-            return math.floor(self.__current_profile['DPI'] * (suggestion/count) / 10) * 10
+            sug = self.__current_profile['DPI'] * (suggestion/count)
+            now = self.__current_profile['DPI']
+            diff = (sug-now) * 0.6
+            now += diff
+            now = math.floor(now/10) * 10
+            print(diff, 'Sug:', sug, "now:", now)
+            return now
     
     def calculate_paused(self, PDList : list[float], TD : float) -> float:
         avg_paused = 0
