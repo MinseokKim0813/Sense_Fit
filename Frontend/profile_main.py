@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QPushButton,
-    QVBoxLayout, QHBoxLayout, QLabel, QDesktopWidget, QMessageBox
+    QVBoxLayout, QHBoxLayout, QLabel, QDesktopWidget, QGridLayout, QSpacerItem, QSizePolicy
 )
 from PyQt5.QtCore import Qt
 
@@ -58,37 +58,45 @@ class ProfileWindow(QWidget):
         # Title label
         self.title_label = QLabel(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
         self.title_label.setAlignment(Qt.AlignCenter)
-        self.title_label.setStyleSheet("font-size: 30px; font-weight: bold;")
+        self.title_label.setStyleSheet("font-size: 50px; font-weight: bold;")
 
         # Button 1 + label
         self.label1 = QLabel("Distance Traveled")
         self.label1.setAlignment(Qt.AlignCenter)
-        self.label1.setStyleSheet("font-size: 20px; color: white;")
+        self.label1.setStyleSheet("font-size: 30px; color: white;")
 
         self.button1 = QPushButton("View Data")
         self.button1.setFixedSize(180, 40)
         self.button1.setStyleSheet("font-size: 14px; color: white; background-color: #2c2c2c;")
 
         box1 = QVBoxLayout()
-        box1.setAlignment(Qt.AlignCenter)
+        box1.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+
+        self.label1.setAlignment(Qt.AlignHCenter)
+        self.button1.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
         box1.addWidget(self.label1)
         box1.addSpacing(10)
-        box1.addWidget(self.button1)
+        box1.addWidget(self.button1, alignment=Qt.AlignHCenter)
 
         # Button 2 + label
         self.label2 = QLabel("DPI Recommendation")
         self.label2.setAlignment(Qt.AlignCenter)
-        self.label2.setStyleSheet("font-size: 20px; color: white;")
+        self.label2.setStyleSheet("font-size: 30px; color: white;")
 
         self.button2 = QPushButton("View Data")
         self.button2.setFixedSize(180, 40)
         self.button2.setStyleSheet("font-size: 14px; color: white; background-color: #2c2c2c;")
 
         box2 = QVBoxLayout()
-        box2.setAlignment(Qt.AlignCenter)
+        box2.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+
+        self.label2.setAlignment(Qt.AlignHCenter)
+        self.button2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
         box2.addWidget(self.label2)
         box2.addSpacing(10)
-        box2.addWidget(self.button2)
+        box2.addWidget(self.button2, alignment=Qt.AlignHCenter)
 
         # Toggle status label
         self.tracking_status_label = QLabel("Tracking Disabled")
@@ -121,29 +129,34 @@ class ProfileWindow(QWidget):
         top_button_layout = QHBoxLayout()
         top_button_layout.addStretch()
         top_button_layout.addLayout(box1)
-        top_button_layout.addSpacing(int(window_width * 0.3))
+        top_button_layout.addSpacing(int(window_width * 0.35))
         top_button_layout.addLayout(box2)
         top_button_layout.addStretch()
 
         toggle_row_layout = QHBoxLayout()
         toggle_row_layout.addStretch()
         toggle_row_layout.addWidget(self.tracking_label)
-        toggle_row_layout.addSpacing(10)
+        toggle_row_layout.addSpacing(0)
         toggle_row_layout.addWidget(self.toggle_button)
         toggle_row_layout.addStretch()
 
         main_layout = QVBoxLayout()
         main_layout.addSpacing(10)
-        # Horizontal layout for back button with left spacing
-        back_button_layout = QHBoxLayout()
-        back_button_layout.addSpacing(20)  # ← Add left space (adjust value as needed)
-        back_button_layout.addWidget(back_button)
-        back_button_layout.addStretch()    # Optional: pushes button left while allowing spacing
+        
+        top_layout = QGridLayout()
 
-        main_layout.addLayout(back_button_layout)
+        # Back button on the left
+        top_layout.addWidget(back_button, 0, 0, alignment=Qt.AlignLeft | Qt.AlignTop)
 
-        main_layout.addWidget(self.title_label)
-        main_layout.addSpacing(int(window_height * 0.1))
+        # Empty placeholder in column 1 if needed
+        top_layout.addItem(QSpacerItem(20, 0, QSizePolicy.Expanding, QSizePolicy.Minimum), 0, 1)
+
+        # Title spans all columns
+        top_layout.addWidget(self.title_label, 0, 0, 1, 3, alignment=Qt.AlignHCenter | Qt.AlignTop)
+
+        main_layout.addLayout(top_layout)
+
+        main_layout.addSpacing(int(window_height * -0.11))
         main_layout.addLayout(top_button_layout)
         main_layout.addSpacing(int(window_height * 0.2))
         
