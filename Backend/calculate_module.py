@@ -65,7 +65,8 @@ class DPICalculationModule:
             diff = (sug-now) * 0.6
             now += diff
             now = math.floor(now/10) * 10
-            print(diff, 'Sug:', sug, "now:", now)
+            # print(diff, 'Sug:', sug, "now:", now)
+            
             return now
     
     def calculate_paused(self, PDList : list[float], TD : float) -> float:
