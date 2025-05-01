@@ -60,7 +60,6 @@ class DPICalculationModule:
         if (count == 0 or suggestion == 0):
             return self.__current_profile['DPI']
         else:
-            print(suggestion, count, suggestion/count)
             return math.floor(self.__current_profile['DPI'] * (suggestion/count) / 10) * 10
     
     def calculate_paused(self, PDList : list[float], TD : float) -> float:
