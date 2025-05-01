@@ -13,6 +13,7 @@ class AnalyzeModule:
         current_dir = os.path.dirname(os.path.realpath(__file__))
         self.__storage_dir = os.path.join(current_dir, "storage", "logs")
         self.__log_file = os.path.join(self.__storage_dir, f"id_{profile_id}_cursor_log_{session}.csv")
+        self.total_distance = 0
         self.__error = None
 
         # if self.__log_file is not found, raise an error (Test Case 9)
@@ -333,15 +334,22 @@ class AnalyzeModule:
             all_segment.append(segment)
 
 
-        print(all_segment)
+        # print(all_segment)
         return all_segment
 
     def analyze_tracking_data(self) -> dict:
-        # TODO: Make algorithm to analyze the tracking data
         end_positions = self.find_end_points()
         all_segment = self.analyze_all_segment(end_positions)
         #print(all_segment)
+        self.total_distance = self.get_total_distance()
+        print(self.total_distance)
         return all_segment
+    
+    def get_total_distance(self) -> float:
+        TD = 0
+        for i in range(1, len(self.__cursor_log)):
+            TD += self.get_distance(i, i-1)
+        return TD
     
     def get_angle_from_delta(self,dx, dy):
         angle = math.atan2(dy, dx) * (180 / math.pi)
