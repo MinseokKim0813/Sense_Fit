@@ -230,7 +230,7 @@ class AnalyzeModule:
         all_segment = []                                    #return list of objects "segment"
         data_points = self.__cursor_log                     #call data points
         i = 0                                               #pointer for the nearer cursor data
-        j = 25                                              #pointer for further cursor data
+        j = 10                                              #pointer for further cursor data
         slope_before = None                                 #to compare two slopes
         prev_click_point = 0                                #to make sure the start for an end point comes after the previous end point
         overshoot_flag = False                              #to detect overshoot existence
@@ -262,7 +262,7 @@ class AnalyzeModule:
                     if slope_before is not None:
                         # Check if the slope abruptly changes (meaning that the cursor is overshooting)
                         if not overshoot_flag:
-                            if 130 <= self.angle_diff(slope_before,slope_now):
+                            if 170 <= self.angle_diff(slope_before, slope_now):
                                 overshoot_flag = True
                                 #for debug
                                 #print("overshoot", data_points[end_position - i])
@@ -270,8 +270,8 @@ class AnalyzeModule:
                                 print("Overshoot detected at", end_position - i)
                                 segment['OS_distance'] = (end_position - i) # temporily use index as distance
                                 slope_before = slope_now
-                                i += 25
-                                j += 25
+                                i += 10
+                                j += 10
                                 continue
 
                         #if the angle diff is more than 30 degrees, the system identifies the second latest cursor data point as the start point for the corresponding endpoint
@@ -282,8 +282,8 @@ class AnalyzeModule:
 
                     # Update the slope before the next iteration
                     slope_before = slope_now
-                    i += 25
-                    j += 25
+                    i += 10
+                    j += 10
 
                 #if goes beyond boundary save analyzed start_index and end_index for the segment
                 else:
@@ -322,7 +322,7 @@ class AnalyzeModule:
 
             # Reset the variables for the next segment
             i = 0
-            j = 25
+            j = 10
             slope_before = None
             prev_click_point = end_position
             overshoot_flag = False
