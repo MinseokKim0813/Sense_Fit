@@ -57,17 +57,26 @@ class DPICalculationModule:
                 continue
             suggestion += temp
 
+
+        response = { "DPI_recommendation": None, "out_of_bounds_flag": False, "large_diff_flag": False }
+
         if (count == 0 or suggestion == 0):
-            return self.__current_profile['DPI']
+            response["DPI_recommendation"] = self.__current_profile['DPI']
         else:
             sug = self.__current_profile['DPI'] * (suggestion/count)
             now = self.__current_profile['DPI']
             diff = (sug-now) * 0.6
             now += diff
             now = math.floor(now/10) * 10
-            # print(diff, 'Sug:', sug, "now:", now)
+            response["DPI_recommendation"] = now
+
+            if abs(diff) > 400:
+                response["large_diff_flag"] = True
             
-            return now
+            if not (100 <= now <= 3200):
+                response["out_of_bounds_flag"] = True
+            
+        return response
     
     def calculate_paused(self, PDList : list[float], TD : float) -> float:
         avg_paused = 0
