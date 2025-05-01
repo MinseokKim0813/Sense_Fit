@@ -271,6 +271,17 @@ class ProfileWindow(QWidget):
                         self.profile_handler.update_dpi(self.profile['_id'], DPI_calculation_module.dpi['DPI_recommendation'])
                         # Update the title label with the new DPI
                         self.title_label.setText(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
+
+                        # If calculated DPI is in invalid range, show error message
+                        flag = True
+                        if (flag):
+                            # Display error message in the UI
+                            error_message = f"Calculated DPI is {self.profile['DPI']}. \nThis is outside the valid range:(100,3200).\nWe did not update your DPI. We suggest you to try again."
+
+                            error_popup = ErrorPopup(message=error_message)
+                            error_popup.exec_()
+
+
                         #print(DPI_calculation_module.calculate_dpi())
                     else:
                         self.status_message_label.setText("DPI not calculated")
