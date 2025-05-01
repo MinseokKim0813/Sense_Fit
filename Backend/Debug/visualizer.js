@@ -96,6 +96,9 @@ reader.addEventListener('load', (event) => {
 
     dataPoints = dataPoints.slice(1);
 
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     ctx.beginPath();
     ctx.arc(dataPoints[0].x, dataPoints[0].y, 15, 0, 2 * Math.PI);
     ctx.fillStyle = 'blue';
