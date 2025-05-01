@@ -364,6 +364,7 @@ class AnalyzeModule:
     
     def get_pause_distance(self, startpoint: int, endpoint: int, OS_index: int) -> list[int]:
         paused_points = self.get_pause_segments()                           #updates __pause_point_list
+        # print(paused_points)
         PDList = []
         
         #TODO: find a way to filter out OS and the last PD as pause point
