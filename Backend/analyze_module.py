@@ -363,7 +363,7 @@ class AnalyzeModule:
         return math.sqrt((x1-x2)**2 + (y1-y2)**2)
     
     def get_pause_distance(self, startpoint: int, endpoint: int, OS_index: int) -> list[int]:
-        paused_points = self.get_pause_segments()                           #updates __pause_point_list
+        paused_points = self.__pause_points_list                           #updates __pause_point_list
         # print(paused_points)
         PDList = []
         
