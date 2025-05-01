@@ -171,9 +171,11 @@ class AnalyzeModule:
         start_idx = None
 
         for i in range(1, len(data_points)):
-            dx = abs(data_points[i]['x'] - data_points[i - 1]['x'])
-            dy = abs(data_points[i]['y'] - data_points[i - 1]['y'])
-            within_threshold = dx <= threshold and dy <= threshold
+            dx = data_points[i]['x'] - data_points[i - 1]['x']
+            dy = data_points[i]['y'] - data_points[i - 1]['y']
+            distance = math.sqrt(dx**2 + dy**2)
+            within_threshold = distance <= threshold
+
 
             if within_threshold:
                 if start_idx is None:
@@ -184,7 +186,7 @@ class AnalyzeModule:
                     timestamp_end = datetime.strptime(data_points[i - 1]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
                     timestamp_start = datetime.strptime(data_points[start_idx]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
 
-                    if ((timestamp_end - timestamp_start).total_seconds() > 0.2):
+                    if ((timestamp_end - timestamp_start).total_seconds() > 0.1):
                         pause_segments.append({
                             "start_index": start_idx,
                             "end_index": i - 1,
@@ -363,7 +365,7 @@ class AnalyzeModule:
         return math.sqrt((x1-x2)**2 + (y1-y2)**2)
     
     def get_pause_distance(self, startpoint: int, endpoint: int, OS_index: int) -> list[int]:
-        paused_points = self.__pause_points_list                           #updates __pause_point_list
+        paused_points = self.__pause_points_list                          #updates __pause_point_list
         # print(paused_points)
         PDList = []
         
@@ -371,6 +373,7 @@ class AnalyzeModule:
         paused_points_within_segment = [startpoint]
         for each in paused_points:
             if startpoint <= each["start_index"] and endpoint >= each["end_index"]:
+                print("PAUSED!")
                 # Skip OS_index check if OS_index is None
                 if OS_index is None or (not (each["start_index"] <= OS_index <= each["end_index"])
                     and not (each["start_index"] <= endpoint <= each["end_index"])):
