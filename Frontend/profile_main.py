@@ -65,7 +65,7 @@ class ProfileWindow(QWidget):
         self.label1.setAlignment(Qt.AlignCenter)
         self.label1.setStyleSheet("font-size: 20px; color: white;")
 
-        self.button1 = QPushButton("Button 1")
+        self.button1 = QPushButton("View Data")
         self.button1.setFixedSize(180, 40)
         self.button1.setStyleSheet("font-size: 14px; color: white; background-color: #2c2c2c;")
 
@@ -80,7 +80,7 @@ class ProfileWindow(QWidget):
         self.label2.setAlignment(Qt.AlignCenter)
         self.label2.setStyleSheet("font-size: 20px; color: white;")
 
-        self.button2 = QPushButton("Button 2")
+        self.button2 = QPushButton("View Data")
         self.button2.setFixedSize(180, 40)
         self.button2.setStyleSheet("font-size: 14px; color: white; background-color: #2c2c2c;")
 
