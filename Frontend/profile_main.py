@@ -269,7 +269,7 @@ class ProfileWindow(QWidget):
 
                         if (DPI_calculation_module.dpi['out_of_bounds_flag'] == True):
                             # Display error message in the UI
-                            error_message = f"Our calculated DPI is {DPI_calculation_module.dpi["DPI_recommendation"]}. \nThis is outside the valid range: (100-3200).\nWe did not update your DPI. Please try again."
+                            error_message = f"Our calculated DPI is {DPI_calculation_module.dpi['DPI_recommendation']}. \nThis is outside the valid range: (100-3200).\nWe did not update your DPI. Please try again."
 
                             error_popup = ErrorPopup(message=error_message)
                             error_popup.exec_()
