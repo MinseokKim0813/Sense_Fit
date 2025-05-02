@@ -103,16 +103,16 @@ class ProfileWindow(QWidget):
         box2.addSpacing(10)
         box2.addWidget(self.button2, alignment=Qt.AlignHCenter)
 
-            # DPI Graph
+        # DPI Graph
         self.dpi_plot_widget = DPIGraphEmbed(self.profile['_id'])
-        self.dpi_plot_widget.setVisible(False)
+        self.dpi_plot_widget.hide()
         self.dpi_plot_widget.setFixedHeight(300)
         self.dpi_plot_widget.setFixedWidth(400)
         box2.addWidget(self.dpi_plot_widget)
 
         # DT Graph
         self.dt_plot_widget = DTGraphEmbed(self.profile['_id'])
-        self.dt_plot_widget.setVisible(False)
+        self.dt_plot_widget.hide()
         self.dt_plot_widget.setFixedHeight(300)
         self.dt_plot_widget.setFixedWidth(400)
         box1.addWidget(self.dt_plot_widget)
@@ -178,12 +178,7 @@ class ProfileWindow(QWidget):
 
         main_layout.addLayout(top_layout)
 
-        # main_layout.addSpacing(int(window_height * -0.11))
-        main_layout.addSpacing(30)  # Or a small positive value
         main_layout.addLayout(top_button_layout)
-        # main_layout.addWidget(self.graph_container, alignment=Qt.AlignHCenter)
-
-        # main_layout.addSpacing(int(window_height * 0.05))
         
         # Add tracking status label first
         main_layout.addWidget(self.tracking_status_label)
@@ -209,20 +204,19 @@ class ProfileWindow(QWidget):
         self.setLayout(main_layout)
 
     def toggle_dt_graph(self):
-        if self.dt_plot_widget.isVisible():
-            self.dt_plot_widget.setVisible(False)
-            self.dt_plot_widget.clear()
-        else:
-            self.dt_plot_widget.setVisible(True)
+        if self.dt_plot_widget.isHidden():
+            self.dt_plot_widget.show()
             self.dt_plot_widget.plot_dt_history()
+        else:
+            self.dt_plot_widget.hide()
 
     def toggle_dpi_graph(self):
-        if self.dpi_plot_widget.isVisible():
-            self.dpi_plot_widget.setVisible(False)
-            self.dpi_plot_widget.clear()
-        else:
-            self.dpi_plot_widget.setVisible(True)
+        if self.dpi_plot_widget.isHidden():
+            self.dpi_plot_widget.show()
             self.dpi_plot_widget.plot_dpi_history()
+        else:
+            self.dpi_plot_widget.hide()
+
 
 
     def go_back(self):
