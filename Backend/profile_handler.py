@@ -3,6 +3,16 @@ import json
 from datetime import datetime
 def is_alphanumeric(char: str) -> bool:
     return (ord('a') <= ord(char) <= ord('z')) or (ord('A') <= ord(char) <= ord('Z')) or (ord('0') <= ord(char) <= ord('9'))
+
+
+def get_current_timestamp() -> str:
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def format_timestamp(timestamp: str) -> str:
+    return datetime.strptime(timestamp, "%Y-%m-%d_%H-%M-%S").strftime("%Y-%m-%d %H:%M:%S")
+
+
 class ProfileHandler:
     def __init__(self):
         self.__profiles = []
@@ -77,10 +87,8 @@ class ProfileHandler:
 
         new_profile['name'] = name
         new_profile['DPI'] = initialDPI
-        new_profile['DPI_history'] = [{
-            "value": initialDPI,
-            "timestamp": datetime.now().isoformat()
-        }]
+        new_profile['DPI_history'] = [{"timestamp": get_current_timestamp(), "DPI": initialDPI}]
+        new_profile['session_total_distance'] = []
         self.__profiles.append(new_profile)
 
         with open(self.__profiles_file, "w") as file:
@@ -130,10 +138,19 @@ class ProfileHandler:
             
             if profile['_id'] == profile_id:
                 profile['DPI'] = dpi
-                profile['DPI_history'].append({
-                "value": dpi,
-                "timestamp": datetime.now().isoformat()
-                })
+                profile['DPI_history'].append({"timestamp": get_current_timestamp(), "DPI": dpi})
+
+                with open(self.__profiles_file, "w") as file:
+                    json.dump(self.__profiles, file, indent=4)
+
+                return {"message": "Profile updated successfully"}
+            
+        return {"error": "Profile not found"}
+    
+    def update_session_total_distance(self, profile_id: int, timestamp: str, total_distance: int) -> dict:
+        for profile in self.__profiles:
+            if profile['_id'] == profile_id:
+                profile['session_total_distance'].append({"timestamp": format_timestamp(timestamp), "total_distance": round(total_distance)})
 
                 with open(self.__profiles_file, "w") as file:
                     json.dump(self.__profiles, file, indent=4)

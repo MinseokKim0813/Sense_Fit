@@ -302,7 +302,9 @@ class ProfileWindow(QWidget):
                     error_popup.exec_()
                 else:
                     movement_data = self.analyze_module.analyze_tracking_data()
-                    #print(movement_data)
+
+                    # Log the total distance of the tracking session
+                    self.profile_handler.update_session_total_distance(self.profile['_id'], self.current_session, movement_data["total_distance"])
 
                     # Display window to ask if the user wants to proceed to calculation
                     alert_message = "We have analyzed your movement for the current session. Would you like us to recommend a DPI that fits better based on your movement?"
@@ -312,7 +314,7 @@ class ProfileWindow(QWidget):
                     # If user clicks "Get DPI", proceed to calculation
                     if dpi_popup.result() == QDialog.Accepted:
                         # TODO: Implement calculation
-                        DPI_calculation_module = DPICalculationModule(self.profile, self.current_session, movement_data)
+                        DPI_calculation_module = DPICalculationModule(self.profile, self.current_session, movement_data["analysis_result"])
                         print("DPI", DPI_calculation_module.dpi)
 
                         if (DPI_calculation_module.dpi['out_of_bounds_flag'] == True):
