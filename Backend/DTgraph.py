@@ -90,6 +90,9 @@ class DTGraphEmbed(QWidget):
             max_days_ago = 30
         else:
             max_days_ago = 1  # Default to 1 day
+        
+        # Temporary storage for aggregating data by day
+        daily_data = {}  # date -> total distance
             
         for entry in self.profile["session_total_distance"]:
             date_info = datetime.strptime(entry["timestamp"], "%Y-%m-%d %H:%M:%S")
@@ -102,13 +105,23 @@ class DTGraphEmbed(QWidget):
                     hours_ago = (current_datetime - date_info).total_seconds() / 3600.0
                     data_points.append((hours_ago, entry["total_distance"], date_info))
             else:
-                # For week and month views, use the date-only approach
+                # For week and month views, aggregate by day
                 date_info_date = date_info.date()
                 date_diff = (current_date - date_info_date).days
                 
                 # Only include data points within the selected time frame
                 if date_diff <= max_days_ago:
-                    data_points.append((date_diff, entry["total_distance"], date_info_date))
+                    # Aggregate data by day
+                    if date_info_date in daily_data:
+                        daily_data[date_info_date] += entry["total_distance"]
+                    else:
+                        daily_data[date_info_date] = entry["total_distance"]
+
+        # For weekly and monthly views, convert the aggregated daily data to data points
+        if time_frame != "24 hours":
+            for date, total_distance in daily_data.items():
+                date_diff = (current_date - date).days
+                data_points.append((date_diff, total_distance, date))
 
         # Sort data by date/time (oldest entries first for consistent display)
         data_points.sort(key=lambda item: item[0], reverse=True)
