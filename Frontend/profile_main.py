@@ -111,7 +111,7 @@ class ProfileWindow(QWidget):
         box2.addWidget(self.dpi_plot_widget)
 
         # DT Graph
-        self.dt_plot_widget = DTGraphEmbed(self.profile['_id'])
+        self.dt_plot_widget = DTGraphEmbed(self.profile)
         self.dt_plot_widget.hide()
         self.dt_plot_widget.setFixedHeight(300)
         self.dt_plot_widget.setFixedWidth(400)

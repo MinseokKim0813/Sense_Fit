@@ -4,40 +4,32 @@ import os
 from datetime import datetime
 
 class DTGraphEmbed(pg.PlotWidget):
-    def __init__(self, profile_id):
+    def __init__(self, profile: dict):
         super().__init__()
-        self.profile_id = profile_id
         self.setBackground('w')
         self.setVisible(False)  # start hidden
         self.setLabel("left", "Distance Traveled")
         self.setLabel("bottom", "Date")
-        self.plot_dt_history()
+        self.profile = profile
 
     def plot_dt_history(self):
-        # Load profile
-        file_path = os.path.join(os.path.dirname(__file__), "../Backend/storage/profiles.json")
-        with open(file_path, "r") as f:
-            profiles = json.load(f)
-
-        profile = next((p for p in profiles if p["_id"] == self.profile_id), None)
-        if not profile:
-            return
-
         # Extract history
         x = []
         y = []
-        for entry in profile.get("session_total_distance", []):
-            if isinstance(entry, dict) and "total_distance" in entry and "timestamp" in entry:
-                try:
-                    dt = datetime.strptime(entry["timestamp"], "%Y-%m-%d %H:%M:%S")
-                    timestamp = dt.timestamp()  # convert to float (seconds since epoch)
-                    x.append(timestamp)
-                    y.append(entry["total_distance"])
-                except Exception as e:
-                    print("Error parsing entry:", entry, e)
-                    continue
 
-        if not x or not y:
+        for entry in self.profile["session_total_distance"]:
+            date_info = datetime.strptime(entry["timestamp"], "%Y-%m-%d %H:%M:%S")
+            
+            # Get only the date part without time
+            date_info_date = date_info.date()
+            current_date = datetime.now().date()
+            
+            # Calculate date difference in days
+            date_diff = (current_date - date_info_date).days
+            x.append(date_diff)
+            y.append(entry["total_distance"])
+
+        if (len(x) == 0 or len(y) == 0):
             return
 
         self.clear()
