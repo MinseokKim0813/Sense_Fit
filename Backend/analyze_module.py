@@ -342,8 +342,7 @@ class AnalyzeModule:
         all_segment = self.analyze_all_segment(end_positions)
         #print(all_segment)
         self.total_distance = self.get_total_distance()
-        print(self.total_distance)
-        return all_segment
+        return {"analysis_result": all_segment, "total_distance": self.total_distance}
     
     def get_total_distance(self) -> float:
         TD = 0
