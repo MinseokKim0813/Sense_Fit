@@ -2,6 +2,7 @@ import pyqtgraph as pg
 import json
 import os
 from datetime import datetime
+import numpy as np
 
 class DTGraphEmbed(pg.PlotWidget):
     def __init__(self, profile: dict):
@@ -11,6 +12,12 @@ class DTGraphEmbed(pg.PlotWidget):
         self.setLabel("left", "Distance Traveled")
         self.setLabel("bottom", "Date")
         self.profile = profile
+        
+        # Disable auto-ranging to keep the view fixed
+        self.setAutoVisible(y=False)
+        
+        # Lock the ViewBox to prevent x-axis scaling
+        self.getViewBox().setMouseEnabled(x=False, y=False)
 
     def plot_dt_history(self):
         # Extract history
@@ -33,4 +40,25 @@ class DTGraphEmbed(pg.PlotWidget):
             return
 
         self.clear()
-        self.plot(x, y, pen=pg.mkPen('blue', width=2), symbol='o')
+        
+        # Create bar graph instead of line graph
+        bargraph = pg.BarGraphItem(x=x, height=y, width=0.6, brush='b')
+        self.addItem(bargraph)
+        
+        # Set Y-axis to start from 0 and extend to max value plus some padding
+        max_y = max(y) if y else 1  # Default to 1 if y is empty
+        self.setYRange(0, max_y * 1.1)  # Add 10% padding on top
+        
+        # Set X-axis ticks for better readability if you have enough data points
+        if len(x) > 0:
+            # Create tick labels (e.g., "1 day ago", "2 days ago", etc.)
+            tick_labels = {}
+            for day in x:
+                if day == 0:
+                    tick_labels[day] = "Today"
+                elif day == 1:
+                    tick_labels[day] = "1 day ago"
+                else:
+                    tick_labels[day] = f"{day} days ago"
+                    
+            self.getAxis('bottom').setTicks([tick_labels.items()])
