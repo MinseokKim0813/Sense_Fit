@@ -35,4 +35,5 @@ class DPIGraphEmbed(pg.PlotWidget):
             return
 
         self.clear()
+        self.getPlotItem().getViewBox().setYRange(0, max(y) * 1.1, padding=0)
         self.plot(x, y, pen=pg.mkPen('blue', width=2), symbol='o')

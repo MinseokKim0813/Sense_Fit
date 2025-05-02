@@ -46,8 +46,7 @@ class DTGraphEmbed(pg.PlotWidget):
         self.addItem(bargraph)
         
         # Set Y-axis to start from 0 and extend to max value plus some padding
-        max_y = max(y) if y else 1  # Default to 1 if y is empty
-        self.setYRange(0, max_y * 1.1)  # Add 10% padding on top
+        self.getPlotItem().getViewBox().setYRange(0, max(y) * 1.1, padding=0)
         
         # Set X-axis ticks for better readability if you have enough data points
         if len(x) > 0:
