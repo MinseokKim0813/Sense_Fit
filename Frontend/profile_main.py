@@ -104,7 +104,7 @@ class ProfileWindow(QWidget):
         box2.addWidget(self.button2, alignment=Qt.AlignHCenter)
 
         # DPI Graph
-        self.dpi_plot_widget = DPIGraphEmbed(self.profile['_id'])
+        self.dpi_plot_widget = DPIGraphEmbed(self.profile)
         self.dpi_plot_widget.hide()
         self.dpi_plot_widget.setFixedHeight(300)
         self.dpi_plot_widget.setFixedWidth(400)
