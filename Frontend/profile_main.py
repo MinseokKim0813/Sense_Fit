@@ -217,8 +217,6 @@ class ProfileWindow(QWidget):
         else:
             self.dpi_plot_widget.hide()
 
-
-
     def go_back(self):
         try:
             if self.cursor_tracker is not None:

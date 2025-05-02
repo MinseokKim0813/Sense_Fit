@@ -9,8 +9,8 @@ class DTGraphEmbed(pg.PlotWidget):
         self.profile_id = profile_id
         self.setBackground('w')
         self.setVisible(False)  # start hidden
-        self.setLabel("left", "DPI")
-        self.setLabel("bottom", "Time")
+        self.setLabel("left", "Distance Traveled")
+        self.setLabel("bottom", "Date")
         self.plot_dt_history()
 
     def plot_dt_history(self):
@@ -26,13 +26,15 @@ class DTGraphEmbed(pg.PlotWidget):
         # Extract history
         x = []
         y = []
-        for entry in profile.get("DPI_history", []):
-            if isinstance(entry, dict) and "value" in entry and "timestamp" in entry:
+        for entry in profile.get("session_total_distance", []):
+            if isinstance(entry, dict) and "total_distance" in entry and "timestamp" in entry:
                 try:
-                    dt = datetime.fromisoformat(entry["timestamp"])
-                    x.append(dt.timestamp())
-                    y.append(entry["value"])
-                except:
+                    dt = datetime.strptime(entry["timestamp"], "%Y-%m-%d %H:%M:%S")
+                    timestamp = dt.timestamp()  # convert to float (seconds since epoch)
+                    x.append(timestamp)
+                    y.append(entry["total_distance"])
+                except Exception as e:
+                    print("Error parsing entry:", entry, e)
                     continue
 
         if not x or not y:
