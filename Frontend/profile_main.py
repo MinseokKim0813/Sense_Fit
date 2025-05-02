@@ -12,6 +12,8 @@ from Frontend.error_window import *
 from Frontend.alert_window import *
 from Frontend.alert_window_one_button import *
 from Backend.profile_handler import ProfileHandler
+from Backend.DPIgraph import DPIGraphEmbed
+from Backend.DTgraph import DTGraphEmbed
 
 class ProfileWindow(QWidget):
     def __init__(self, profile, main_window=None):
@@ -68,6 +70,8 @@ class ProfileWindow(QWidget):
         self.button1 = QPushButton("View Data")
         self.button1.setFixedSize(180, 40)
         self.button1.setStyleSheet("font-size: 14px; color: white; background-color: #2c2c2c;")
+        self.button1.clicked.connect(self.toggle_dt_graph)
+
 
         box1 = QVBoxLayout()
         box1.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
@@ -87,6 +91,7 @@ class ProfileWindow(QWidget):
         self.button2 = QPushButton("View Data")
         self.button2.setFixedSize(180, 40)
         self.button2.setStyleSheet("font-size: 14px; color: white; background-color: #2c2c2c;")
+        self.button2.clicked.connect(self.toggle_dpi_graph)
 
         box2 = QVBoxLayout()
         box2.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
@@ -97,6 +102,23 @@ class ProfileWindow(QWidget):
         box2.addWidget(self.label2)
         box2.addSpacing(10)
         box2.addWidget(self.button2, alignment=Qt.AlignHCenter)
+
+            # DPI Graph
+        self.dpi_plot_widget = DPIGraphEmbed(self.profile['_id'])
+        self.dpi_plot_widget.setVisible(False)
+        self.dpi_plot_widget.setFixedHeight(300)
+        self.dpi_plot_widget.setFixedWidth(400)
+        box2.addWidget(self.dpi_plot_widget)
+
+        # DT Graph
+        self.dt_plot_widget = DTGraphEmbed(self.profile['_id'])
+        self.dt_plot_widget.setVisible(False)
+        self.dt_plot_widget.setFixedHeight(300)
+        self.dt_plot_widget.setFixedWidth(400)
+        box1.addWidget(self.dt_plot_widget)
+
+
+
 
         # Toggle status label
         self.tracking_status_label = QLabel("Tracking Disabled")
@@ -129,7 +151,7 @@ class ProfileWindow(QWidget):
         top_button_layout = QHBoxLayout()
         top_button_layout.addStretch()
         top_button_layout.addLayout(box1)
-        top_button_layout.addSpacing(int(window_width * 0.35))
+        top_button_layout.addSpacing(int(window_width * 0.2))
         top_button_layout.addLayout(box2)
         top_button_layout.addStretch()
 
@@ -156,9 +178,12 @@ class ProfileWindow(QWidget):
 
         main_layout.addLayout(top_layout)
 
-        main_layout.addSpacing(int(window_height * -0.11))
+        # main_layout.addSpacing(int(window_height * -0.11))
+        main_layout.addSpacing(30)  # Or a small positive value
         main_layout.addLayout(top_button_layout)
-        main_layout.addSpacing(int(window_height * 0.2))
+        # main_layout.addWidget(self.graph_container, alignment=Qt.AlignHCenter)
+
+        # main_layout.addSpacing(int(window_height * 0.05))
         
         # Add tracking status label first
         main_layout.addWidget(self.tracking_status_label)
@@ -182,6 +207,22 @@ class ProfileWindow(QWidget):
         main_layout.addSpacing(20)  # Small fixed spacing instead of stretch
         
         self.setLayout(main_layout)
+
+    def toggle_dt_graph(self):
+        if self.dt_plot_widget.isVisible():
+            self.dt_plot_widget.setVisible(False)
+            self.dt_plot_widget.clear()
+        else:
+            self.dt_plot_widget.setVisible(True)
+            self.dt_plot_widget.plot_dt_history()
+
+    def toggle_dpi_graph(self):
+        if self.dpi_plot_widget.isVisible():
+            self.dpi_plot_widget.setVisible(False)
+            self.dpi_plot_widget.clear()
+        else:
+            self.dpi_plot_widget.setVisible(True)
+            self.dpi_plot_widget.plot_dpi_history()
 
 
     def go_back(self):

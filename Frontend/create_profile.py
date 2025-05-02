@@ -15,7 +15,7 @@ class CreateProfileDialog(QDialog):
     profile_created = pyqtSignal(dict)  # Profile Object
 
     def __init__(self, profile_handler):
-        super().__init__()
+        super().__init__() 
         self.setWindowTitle("SenseFit")
 
         screen = QDesktopWidget().screenGeometry()

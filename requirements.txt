@@ -3,3 +3,4 @@ pyautogui
 pynput
 pandas
 numpy
+pyqtgraph
