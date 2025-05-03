@@ -63,7 +63,7 @@ class DPIGraphEmbed(pg.PlotWidget):
                 time_label = "Before"
             else:
                 # For other points, show date and hour
-                time_label = date_obj.strftime("%b-%d %H")
+                time_label = date_obj.strftime("%b-%d %H:%M")
             tick_labels[i] = time_label
 
         self.clear()
