@@ -34,7 +34,7 @@ class ErrorPopup(QDialog):
                 background-color:rgb(175, 28, 31);
             }
         """)
-        # self.setFixedSize(500, 250)
+        
         self.setMinimumWidth(500)
         self.setMinimumHeight(250)
         self.setWindowFlags(Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint)

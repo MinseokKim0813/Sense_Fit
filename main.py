@@ -1,6 +1,3 @@
-from Backend.tracking_module import CursorTracker
-# from Frontend.frontmain import MainInterface
-
 from PyQt5.QtWidgets import QApplication
 import sys
 
@@ -15,5 +12,3 @@ if __name__ == "__main__":
     window = MainInterface()
     window.show()
     sys.exit(app.exec_())
-
-

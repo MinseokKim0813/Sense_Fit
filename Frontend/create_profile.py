@@ -102,6 +102,7 @@ class CreateProfileDialog(QDialog):
         layout.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.title_label)
         layout.addWidget(self.error_label)
+
         # Wrap name layout
         name_wrapper = QWidget()
         name_wrapper.setLayout(name_layout)
@@ -113,7 +114,6 @@ class CreateProfileDialog(QDialog):
         dpi_wrapper.setLayout(dpi_layout)
         dpi_wrapper.setFixedWidth(int(window_width * 0.6))  # 60% of window width
         layout.addWidget(dpi_wrapper, alignment=Qt.AlignCenter)
-
 
         button_layout = QHBoxLayout()
         button_layout.setAlignment(Qt.AlignCenter)
@@ -134,7 +134,7 @@ class CreateProfileDialog(QDialog):
         response = self.profile_handler.create_profile(name, dpi)
 
         if 'error' in response:
-            # TODO: show a error message in the window but do not resize the modal
+            # TODO: show a error message in the window in the way that it does not resize the modal
             self.error_label.setText(response['error'])
             self.error_label.setVisible(True)
         else:

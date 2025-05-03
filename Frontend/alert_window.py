@@ -35,7 +35,7 @@ class Popup(QDialog):
                 color: black;
             }
         """)
-        # self.setFixedSize(500, 250)
+        
         self.setMinimumWidth(500)
         self.setMinimumHeight(250)
         self.setWindowFlags(Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint)

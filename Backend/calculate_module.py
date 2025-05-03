@@ -41,15 +41,15 @@ class DPICalculationModule:
         count = 0
 
         for seg in self.__movement_data:
-            #when mix
+            # When both pause(s) and an overshoot exist
             if len(seg["PD_list"]) != 0 and seg["OS_distance"] is not None:
                 temp = self.calculate_mix(seg["PD_list"], seg["OS_distance"], seg["TD"])
                 count += 1
-            #when only over shoot exist
+            # When only a overshoot exists
             elif len(seg["PD_list"]) == 0 and seg["OS_distance"] is not None:
                 temp = self.calculate_OS(seg["OS_distance"], seg["TD"])
                 count += 1
-            #when only over paused exist
+            # When only pause(s) exist
             elif len(seg["PD_list"]) != 0 and seg["OS_distance"] is None:
                 temp = self.calculate_paused(seg["PD_list"], seg["TD"])
                 count += 1

@@ -305,7 +305,6 @@ class ProfileWindow(QWidget):
                         self.title_label.setText(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
 
                         # add the new dpi to self.profile for dpi history
-                        # self.dpi_plot_widget = DPIGraphEmbed(self.profile)
                         updated_profile = self.profile_handler.refresh_profile(self.profile["_id"])
                         self.profile = updated_profile
                         self.dpi_plot_widget.profile = updated_profile

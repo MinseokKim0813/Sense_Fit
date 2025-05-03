@@ -13,7 +13,7 @@ from Backend.profile_handler import ProfileHandler
 profile_handler = ProfileHandler()
 
 class ProfileCard(QFrame):
-    clicked = pyqtSignal(dict) # profile object
+    clicked = pyqtSignal(dict) # The profile object
 
     def __init__(self, profile, width, height):
         super().__init__()
@@ -142,7 +142,7 @@ class MainInterface(QMainWindow):
                 widget.setParent(None)
 
         card_width, card_height = self.get_card_size()
-        total_items = len(self.profiles) + 1  # profiles + add card
+        total_items = len(self.profiles) + 1  # Profiles + the Add card
         columns = 4
 
         for idx in range(total_items):

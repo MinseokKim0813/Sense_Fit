@@ -16,7 +16,7 @@ class AnalyzeModule:
         self.total_distance = 0
         self.__error = None
 
-        # if self.__log_file is not found, raise an error (Test Case 9)
+        # If self.__log_file is not found, raise an error (Test Case 9)
         if not os.path.exists(self.__log_file):
             raise Exception(f"Tracking log file not found: {self.__log_file}")
 
@@ -59,9 +59,8 @@ class AnalyzeModule:
             self.__error = str(e)
 
     def validate_data_length(self) -> bool:
-        # The tracking data must have at least 100 data points
-        # TODO: For testing purposes, change the minimum data length to 100
-        return len(self.__cursor_log) >= 100
+        # The tracking data must have at least 1000 data points
+        return len(self.__cursor_log) >= 100 # Have 100 for testing purposes; TODO, change back to 1000
 
     def validate_timestamps(self) -> bool:
 
@@ -217,7 +216,6 @@ class AnalyzeModule:
             if self.__cursor_log[i]['clicked'] == 1:
                 clicked_positions.append({**self.__cursor_log[i], 'index': i})
         
-        # TODO: Remove clicks that are too close to each other (0.4 seconds) to count double clicks as one click
         for i in range(1, len(clicked_positions)):
             time_before = datetime.strptime(clicked_positions[i - 1]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
             time_now = datetime.strptime(clicked_positions[i]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
@@ -229,16 +227,14 @@ class AnalyzeModule:
         return clicked_positions
     
     def analyze_all_segment(self, end_positions) -> list[dict]:
-        #variables
-        all_segment = []                                    #return list of objects "segment"
-        data_points = self.__cursor_log                     #call data points
-        i = 0                                               #pointer for the nearer cursor data
-        j = 25                                              #pointer for further cursor data
-        slope_before = None                                 #to compare two slopes
-        prev_click_point = 0                                #to make sure the start for an end point comes after the previous end point
-        overshoot_flag = False                              #to detect overshoot existence
-        self.get_pause_segments()                           #updates __pause_point_list
-        # print(self.__pause_points_list)
+        all_segment = []                                    # Return list of objects "segment"
+        data_points = self.__cursor_log                     # Call data points
+        i = 0                                               # Pointer for the nearer cursor data
+        j = 25                                              # Pointer for further cursor data
+        slope_before = None                                 # To compare two slopes
+        prev_click_point = 0                                # Make sure the start for an end point comes after the previous end point
+        overshoot_flag = False                              # Detect overshoot existence
+        self.get_pause_segments()                           # Updates __pause_point_list
 
         # Each click point will become the end_position of a trajectory segment for analysis
         for end_position in end_positions:
@@ -255,7 +251,7 @@ class AnalyzeModule:
                     dx = data_points[end_position - j]['x'] - data_points[end_position - i]['x']
                     dy = data_points[end_position - j]['y'] - data_points[end_position - i]['y']
                     
-                    #check for pause points, and disregard these points
+                    # Check for pause points, and disregard these points
                     if self.is_paused(dx,dy):
                         i += 1
                         j += 1
@@ -268,17 +264,13 @@ class AnalyzeModule:
                         if not overshoot_flag:
                             if 130 <= self.angle_diff(slope_before, slope_now):
                                 overshoot_flag = True
-                                #for debug
-                                #print("overshoot", data_points[end_position - i])
-                                #TODO: Fix false overshoot, like if overshoot is too large, filter it out
-                                # print("Overshoot detected at", end_position - i)
                                 segment['OS_distance'] = (end_position - i) # temporily use index as distance
                                 slope_before = slope_now
                                 i += 25
                                 j += 25
                                 continue
 
-                        #if the angle diff is more than 30 degrees, the system identifies the second latest cursor data point as the start point for the corresponding endpoint
+                        # If the angle diff is more than 30 degrees, the system identifies the second latest cursor data point as the start point for the corresponding endpoint
                         if self.angle_diff(slope_before, slope_now) > 30:
 
                             segment['start_index'] = (end_position - i)         #add second latest cursor data index as the segment's start index
@@ -290,7 +282,7 @@ class AnalyzeModule:
                     i += 25
                     j += 25
 
-                #if goes beyond boundary save analyzed start_index and end_index for the segment
+                # If goes beyond boundary save analyzed start_index and end_index for the segment
                 else:
                     segment['start_index'] = (end_position - i)
                     segment['end_index'] = end_position
@@ -301,29 +293,13 @@ class AnalyzeModule:
                 segment['start_index'] = 0
                 segment['end_index'] = end_position
 
-            #for counting pausepoints in one segment
+            # For counting pausepoints in one segment
             segment["PD_list"] = self.get_pause_distance(segment["start_index"], segment["end_index"], segment["OS_distance"])
-            # startindex = segment["start_index"]
-            # endindex = segment["end_index"]
-
-            # for each in self.__pause_points_list:
-            #     if each["start_index"] == 0:
-            #         continue
-
-            #     if segment["OS_distance"] is not None:
-            #         if each["start_index"] <= segment["OS_distance"] <= each["end_index"]:
-            #             continue              
-
-            #     if startindex <= each["start_index"] and endindex >= each["end_index"]:
-            #         segment["PPnums"] += 1
-
-            # Update OS_distance to the distance between the start and end of the segment
 
             if segment['OS_distance'] is not None:
                 segment['OS_distance'] = self.get_distance(segment["end_index"], segment['OS_distance'])
 
             segment['TD'] = self.get_distance(segment["start_index"], segment["end_index"])
-            # print("TD", segment['TD'])
 
             # Reset the variables for the next segment
             i = 0
@@ -333,14 +309,11 @@ class AnalyzeModule:
             overshoot_flag = False
             all_segment.append(segment)
 
-
-        # print(all_segment)
         return all_segment
 
     def analyze_tracking_data(self) -> dict:
         end_positions = self.find_end_points()
         all_segment = self.analyze_all_segment(end_positions)
-        #print(all_segment)
         self.total_distance = self.get_total_distance()
         return {"analysis_result": all_segment, "total_distance": self.total_distance}
     
@@ -378,14 +351,12 @@ class AnalyzeModule:
     
     def get_pause_distance(self, startpoint: int, endpoint: int, OS_index: int) -> list[int]:
         paused_points = self.__pause_points_list                          #updates __pause_point_list
-        # print(paused_points)
         PDList = []
         
-        #TODO: find a way to filter out OS and the last PD as pause point
         paused_points_within_segment = [startpoint]
         for each in paused_points:
             if startpoint <= each["start_index"] and endpoint >= each["end_index"]:
-                # print("PAUSED!")
+
                 # Skip OS_index check if OS_index is None
                 if OS_index is None or (not (each["start_index"] <= OS_index <= each["end_index"])
                     and not (each["start_index"] <= endpoint <= each["end_index"])):
