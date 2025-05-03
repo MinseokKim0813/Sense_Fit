@@ -10,29 +10,18 @@ class DTGraphEmbed(QWidget):
         super().__init__()
         self.profile = profile
         
-        # Create layout
+        # Create main layout
         self.layout = QVBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0, 0)  # Remove margins
+        self.layout.setSpacing(0)  # Remove spacing between widgets
         
-        # Create graph
-        self.graph_widget = pg.PlotWidget()
-        self.graph_widget.setBackground('w')
-        self.graph_widget.setLabel("left", "Distance Traveled")
-        self.graph_widget.setLabel("bottom", "Date")
-        
-        # Disable auto-ranging to keep the view fixed
-        self.graph_widget.setAutoVisible(y=False)
-        
-        # Lock the ViewBox to prevent x-axis scaling
-        self.graph_widget.getViewBox().setMouseEnabled(x=False, y=False)
-        
-        # Create controls widget (dropdown and button)
+        # Create controls widget (dropdown)
         self.controls_widget = QWidget()
         self.controls_layout = QHBoxLayout(self.controls_widget)
+        self.controls_layout.setContentsMargins(0, 0, 0, 0)  # Remove margins
         
-        # View Data label
-        self.view_label = QLabel("View Data")
-        self.view_label.setStyleSheet("color: white; font-size: 16px;")
-        self.controls_layout.addWidget(self.view_label)
+        # Add stretch first to push dropdown to the right
+        self.controls_layout.addStretch()
         
         # Create dropdown for time frame options
         self.dropdown = QComboBox()
@@ -56,9 +45,21 @@ class DTGraphEmbed(QWidget):
         """)
         self.controls_layout.addWidget(self.dropdown)
         
+        # Create graph
+        self.graph_widget = pg.PlotWidget()
+        self.graph_widget.setBackground('w')
+        self.graph_widget.setLabel("left", "Distance Traveled")
+        self.graph_widget.setLabel("bottom", "Date")
+        
+        # Disable auto-ranging to keep the view fixed
+        self.graph_widget.setAutoVisible(y=False)
+        
+        # Lock the ViewBox to prevent x-axis scaling
+        self.graph_widget.getViewBox().setMouseEnabled(x=False, y=False)
+        
         # Add controls and graph to main layout
         self.layout.addWidget(self.controls_widget)
-        self.layout.addWidget(self.graph_widget)
+        self.layout.addWidget(self.graph_widget, 1)  # Give graph widget stretch factor of 1
         
         # Initialize with default visualization
         self.plot_dt_history()
@@ -157,13 +158,9 @@ class DTGraphEmbed(QWidget):
             tick_labels = {}
             
             if time_frame == "24 hours":
-                # For 24-hour view, use time of day format (3:24 PM, 1:23 AM)
+                # For 24-hour view, use 24-hour time format (14:30, 23:15)
                 for x_val, datetime_obj in x_map.items():
-                    # Format the time as "3:24 PM" or "1:23 AM"
-                    time_label = datetime_obj.strftime("%I:%M %p")
-                    # Remove leading zero from hour if present
-                    if time_label.startswith("0"):
-                        time_label = time_label[1:]
+                    time_label = datetime_obj.strftime("%H:%M")
                     tick_labels[x_val] = time_label
             else:
                 # For week/month views, use Month-Day format
