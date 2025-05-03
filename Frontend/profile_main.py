@@ -151,10 +151,11 @@ class ProfileWindow(QWidget):
         top_button_layout = QHBoxLayout()
         top_button_layout.addStretch()
         top_button_layout.addLayout(box1)
-        top_button_layout.addSpacing(int(window_width * 0.2))
+        top_button_layout.addSpacing(int(window_width * 0.35))
         top_button_layout.addLayout(box2)
         top_button_layout.addStretch()
 
+        box3 = QVBoxLayout()
         toggle_row_layout = QHBoxLayout()
         toggle_row_layout.addStretch()
         toggle_row_layout.addWidget(self.tracking_label)
@@ -177,7 +178,7 @@ class ProfileWindow(QWidget):
         top_layout.addWidget(self.title_label, 0, 0, 1, 3, alignment=Qt.AlignHCenter | Qt.AlignTop)
 
         main_layout.addLayout(top_layout)
-
+        # main_layout.addSpacing(int(window_height * -0.11))
         main_layout.addLayout(top_button_layout)
         
         # Add tracking status label first
