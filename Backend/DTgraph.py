@@ -160,7 +160,12 @@ class DTGraphEmbed(QWidget):
             if time_frame == "24 hours":
                 # For 24-hour view, use 24-hour time format (14:30, 23:15)
                 for x_val, datetime_obj in x_map.items():
-                    time_label = datetime_obj.strftime("%H:%M")
+                    # Compare date of data point to current date
+                    if datetime_obj.date() == current_datetime.date():
+                        time_label = datetime_obj.strftime("%H:%M")
+                    else:
+                        # Previous day but within 24 hours
+                        time_label = f"-1D:{datetime_obj.strftime('%H:%M')}"
                     tick_labels[x_val] = time_label
             else:
                 # For week/month views, use Month-Day format
