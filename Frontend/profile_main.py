@@ -54,12 +54,7 @@ class ProfileWindow(QWidget):
 
         # Set window size to 80% of screen
         window_width = int(self.screen_width * 0.8)
-        window_height = int(self.screen_height * 0.8)
-        self.resize(window_width, window_height)
-        self.move(
-            int((self.screen_width - window_width) / 2),
-            int((self.screen_height - window_height) / 2)
-        )
+        half_width = window_width // 2
 
         # Set modern dark background
         self.setStyleSheet("background-color: #1e1e1e; color: white;")
@@ -81,9 +76,10 @@ class ProfileWindow(QWidget):
         border: 2px solid red; """)
 
 
-        # Distance Traveled Section
+        # Distance Traveled Section (Left)
         self.label1 = QLabel("Distance Traveled")
         self.label1.setStyleSheet("font-size: 30px; color: white;")
+        self.label1.setAlignment(Qt.AlignHCenter)
 
         self.button1 = QPushButton("View Data")
         self.button1.setFixedSize(180, 40)
@@ -93,11 +89,22 @@ class ProfileWindow(QWidget):
         self.dt_plot_widget = DTGraphEmbed(self.profile)
         self.dt_plot_widget.hide()
         self.dt_plot_widget.setFixedHeight(300)
-        self.dt_plot_widget.setFixedWidth(400)
+        self.dt_plot_widget.setFixedWidth(half_width - 40)
 
-        # DPI Section
+        left_container = QWidget()
+        left_container.setFixedWidth(half_width)
+        left_layout = QVBoxLayout(left_container)
+        left_layout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+        left_layout.setContentsMargins(0, 0, 0, 0)
+        left_layout.addWidget(self.label1, alignment=Qt.AlignHCenter)
+        left_layout.addWidget(self.button1, alignment=Qt.AlignHCenter)
+        left_layout.addWidget(self.dt_plot_widget, alignment=Qt.AlignHCenter)
+        left_layout.addStretch()
+
+        # DPI Recommendation Section (Right)
         self.label2 = QLabel("DPI Recommendation")
         self.label2.setStyleSheet("font-size: 30px; color: white;")
+        self.label2.setAlignment(Qt.AlignHCenter)
 
         self.button2 = QPushButton("View Data")
         self.button2.setFixedSize(180, 40)
@@ -107,7 +114,29 @@ class ProfileWindow(QWidget):
         self.dpi_plot_widget = DPIGraphEmbed(self.profile)
         self.dpi_plot_widget.hide()
         self.dpi_plot_widget.setFixedHeight(300)
-        self.dpi_plot_widget.setFixedWidth(400)
+        self.dpi_plot_widget.setFixedWidth(half_width - 40)
+
+        right_container = QWidget()
+        right_container.setFixedWidth(half_width)
+        right_layout = QVBoxLayout(right_container)
+        right_layout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+        right_layout.setContentsMargins(0, 0, 0, 0)
+        right_layout.addWidget(self.label2, alignment=Qt.AlignHCenter)
+        right_layout.addWidget(self.button2, alignment=Qt.AlignHCenter)
+        right_layout.addWidget(self.dpi_plot_widget, alignment=Qt.AlignHCenter)
+        right_layout.addStretch()
+
+        # Combine into a horizontal layout
+        graphs_horizontal = QHBoxLayout()
+        graphs_horizontal.setSpacing(0)
+        graphs_horizontal.setContentsMargins(0, 0, 0, 0)
+        graphs_horizontal.addWidget(left_container)
+        graphs_horizontal.addWidget(right_container)
+
+        # Wrap in a container with fixed height
+        graphs_container = QWidget()
+        graphs_container.setFixedHeight(450)
+        graphs_container.setLayout(graphs_horizontal)
 
         # Tracking Toggle
         self.tracking_status_label = QLabel("Tracking Disabled")
@@ -135,32 +164,9 @@ class ProfileWindow(QWidget):
         self.analysis_error_label.setVisible(False)
 
         # === LAYOUT COMPOSITION ===
-
         top_layout = QGridLayout()
         top_layout.addWidget(back_button, 0, 0, alignment=Qt.AlignLeft | Qt.AlignTop)
-        # top_layout.addItem(QSpacerItem(20, 0, QSizePolicy.Expanding, QSizePolicy.Minimum), 0, 1)
         top_layout.addWidget(self.title_label, 0, 0, 1, 3, alignment=Qt.AlignHCenter | Qt.AlignTop)
-
-        # top_layout.setFixedHeight(100)
-        # self.testing_label = QLabel("Testing")
-        # top_layout.addLayout(box1)
-        box1 = QVBoxLayout()
-        box1.addWidget(self.label1)
-        box1.addWidget(self.button1)
-        box1.addWidget(self.dt_plot_widget)
-        
-        box2 = QVBoxLayout()
-        box2.addWidget(self.label2)
-        box2.addWidget(self.button2)
-        box2.addWidget(self.dpi_plot_widget)
-
-
-        top_button_layout = QHBoxLayout()
-        # top_button_layout.addStretch()
-        top_button_layout.addLayout(box1)
-        # top_button_layout.addSpacing(int(window_width * 0.2))
-        top_button_layout.addLayout(box2)
-        # top_button_layout.addStretch()
 
         toggle_row_layout = QHBoxLayout()
         toggle_row_layout.addStretch()
@@ -179,23 +185,11 @@ class ProfileWindow(QWidget):
         main_layout = QVBoxLayout()
         main_layout.addSpacing(10)
         main_layout.addWidget(self.wrap_with_border(top_layout, "red"))
-        main_layout.addWidget(self.wrap_with_border(top_button_layout, "green"))
+        main_layout.addWidget(self.wrap_with_border(graphs_container, "green"))
         main_layout.addWidget(self.wrap_with_border(self.tracking_status_label, "yellow"))
         main_layout.addWidget(self.wrap_with_border(toggle_row_layout, "blue"))
         main_layout.addWidget(self.wrap_with_border(status_widget, "purple"))
         main_layout.addSpacing(20)
-
-
-
-
-        # main_layout = QVBoxLayout()
-        # main_layout.addSpacing(10)
-        # main_layout.addLayout(top_layout)
-        # main_layout.addLayout(top_button_layout)
-        # main_layout.addWidget(self.tracking_status_label)
-        # main_layout.addLayout(toggle_row_layout)
-        # main_layout.addWidget(status_widget)
-        # main_layout.addSpacing(20)
 
         self.setLayout(main_layout)
 
