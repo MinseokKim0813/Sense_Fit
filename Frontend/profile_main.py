@@ -82,7 +82,7 @@ class ProfileWindow(QWidget):
         self.left_layout.addStretch()
 
         # DPI Recommendation Section (Right)
-        self.label2 = QLabel("DPI Recommendation")
+        self.label2 = QLabel("DPI History")
         self.label2.setStyleSheet("font-size: 30px; color: white;")
         self.label2.setAlignment(Qt.AlignHCenter)
 
@@ -313,6 +313,8 @@ class ProfileWindow(QWidget):
                         self.profile = updated_profile
                         self.dpi_plot_widget.profile = updated_profile
                         self.dpi_plot_widget.plot_dpi_history()
+                        self.dt_plot_widget.profile = updated_profile
+                        self.dt_plot_widget.plot_dt_history()
 
                         #print(DPI_calculation_module.calculate_dpi())
                     else:
