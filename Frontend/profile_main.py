@@ -27,21 +27,6 @@ class ProfileWindow(QWidget):
         self.profile_handler = ProfileHandler()
         self.initUI()
 
-    def wrap_with_border(self, widget_or_layout, color="cyan"):
-        container = QWidget()
-        wrapper_layout = QVBoxLayout()
-        wrapper_layout.setContentsMargins(0, 0, 0, 0)
-
-        if isinstance(widget_or_layout, QWidget):
-            wrapper_layout.addWidget(widget_or_layout)
-        else:
-            temp_widget = QWidget()
-            temp_widget.setLayout(widget_or_layout)
-            wrapper_layout.addWidget(temp_widget)
-
-        container.setLayout(wrapper_layout)
-        container.setStyleSheet(f"border: 2px dashed {color}; background-color: rgba(255, 255, 255, 0.05);")
-        return container
 
 
     def initUI(self):
@@ -68,13 +53,8 @@ class ProfileWindow(QWidget):
         back_button.setStyleSheet("font-size: 18px; background-color: #2c2c2c; color: white;")
 
         self.title_label = QLabel(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
-        # self.title_label.setStyleSheet("font-size: 50px; font-weight: bold;")
-        self.title_label.setStyleSheet("""
-        font-size: 50px; 
-        font-weight: bold; 
-        background-color: rgba(255, 0, 0, 0.2); 
-        border: 2px solid red; """)
-
+        self.title_label.setStyleSheet("font-size: 50px; font-weight: bold;")
+    
 
         # Distance Traveled Section (Left)
         self.label1 = QLabel("Distance Traveled")
@@ -93,13 +73,13 @@ class ProfileWindow(QWidget):
 
         left_container = QWidget()
         left_container.setFixedWidth(half_width)
-        left_layout = QVBoxLayout(left_container)
-        left_layout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
-        left_layout.setContentsMargins(0, 0, 0, 0)
-        left_layout.addWidget(self.label1, alignment=Qt.AlignHCenter)
-        left_layout.addWidget(self.button1, alignment=Qt.AlignHCenter)
-        left_layout.addWidget(self.dt_plot_widget, alignment=Qt.AlignHCenter)
-        left_layout.addStretch()
+        self.left_layout = QVBoxLayout(left_container)
+        self.left_layout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+        self.left_layout.setContentsMargins(0, 0, 0, 0)
+        self.left_layout.addWidget(self.label1, alignment=Qt.AlignHCenter)
+        self.left_layout.addWidget(self.button1, alignment=Qt.AlignHCenter)
+        self.left_layout.addWidget(self.dt_plot_widget, alignment=Qt.AlignHCenter)
+        self.left_layout.addStretch()
 
         # DPI Recommendation Section (Right)
         self.label2 = QLabel("DPI Recommendation")
@@ -112,6 +92,7 @@ class ProfileWindow(QWidget):
         self.button2.clicked.connect(self.toggle_dpi_graph)
 
         self.dpi_plot_widget = DPIGraphEmbed(self.profile)
+        print("init: ", self.profile)
         self.dpi_plot_widget.hide()
         self.dpi_plot_widget.setFixedHeight(300)
         self.dpi_plot_widget.setFixedWidth(half_width - 40)
@@ -184,11 +165,11 @@ class ProfileWindow(QWidget):
 
         main_layout = QVBoxLayout()
         main_layout.addSpacing(10)
-        main_layout.addWidget(self.wrap_with_border(top_layout, "red"))
-        main_layout.addWidget(self.wrap_with_border(graphs_container, "green"))
-        main_layout.addWidget(self.wrap_with_border(self.tracking_status_label, "yellow"))
-        main_layout.addWidget(self.wrap_with_border(toggle_row_layout, "blue"))
-        main_layout.addWidget(self.wrap_with_border(status_widget, "purple"))
+        main_layout.addLayout(top_layout)
+        main_layout.addWidget(graphs_container)
+        main_layout.addWidget(self.tracking_status_label)
+        main_layout.addLayout(toggle_row_layout)
+        main_layout.addWidget(status_widget)
         main_layout.addSpacing(20)
 
         self.setLayout(main_layout)
@@ -324,6 +305,14 @@ class ProfileWindow(QWidget):
                         self.profile_handler.update_dpi(self.profile['_id'], DPI_calculation_module.dpi['DPI_recommendation'])
                         # Update the title label with the new DPI
                         self.title_label.setText(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
+
+                        # add the new dpi to self.profile for dpi history
+                        print("after toggle:", self.profile)
+                        # self.dpi_plot_widget = DPIGraphEmbed(self.profile)
+                        updated_profile = self.profile_handler.refresh_profile(self.profile["_id"])
+                        self.profile = updated_profile
+                        self.dpi_plot_widget.profile = updated_profile
+                        self.dpi_plot_widget.plot_dpi_history()
 
                         #print(DPI_calculation_module.calculate_dpi())
                     else:

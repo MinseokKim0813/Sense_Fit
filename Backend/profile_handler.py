@@ -107,6 +107,20 @@ class ProfileHandler:
                 return {"message": "Profile deleted successfully"}
             
         return {"error": "Profile not found"}
+        
+    def refresh_profile(self, profile_id: int) -> dict:
+        if not os.path.exists(self.__profiles_file):
+            return {"error": "Profile storage file not found"}
+
+        with open(self.__profiles_file, "r") as file:
+            latest_profiles = json.load(file)
+
+        for profile in latest_profiles:
+            if profile["_id"] == profile_id:
+                return profile
+
+        return {"error": "Profile not found"}
+
     
     def get_profiles(self):
         return self.__profiles
