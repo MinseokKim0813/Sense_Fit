@@ -10,6 +10,13 @@ class DPIGraphEmbed(pg.PlotWidget):
         self.setBackground('w')
         self.setLabel("left", "DPI")
         self.setLabel("bottom", "Date")
+
+        # Disable auto-ranging to keep the view fixed
+        self.setAutoVisible(y=False)
+        
+        # Lock the ViewBox to prevent x-axis scaling
+        self.getViewBox().setMouseEnabled(x=False, y=False)
+        
         self.profile = profile
         self.plot_dpi_history()
 
