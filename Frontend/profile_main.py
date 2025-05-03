@@ -92,7 +92,6 @@ class ProfileWindow(QWidget):
         self.button2.clicked.connect(self.toggle_dpi_graph)
 
         self.dpi_plot_widget = DPIGraphEmbed(self.profile)
-        print("init: ", self.profile)
         self.dpi_plot_widget.hide()
         self.dpi_plot_widget.setFixedHeight(300)
         self.dpi_plot_widget.setFixedWidth(half_width - 40)
@@ -284,7 +283,6 @@ class ProfileWindow(QWidget):
                     if dpi_popup.result() == QDialog.Accepted:
                         # TODO: Implement calculation
                         DPI_calculation_module = DPICalculationModule(self.profile, self.current_session, movement_data["analysis_result"])
-                        print("DPI", DPI_calculation_module.dpi)
 
                         if (DPI_calculation_module.dpi['out_of_bounds_flag'] == True):
                             # Display error message in the UI
@@ -307,7 +305,6 @@ class ProfileWindow(QWidget):
                         self.title_label.setText(f"{self.profile['name']}'s Profile ({self.profile['DPI']} DPI)")
 
                         # add the new dpi to self.profile for dpi history
-                        print("after toggle:", self.profile)
                         # self.dpi_plot_widget = DPIGraphEmbed(self.profile)
                         updated_profile = self.profile_handler.refresh_profile(self.profile["_id"])
                         self.profile = updated_profile
@@ -316,7 +313,6 @@ class ProfileWindow(QWidget):
                         self.dt_plot_widget.profile = updated_profile
                         self.dt_plot_widget.plot_dt_history()
 
-                        #print(DPI_calculation_module.calculate_dpi())
                     else:
                         self.status_message_label.setText("DPI not calculated")
                         self.status_message_label.setStyleSheet("font-size: 16px; color: #FCAE1E;") # Warm Orange for warning
