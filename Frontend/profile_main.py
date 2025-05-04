@@ -16,7 +16,7 @@ from Backend.DPIgraph import DPIGraphEmbed
 from Backend.DTgraph import DTGraphEmbed
 
 class ProfileWindow(QWidget):
-    def __init__(self, profile, main_window=None):
+    def __init__(self, profile, main_window=None, profile_handler=None):
         super().__init__()
         self.main_interface = main_window
         self.profile = profile
@@ -24,7 +24,7 @@ class ProfileWindow(QWidget):
         self.cursor_tracker = None
         self.analyze_module = None
         self.current_session = None
-        self.profile_handler = ProfileHandler()
+        self.profile_handler = profile_handler
         self.initUI()
 
 

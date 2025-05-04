@@ -175,7 +175,7 @@ class MainInterface(QMainWindow):
         dialog.exec_()
     
     def switch_to_profile_page(self, profile):
-        profile_page = ProfileWindow(profile, self)
+        profile_page = ProfileWindow(profile, self, profile_handler)
         self.setCentralWidget(profile_page)
 
     def create_profile_card(self, profile, width, height):
