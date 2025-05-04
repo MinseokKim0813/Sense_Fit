@@ -9,9 +9,6 @@ from Frontend.create_profile import CreateProfileDialog
 from Frontend.profile_main import ProfileWindow
 from Backend.profile_handler import ProfileHandler
 
-# Create an instance of the profileHandler
-profile_handler = ProfileHandler()
-
 class ProfileCard(QFrame):
     clicked = pyqtSignal(dict) # The profile object
 
@@ -77,7 +74,8 @@ class MainInterface(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("SenseFit")
-        self.profiles = profile_handler.get_profiles()
+        self.profile_handler = ProfileHandler()
+        self.profiles = self.profile_handler.get_profiles()
 
         # Center window
         screen = QDesktopWidget().screenGeometry()
@@ -94,7 +92,7 @@ class MainInterface(QMainWindow):
         self.build_profile_grid()
 
     def build_profile_grid(self):
-        self.profiles = profile_handler.get_profiles()  # Refresh in case of newly created profile
+        self.profiles = self.profile_handler.get_profiles()  # Refresh in case of newly created profile
         profile_grid_widget = QWidget()
         self.setCentralWidget(profile_grid_widget)
 
@@ -151,7 +149,7 @@ class MainInterface(QMainWindow):
 
             if idx < len(self.profiles):
 
-                profile = profile_handler.find_profile(self.profiles[idx]['name'])
+                profile = self.profile_handler.find_profile(self.profiles[idx]['name'])
 
                 card = self.create_profile_card(profile, card_width, card_height)
             else:
@@ -170,12 +168,12 @@ class MainInterface(QMainWindow):
                 self.grid_layout.addWidget(filler, total_items // columns, col)
 
     def handle_add_profile(self):
-        dialog = CreateProfileDialog(profile_handler)
+        dialog = CreateProfileDialog(self.profile_handler)
         dialog.profile_created.connect(self.switch_to_profile_page)
         dialog.exec_()
     
     def switch_to_profile_page(self, profile):
-        profile_page = ProfileWindow(profile, self, profile_handler)
+        profile_page = ProfileWindow(profile, self, self.profile_handler)
         self.setCentralWidget(profile_page)
 
     def create_profile_card(self, profile, width, height):
@@ -187,7 +185,7 @@ class MainInterface(QMainWindow):
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
 
-        self.profiles = profile_handler.get_profiles()
+        self.profiles = self.profile_handler.get_profiles()
 
         self.setup_ui()
 
