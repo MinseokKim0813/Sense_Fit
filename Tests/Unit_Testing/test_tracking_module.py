@@ -20,3 +20,21 @@ def test_csv_initialization(tmp_path, qtbot):
             reader = csv.reader(f)
             header = next(reader)
             assert header == ["timestamp", "X", "Y", "clicked"]
+
+@patch("pyautogui.position")
+def test_error_logging(mock_position, tmp_path, qtbot):
+    mock_position.return_value = (100, 200)  # Fixed position
+    with patch("os.path.realpath", return_value=str(tmp_path)):
+        tracker = CursorTracker(1)
+        qtbot.addWidget(tracker)
+        
+        # Simulate timer timeout to trigger logging
+        tracker.update_cursor_position()
+        
+        # Read log file
+        with open(tracker._CursorTracker__log_file, 'r') as f:
+            rows = list(csv.reader(f))
+            last_row = rows[-1]
+            assert last_row[1] == "X"
+            assert last_row[2] == "Y"
+            assert last_row[3] == "clicked"
