@@ -135,6 +135,14 @@ def generate_no_clicks_rows(n=100):
         rows.append([time, 100 + i, 100 + i, '0'])  # All clicks are '0'
     return rows
 
+def generate_single_click_rows(n=100):
+    start = datetime.now()
+    rows = []
+    for i in range(n):
+        time = (start + timedelta(milliseconds=i*100)).strftime('%Y-%m-%d %H:%M:%S.%f')
+        click = '1' if i == 50 else '0'  # Single click at index 50
+        rows.append([time, 100 + i, 100 + i, click])
+    return rows
 
 # --------- Fixtures ---------
 
@@ -230,4 +238,11 @@ def create_no_clicks_log(temp_log_dir):
     temp_dir, logs_path = temp_log_dir
     file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
     write_log_file(file_path, generate_no_clicks_rows())
+    return temp_dir
+
+@pytest.fixture
+def create_single_click_log(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_single_click_rows())
     return temp_dir

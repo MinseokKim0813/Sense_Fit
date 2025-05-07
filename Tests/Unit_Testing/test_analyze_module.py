@@ -108,3 +108,9 @@ def test_no_clicks(create_no_clicks_log):
         analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
         end_positions = analyzer.find_end_points()
         assert end_positions == []
+
+def test_single_click(create_single_click_log):
+    with patch("Backend.analyze_module.os.path.dirname", return_value=create_single_click_log):
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
+        end_positions = analyzer.find_end_points()
+        assert end_positions == [50]
