@@ -101,6 +101,20 @@ def generate_multiple_pause_rows(n=100):
         rows.append([time, x, y, '0'])
     return rows
 
+def generate_edge_pause_rows(n=100):
+    start = datetime.now()
+    rows = []
+    for i in range(n):
+        time = (start + timedelta(milliseconds=i*100)).strftime('%Y-%m-%d %H:%M:%S.%f')
+        if i <= 5 or i >= 95:
+            # Pause at start (indices 0-5) and end (indices 95-99)
+            x, y = 100, 100
+        else:
+            x, y = 100 + i*20, 100 + i*20
+        rows.append([time, x, y, '0'])
+    return rows
+
+
 # --------- Fixtures ---------
 
 @pytest.fixture
@@ -174,4 +188,11 @@ def create_multiple_pause_log(temp_log_dir):
     temp_dir, logs_path = temp_log_dir
     file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
     write_log_file(file_path, generate_multiple_pause_rows())
+    return temp_dir
+
+@pytest.fixture
+def create_edge_pause_log(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_edge_pause_rows())
     return temp_dir

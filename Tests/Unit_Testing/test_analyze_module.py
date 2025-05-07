@@ -77,3 +77,15 @@ def test_multiple_pauses(create_multiple_pause_log):
         # Validate second pause
         assert pause_segments[1]["start_index"] == 20
         assert pause_segments[1]["end_index"] == 25
+
+def test_edge_pauses(create_edge_pause_log):
+    with patch("Backend.analyze_module.os.path.dirname", return_value=create_edge_pause_log):
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
+        pause_segments = analyzer.get_pause_segments()
+        assert len(pause_segments) == 2
+        # Validate start pause
+        assert pause_segments[0]["start_index"] == 0
+        assert pause_segments[0]["end_index"] == 5
+        # Validate end pause
+        assert pause_segments[1]["start_index"] == 95
+        assert pause_segments[1]["end_index"] == 99
