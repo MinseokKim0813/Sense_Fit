@@ -51,6 +51,17 @@ def test_missing_log_file():
 
 def test_no_pauses(create_no_pause_log):
     with patch("Backend.analyze_module.os.path.dirname", return_value=create_no_pause_log):
-        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3000, screen_height=3000)
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
         pause_segments = analyzer.get_pause_segments()
         assert len(pause_segments) == 0  # Expect no pauses
+
+def test_single_pause(create_single_pause_log):
+    with patch("Backend.analyze_module.os.path.dirname", return_value=create_single_pause_log):
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
+        pause_segments = analyzer.get_pause_segments()
+        assert len(pause_segments) == 1
+        segment = pause_segments[0]
+        assert segment["start_index"] == 5
+        assert segment["end_index"] == 10
+        assert segment["x"] == 0
+        assert segment["y"] == 0
