@@ -133,3 +133,10 @@ def test_edge_clicks(create_edge_clicks_log):
         analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
         end_positions = analyzer.find_end_points()
         assert end_positions == [0, 99]  # Both clicks are valid
+
+def test_no_end_points(create_no_clicks_log):
+    with patch("Backend.analyze_module.os.path.dirname", return_value=create_no_clicks_log):
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
+        end_positions = analyzer.find_end_points()
+        segments = analyzer.analyze_all_segment(end_positions)
+        assert segments == []
