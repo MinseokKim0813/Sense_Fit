@@ -102,3 +102,9 @@ def test_custom_threshold(create_single_pause_log):
         # Use threshold=5 (smaller than movement during non-pause)
         pause_segments = analyzer.get_pause_segments(threshold=5)
         assert len(pause_segments) == 1  # Still detects the pause
+
+def test_no_clicks(create_no_clicks_log):
+    with patch("Backend.analyze_module.os.path.dirname", return_value=create_no_clicks_log):
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
+        end_positions = analyzer.find_end_points()
+        assert end_positions == []
