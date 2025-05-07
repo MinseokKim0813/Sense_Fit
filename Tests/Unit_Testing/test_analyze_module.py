@@ -140,3 +140,16 @@ def test_no_end_points(create_no_clicks_log):
         end_positions = analyzer.find_end_points()
         segments = analyzer.analyze_all_segment(end_positions)
         assert segments == []
+
+def test_single_segment(create_single_endpoint_log):
+    with patch("Backend.analyze_module.os.path.dirname", return_value=create_single_endpoint_log):
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
+        end_positions = analyzer.find_end_points()
+        segments = analyzer.analyze_all_segment(end_positions)
+        
+        assert len(segments) == 1
+        segment = segments[0]
+        assert segment["start_index"] == 0  # Should start from beginning
+        assert segment["end_index"] == 80
+        assert isinstance(segment["TD"], float)  # Total distance
+        assert isinstance(segment["PD_list"], list)  # Pause distances

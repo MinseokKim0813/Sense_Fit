@@ -173,6 +173,17 @@ def generate_edge_clicks_rows(n=100):
         rows.append([time, 100 + i, 100 + i, click])
     return rows
 
+def generate_single_endpoint_rows(n=100):
+    start = datetime.now()
+    rows = []
+    for i in range(n):
+        time = (start + timedelta(milliseconds=i*100)).strftime('%Y-%m-%d %H:%M:%S.%f')
+        x = i * 30 % 3840  # Ensure coordinates stay within 3840x2160
+        y = i * 20 % 2160
+        click = '1' if i == 80 else '0'
+        rows.append([time, x, y, click])
+    return rows
+
 # --------- Fixtures ---------
 
 @pytest.fixture
@@ -295,4 +306,11 @@ def create_edge_clicks_log(temp_log_dir):
     temp_dir, logs_path = temp_log_dir
     file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
     write_log_file(file_path, generate_edge_clicks_rows())
+    return temp_dir
+
+@pytest.fixture
+def create_single_endpoint_log(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_single_endpoint_rows())
     return temp_dir
