@@ -1,5 +1,6 @@
 from unittest.mock import patch
 from Backend.analyze_module import AnalyzeModule
+import pytest
 
 def test_valid_log(create_valid_log_file):
     with patch("Backend.analyze_module.os.path.dirname", return_value=create_valid_log_file):
@@ -41,3 +42,9 @@ def test_no_movement(create_no_movement_log):
         result = analyzer.handle_error()
         assert "error" in result
         assert "Unusual cursor movement (No movement)" in result["error"]
+
+def test_missing_log_file():
+    with patch("Backend.analyze_module.os.path.dirname", return_value="/non/existent/directory"):
+        with pytest.raises(Exception) as exc_info:
+            AnalyzeModule(profile_id=1, session="sessionA", screen_width=1920, screen_height=1080)
+        assert "Tracking log file not found" in str(exc_info.value)
