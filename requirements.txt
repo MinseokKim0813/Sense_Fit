@@ -4,3 +4,4 @@ pynput
 pyqtgraph
 pytest
 pytest-qt
+pytest-cov

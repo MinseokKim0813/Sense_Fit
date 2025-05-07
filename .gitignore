@@ -10,3 +10,6 @@ Backend/storage
 
 # Cache
 __pycache__
+
+# Coverage
+.coverage
