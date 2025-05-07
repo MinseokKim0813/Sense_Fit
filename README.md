@@ -134,12 +134,13 @@ Sense_Fit/
 ## How It Works (Brief)
 
 - **Create a Profile** or Select a profile → **Start tracking**.
-- The system records **(timestamp, x, y, click status)** every few milliseconds.
+- The system records **(timestamp, x, y, click status)** every 10 milliseconds.
 - After stopping tracking, the system:
   - Validates collected data.
-  - Identifies **pauses** where the mouse stayed still.
-  - Detects **overshoot behaviors** where the cursor reversed direction sharply.
-  - Prepares the session log for further analysis or visualization.
+  - Identifies **Pauses**, **Start Positions**, and **End Positions**.
+  - Detects **overshoot** and **staccato** behaviors.
+- After the user agrees to get a calculation, the system suggests a suitable DPI than the one user had before.
+- The user can later check the **Distance Traveled** and **DPI Suggestion History** graph for insights.
 
 ---
 
@@ -147,8 +148,8 @@ Sense_Fit/
 
 - Visualize tracking path on a graph (pause points, overshoots, etc.)
 - Export analysis results into a report.
-- Add basic recommendations based on user movement patterns.
 - More robust error handling and UI polish.
+- Allow profile deletion.
 
 ---
 
