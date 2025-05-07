@@ -23,6 +23,14 @@ def generate_valid_rows(n=100):
         rows.append([time, current_value, current_value, clicked])
     return rows
 
+
+def generate_invalid_timestamp_rows(n=100):
+    rows = generate_valid_rows(n)
+    # Swap timestamps of two entries to create inconsistency
+    if len(rows) > 10:
+        rows[5][0], rows[10][0] = rows[10][0], rows[5][0]
+    return rows
+
 # --------- Fixtures ---------
 
 @pytest.fixture
@@ -38,3 +46,20 @@ def create_valid_log_file(temp_log_dir):
     file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
     write_log_file(file_path, generate_valid_rows())
     return temp_dir  # used in patching
+
+
+@pytest.fixture
+def create_short_log_file(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_valid_rows(n=50))  # Only 50 rows
+    return temp_dir
+
+
+
+@pytest.fixture
+def create_invalid_timestamps_log(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_invalid_timestamp_rows())
+    return temp_dir
