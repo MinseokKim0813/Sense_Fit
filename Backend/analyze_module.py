@@ -2,8 +2,6 @@ import os
 from datetime import datetime
 import csv
 import math
-import pandas as pd
-import numpy as np
 
 class AnalyzeModule:
     def __init__(self, profile_id: int, session: str, screen_width: int, screen_height: int) -> None:
