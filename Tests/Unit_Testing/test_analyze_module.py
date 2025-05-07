@@ -95,3 +95,10 @@ def test_short_pause_ignored(create_short_pause_log):
         analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
         pause_segments = analyzer.get_pause_segments()
         assert len(pause_segments) == 0  # Duration too short
+
+def test_custom_threshold(create_single_pause_log):
+    with patch("Backend.analyze_module.os.path.dirname", return_value=create_single_pause_log):
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
+        # Use threshold=5 (smaller than movement during non-pause)
+        pause_segments = analyzer.get_pause_segments(threshold=5)
+        assert len(pause_segments) == 1  # Still detects the pause
