@@ -46,3 +46,16 @@ def test_weekly_aggregation(qtbot):
     # Should aggregate to 1 bar with 125 (50+75)
     bars = [item for item in widget.graph_widget.items() if isinstance(item, pg.BarGraphItem)]
     assert bars[0].opts['height'] == [125]
+
+def test_yaxis_scaling(qtbot):
+    profile = {
+        "session_total_distance": [
+            {"timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "total_distance": 1500}
+        ]
+    }
+    widget = DTGraphEmbed(profile)
+    qtbot.addWidget(widget)
+    
+    ymin, ymax = widget.graph_widget.getViewBox().viewRange()[1]
+    assert ymin == 0.0
+    assert ymax == 1500 * 1.1  # 1650
