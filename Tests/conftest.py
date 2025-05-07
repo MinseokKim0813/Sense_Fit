@@ -195,6 +195,19 @@ def generate_multiple_endpoint_rows(n=100):
         rows.append([time, x, y, click])
     return rows
 
+def generate_overshoot_rows(n=100):
+    start = datetime.now()
+    rows = []
+    for i in range(n):
+        time = (start + timedelta(milliseconds=i*100)).strftime('%Y-%m-%d %H:%M:%S.%f')
+        if i < 50:
+            x, y = 100 + i*10, 100 + i*10  # Northeast movement
+        else:
+            x, y = 100 + i*10, 100 - i*10  # Southeast movement (abrupt change)
+        click = '1' if i == 80 else '0'
+        rows.append([time, x % 3840, y % 2160, click])
+    return rows
+
 # --------- Fixtures ---------
 
 @pytest.fixture
@@ -331,4 +344,11 @@ def create_multiple_endpoint_log(temp_log_dir):
     temp_dir, logs_path = temp_log_dir
     file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
     write_log_file(file_path, generate_multiple_endpoint_rows())
+    return temp_dir
+
+@pytest.fixture
+def create_overshoot_log(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_overshoot_rows())
     return temp_dir
