@@ -282,7 +282,7 @@ class ProfileWindow(QWidget):
                     # If user clicks "Get DPI", proceed to calculation
                     if dpi_popup.result() == QDialog.Accepted:
                         # TODO: Implement calculation
-                        DPI_calculation_module = DPICalculationModule(self.profile, self.current_session, movement_data["analysis_result"])
+                        DPI_calculation_module = DPICalculationModule(self.profile, movement_data["analysis_result"])
 
                         if (DPI_calculation_module.dpi['out_of_bounds_flag'] == True):
                             # Display error message in the UI
