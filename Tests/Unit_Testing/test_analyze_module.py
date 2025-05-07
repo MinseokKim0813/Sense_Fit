@@ -165,3 +165,11 @@ def test_multiple_segments(create_multiple_endpoint_log):
         assert segments[0]["end_index"] == 20
         assert segments[1]["end_index"] == 60
         assert segments[2]["end_index"] == 90
+
+def test_pause_in_segment(create_paused_segment_log):
+    with patch("Backend.analyze_module.os.path.dirname", return_value=create_paused_segment_log):
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
+        end_positions = analyzer.find_end_points()
+        segments = analyzer.analyze_all_segment(end_positions)
+        
+        assert len(segments[0]["PD_list"]) > 0  # Should detect pauses

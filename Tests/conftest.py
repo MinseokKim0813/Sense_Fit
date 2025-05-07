@@ -208,6 +208,19 @@ def generate_overshoot_rows(n=100):
         rows.append([time, x % 3840, y % 2160, click])
     return rows
 
+def generate_paused_segment_rows(n=100):
+    start = datetime.now()
+    rows = []
+    for i in range(n):
+        time = (start + timedelta(milliseconds=i*100)).strftime('%Y-%m-%d %H:%M:%S.%f')
+        if 30 <= i <= 40:
+            x, y = 500, 500  # Pause
+        else:
+            x, y = 100 + i*20, 100 + i*20
+        click = '1' if i == 80 else '0'
+        rows.append([time, x % 3840, y % 2160, click])
+    return rows
+
 # --------- Fixtures ---------
 
 @pytest.fixture
@@ -351,4 +364,11 @@ def create_overshoot_log(temp_log_dir):
     temp_dir, logs_path = temp_log_dir
     file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
     write_log_file(file_path, generate_overshoot_rows())
+    return temp_dir
+
+@pytest.fixture
+def create_paused_segment_log(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_paused_segment_rows())
     return temp_dir
