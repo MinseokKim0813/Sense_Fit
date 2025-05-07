@@ -33,7 +33,6 @@ class CursorTracker(QWidget):
         self.setWindowTitle("Global Cursor Tracker")                    # Window title
         self.resize(300, 100)                                           # Set window size
 
-
         # Set up the layout and add the label
         layout = QVBoxLayout()
         # layout.addWidget(self.label)
