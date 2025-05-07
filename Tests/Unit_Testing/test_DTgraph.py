@@ -27,3 +27,22 @@ def test_24h_time_frame(qtbot):
     bars = [item for item in widget.graph_widget.items() if isinstance(item, pg.BarGraphItem)]
     assert len(bars) == 1
     assert bars[0].opts['height'] == [100]
+
+def test_weekly_aggregation(qtbot):
+    now = datetime.now()
+    profile = {
+        "session_total_distance": [
+            # Same day entries
+            {"timestamp": (now - timedelta(days=1)).strftime("%Y-%m-%d 10:00:00"), "total_distance": 50},
+            {"timestamp": (now - timedelta(days=1)).strftime("%Y-%m-%d 15:00:00"), "total_distance": 75},
+            # Older than 7 days
+            {"timestamp": (now - timedelta(days=8)).strftime("%Y-%m-%d 09:00:00"), "total_distance": 200}
+        ]
+    }
+    widget = DTGraphEmbed(profile)
+    qtbot.addWidget(widget)
+    widget.dropdown.setCurrentIndex(1)  # Switch to weekly view
+    
+    # Should aggregate to 1 bar with 125 (50+75)
+    bars = [item for item in widget.graph_widget.items() if isinstance(item, pg.BarGraphItem)]
+    assert bars[0].opts['height'] == [125]
