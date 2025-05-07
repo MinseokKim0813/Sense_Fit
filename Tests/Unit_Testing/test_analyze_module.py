@@ -121,3 +121,9 @@ def test_rapid_clicks_filtered(create_rapid_clicks_log):
         end_positions = analyzer.find_end_points()
         # Expect only the first (index 10) and third (index 20) clicks
         assert end_positions == [10, 20]
+
+def test_valid_multiclick(create_valid_multiclick_log):
+    with patch("Backend.analyze_module.os.path.dirname", return_value=create_valid_multiclick_log):
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3840, screen_height=2160)
+        end_positions = analyzer.find_end_points()
+        assert end_positions == [0, 2, 4]

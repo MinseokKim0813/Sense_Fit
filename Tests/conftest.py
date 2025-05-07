@@ -154,6 +154,16 @@ def generate_rapid_clicks_rows(n=100):
         rows.append([time, 100 + i, 100 + i, click])
     return rows
 
+def generate_valid_multiclick_rows(n=100):
+    start = datetime.now()
+    rows = []
+    for i in range(n):
+        time = (start + timedelta(milliseconds=i*500)).strftime('%Y-%m-%d %H:%M:%S.%f')  # 500ms steps
+        # Clicks at indices 0 (0ms), 2 (1000ms), 4 (2000ms)
+        click = '1' if i in [0, 2, 4] else '0'
+        rows.append([time, 100 + i, 100 + i, click])
+    return rows
+
 # --------- Fixtures ---------
 
 @pytest.fixture
@@ -262,4 +272,11 @@ def create_rapid_clicks_log(temp_log_dir):
     temp_dir, logs_path = temp_log_dir
     file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
     write_log_file(file_path, generate_rapid_clicks_rows())
+    return temp_dir
+
+@pytest.fixture
+def create_valid_multiclick_log(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_valid_multiclick_rows())
     return temp_dir
