@@ -40,3 +40,18 @@ def test_more_than_five_entries(qtbot):
     x_data, y_data = items[0].getData()
     assert y_data[0] == 800  # Average of first 2 entries
     assert list(y_data[1:]) == [800, 800, 800, 800]  # Last 4 entries
+
+def test_more_than_five_entries(qtbot):
+    history = [
+        {"timestamp": f"2023-01-0{i+1} 10:00:00", "DPI": 800}
+        for i in range(6)
+    ]
+    profile = {"DPI_history": history}
+    widget = DPIGraphEmbed(profile)
+    qtbot.addWidget(widget)
+    
+    # Verify averaged data + recent entries
+    items = widget.plotItem.listDataItems()
+    x_data, y_data = items[0].getData()
+    assert y_data[0] == 800  # Average of first 2 entries
+    assert list(y_data[1:]) == [800, 800, 800, 800]  # Last 4 entries
