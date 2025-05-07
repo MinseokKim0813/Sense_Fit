@@ -27,10 +27,6 @@ def make_profile_handler():
             return ProfileHandler()
     return _make_profile_handler
 
-def generate_empty_profile_file(filepath):
-    with open(filepath, 'w', newline='') as file:
-        json.dump([], file, indent=4)
-
 def generate_profile_file(filepath, profile_count):
     with open(filepath, 'w', newline='') as file:
         json_data = []
