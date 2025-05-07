@@ -1,4 +1,3 @@
-from unittest.mock import patch
 from Backend.calculate_module import DPICalculationModule
 import pytest
 

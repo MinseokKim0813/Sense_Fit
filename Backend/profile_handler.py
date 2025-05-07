@@ -1,6 +1,8 @@
 import os
 import json
 from datetime import datetime
+
+
 def is_alphanumeric(char: str) -> bool:
     return (ord('a') <= ord(char) <= ord('z')) or (ord('A') <= ord(char) <= ord('Z')) or (ord('0') <= ord(char) <= ord('9'))
 
@@ -172,7 +174,4 @@ class ProfileHandler:
                 return {"message": "Profile updated successfully"}
             
         return {"error": "Profile not found"}
-    
-if __name__ == "__main__":
-    # Test create_profile here
-    pass
+
