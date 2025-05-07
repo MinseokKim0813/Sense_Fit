@@ -21,3 +21,9 @@ def test_invalid_timestamps(create_invalid_timestamps_log):
         result = analyzer.handle_error()
         assert "error" in result
         assert "timestamp of the tracking data is missing or invalid" in result["error"]
+
+def test_out_of_bounds_positions(create_out_of_bounds_log):
+    with patch("Backend.analyze_module.os.path.dirname", return_value=create_out_of_bounds_log):
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=1920, screen_height=1080)
+        result = analyzer.handle_error()
+        assert "error" in result

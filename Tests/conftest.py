@@ -31,6 +31,17 @@ def generate_invalid_timestamp_rows(n=100):
         rows[5][0], rows[10][0] = rows[10][0], rows[5][0]
     return rows
 
+def generate_out_of_bounds_rows(n=100):
+    rows = generate_valid_rows(n)
+    for i in range(len(rows)):
+        if i == 50:
+            rows[i][1] = "1921"  # Out of screen_width (1920)
+            rows[i][2] = "1081"  # Out of screen_height (1080)
+    return rows
+
+
+
+
 # --------- Fixtures ---------
 
 @pytest.fixture
@@ -63,3 +74,11 @@ def create_invalid_timestamps_log(temp_log_dir):
     file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
     write_log_file(file_path, generate_invalid_timestamp_rows())
     return temp_dir
+
+@pytest.fixture
+def create_out_of_bounds_log(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_out_of_bounds_rows())
+    return temp_dir
+
