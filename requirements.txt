@@ -1,6 +1,6 @@
 PyQt5
 pyautogui
 pynput
-pandas
-numpy
 pyqtgraph
+pytest
+pytest-qt
