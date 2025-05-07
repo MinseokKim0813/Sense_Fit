@@ -105,6 +105,14 @@ From there, you can create new profiles and start tracking sessions.
 
 ---
 
+## How to run Tests
+
+---
+
+## How to get Coverage Report
+
+---
+
 ## Project Structure
 
 ```plaintext
