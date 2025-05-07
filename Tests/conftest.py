@@ -184,6 +184,17 @@ def generate_single_endpoint_rows(n=100):
         rows.append([time, x, y, click])
     return rows
 
+def generate_multiple_endpoint_rows(n=100):
+    start = datetime.now()
+    rows = []
+    for i in range(n):
+        time = (start + timedelta(milliseconds=i*200)).strftime('%Y-%m-%d %H:%M:%S.%f')  # 200ms steps
+        x = i * 50 % 3840
+        y = i * 30 % 2160
+        click = '1' if i in [20, 60, 90] else '0'  # Valid clicks spaced >0.4s
+        rows.append([time, x, y, click])
+    return rows
+
 # --------- Fixtures ---------
 
 @pytest.fixture
@@ -313,4 +324,11 @@ def create_single_endpoint_log(temp_log_dir):
     temp_dir, logs_path = temp_log_dir
     file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
     write_log_file(file_path, generate_single_endpoint_rows())
+    return temp_dir
+
+@pytest.fixture
+def create_multiple_endpoint_log(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_multiple_endpoint_rows())
     return temp_dir
