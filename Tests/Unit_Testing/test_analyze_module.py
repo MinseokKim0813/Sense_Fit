@@ -48,3 +48,9 @@ def test_missing_log_file():
         with pytest.raises(Exception) as exc_info:
             AnalyzeModule(profile_id=1, session="sessionA", screen_width=1920, screen_height=1080)
         assert "Tracking log file not found" in str(exc_info.value)
+
+def test_no_pauses(create_no_pause_log):
+    with patch("Backend.analyze_module.os.path.dirname", return_value=create_no_pause_log):
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=3000, screen_height=3000)
+        pause_segments = analyzer.get_pause_segments()
+        assert len(pause_segments) == 0  # Expect no pauses

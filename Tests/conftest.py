@@ -62,6 +62,19 @@ def generate_no_movement_rows(n=100):
         rows.append([time, 100, 100, '0'])  # All positions are (100, 100)
     return rows
 
+def generate_no_pause_rows(n=100):
+    start = datetime.now()
+    rows = []
+    for i in range(n):
+        time = (start + timedelta(milliseconds=i*100)).strftime('%Y-%m-%d %H:%M:%S.%f')
+        x = 100 + i * 20
+        y = 100 + i * 20
+        clicked = int(0)
+        rows.append([time, x, y, clicked])
+
+    return rows
+
+
 # --------- Fixtures ---------
 
 @pytest.fixture
@@ -114,4 +127,11 @@ def create_no_movement_log(temp_log_dir):
     temp_dir, logs_path = temp_log_dir
     file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
     write_log_file(file_path, generate_no_movement_rows())
+    return temp_dir
+
+@pytest.fixture
+def create_no_pause_log(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_no_pause_rows())
     return temp_dir
