@@ -27,3 +27,10 @@ def test_out_of_bounds_positions(create_out_of_bounds_log):
         analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=1920, screen_height=1080)
         result = analyzer.handle_error()
         assert "error" in result
+
+def test_abrupt_movement(create_abrupt_movement_log):
+    with patch("Backend.analyze_module.os.path.dirname", return_value=create_abrupt_movement_log):
+        analyzer = AnalyzeModule(profile_id=1, session="sessionA", screen_width=1920, screen_height=1080)
+        result = analyzer.handle_error()
+        assert "error" in result
+        assert "Unusual cursor movement (Abrupt movement)" in result["error"]

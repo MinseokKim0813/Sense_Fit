@@ -39,7 +39,19 @@ def generate_out_of_bounds_rows(n=100):
             rows[i][2] = "1081"  # Out of screen_height (1080)
     return rows
 
-
+def generate_abrupt_movement_rows(n=100):
+    rows = []
+    start = datetime.now()
+    for i in range(n):
+        time = (start + timedelta(milliseconds=i*100)).strftime('%Y-%m-%d %H:%M:%S.%f')
+        if i == 50:
+            x = 1000  # Large jump from previous position (100 + 49 = 149)
+            y = 1000
+        else:
+            x = 100 + i
+            y = 100 + i
+        rows.append([time, x, y, '0'])
+    return rows
 
 
 # --------- Fixtures ---------
@@ -82,3 +94,9 @@ def create_out_of_bounds_log(temp_log_dir):
     write_log_file(file_path, generate_out_of_bounds_rows())
     return temp_dir
 
+@pytest.fixture
+def create_abrupt_movement_log(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_abrupt_movement_rows())
+    return temp_dir
