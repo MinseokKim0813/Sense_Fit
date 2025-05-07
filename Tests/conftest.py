@@ -144,6 +144,16 @@ def generate_single_click_rows(n=100):
         rows.append([time, 100 + i, 100 + i, click])
     return rows
 
+def generate_rapid_clicks_rows(n=100):
+    start = datetime.now()
+    rows = []
+    for i in range(n):
+        time = (start + timedelta(milliseconds=i*100)).strftime('%Y-%m-%d %H:%M:%S.%f')
+        # Clicks at indices 10 (0ms), 11 (100ms), 20 (1000ms)
+        click = '1' if i in [10, 11, 20] else '0'
+        rows.append([time, 100 + i, 100 + i, click])
+    return rows
+
 # --------- Fixtures ---------
 
 @pytest.fixture
@@ -245,4 +255,11 @@ def create_single_click_log(temp_log_dir):
     temp_dir, logs_path = temp_log_dir
     file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
     write_log_file(file_path, generate_single_click_rows())
+    return temp_dir
+
+@pytest.fixture
+def create_rapid_clicks_log(temp_log_dir):
+    temp_dir, logs_path = temp_log_dir
+    file_path = os.path.join(logs_path, "id_1_cursor_log_sessionA.csv")
+    write_log_file(file_path, generate_rapid_clicks_rows())
     return temp_dir
