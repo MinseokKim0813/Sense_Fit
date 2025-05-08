@@ -4,7 +4,7 @@ from Frontend.frontmain import MainInterface, ProfileCard, AddProfileCard
 import pytest
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QLabel
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 @pytest.fixture
 def app(qtbot, profile_handler_mock):

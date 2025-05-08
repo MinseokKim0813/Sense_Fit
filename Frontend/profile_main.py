@@ -11,7 +11,6 @@ from Backend.calculate_module import DPICalculationModule
 from Frontend.error_window import *
 from Frontend.alert_window import *
 from Frontend.alert_window_one_button import *
-from Backend.profile_handler import ProfileHandler
 from Backend.DPIgraph import DPIGraphEmbed
 from Backend.DTgraph import DTGraphEmbed
 
