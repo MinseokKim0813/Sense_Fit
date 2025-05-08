@@ -47,8 +47,9 @@ Built using:
 
 ## Prerequisites
 
-- Python 3.7 or higher
+- Python *between 3.7 and 3.12*
 - pip (Python package manager)
+- (Recommmanded) `make` for utilizing makefile
 
 ---
 
@@ -64,7 +65,7 @@ cd /path/to/dir
 
 ### 1. Clone this repository
 
-```
+```bash
 git clone https://github.com/MinseokKim0813/Sense_Fit.git
 cd Sense_Fit
 ```
@@ -87,7 +88,7 @@ source .venv/bin/activate
 You should see `(.venv)` appear in your terminal prompt.
 
 Then to install python libraries (for both Windows and MacOS):
-```
+```bash
 pip install -r requirements.txt
 ```
 
@@ -101,8 +102,14 @@ When you come back later, simply run `.venv\Scripts\activate` or `source .venv/b
 
 ## Running the Application
 
+### On MacOS (or if `make` command is available)
 ```bash
 make run
+```
+
+### On Windows (or if `make` command is *not* available)
+```bash
+python main.py
 ```
 
 This will launch the **Profile Selection Page**.  
@@ -110,12 +117,18 @@ From there, you can create new profiles and start tracking sessions.
 
 ---
 
-## Running Tests
+## Running Tests to Obtain Coverage Report
 
-## How to get Coverage Report
-
+### On macOS
 ```bash
 make coverage
+```
+
+### On Windows (or if `make` command is not available)
+```bash
+pytest --cov=. --cov-fail-under=90 --cov-report=html:report Tests/
+coverage report # Displays coverage report on terminal
+coverage html   # Creates an html coverage report
 ```
 
 This command executes all tests located in the `Tests/` directory, including both unit tests and system tests. It generates a comprehensive coverage report that is displayed in the terminal and also saved as an HTML file at `htmlcov/index.html`. You can view the HTML report in any web browser for a more detailed analysis of the test coverage.
