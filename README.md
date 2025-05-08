@@ -47,7 +47,7 @@ Built using:
 
 ## Prerequisites
 
-- Python *between 3.7 and 3.12*
+- Python **between 3.7 and 3.12**
 - pip (Python package manager)
 - (Recommmanded) `make` for utilizing makefile
 
@@ -102,12 +102,14 @@ When you come back later, simply run `.venv\Scripts\activate` or `source .venv/b
 
 ## Running the Application
 
+***Don't forget to activate virtual environment before!***
+
 ### On MacOS (or if `make` command is available)
 ```bash
 make run
 ```
 
-### On Windows (or if `make` command is *not* available)
+### On Windows (or if `make` command is **not** available)
 ```bash
 python main.py
 ```
@@ -118,6 +120,8 @@ From there, you can create new profiles and start tracking sessions.
 ---
 
 ## Running Tests to Obtain Coverage Report
+
+***Don't forget to activate virtual environment before!***
 
 ### On macOS
 ```bash
