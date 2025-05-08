@@ -14,4 +14,4 @@ __pycache__
 # Coverage
 .coverage
 .pytest_cache
-report
+htmlcov

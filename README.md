@@ -67,56 +67,46 @@ git clone https://github.com/MinseokKim0813/Sense_Fit.git
 cd Sense_Fit
 ```
 
-### 2. Set up a virtual environment
+### 2. Set up a virtual environment and install dependencies
 
-#### On Windows
-
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-```
-
-#### On macOS/Linux
+#### On Windows/MacOS
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+make venv
 ```
 
 You should see `(.venv)` appear in your terminal prompt.
-
----
-
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
+`make venv` also installs all python dependencies (by running `pip install -r requirements.txt`)
 
 _Typical libraries include_:
 
 - PyQt5
 - pyautogui
-- numpy
+- pyqtgraph
+- pytest
 
 ---
 
 ## Running the Application
 
 ```bash
-python main.py
+make run
 ```
-
-_If it does not work, try `python3 main.py`_
 
 This will launch the **Profile Selection Page**.  
 From there, you can create new profiles and start tracking sessions.
 
 ---
 
-## How to run Tests
+## Running Tests
 
 ## How to get Coverage Report
+
+```bash
+make coverage
+```
+
+This command executes all tests located in the `Tests/` directory, including both unit tests and system tests. It generates a comprehensive coverage report that is displayed in the terminal and also saved as an HTML file at `htmlcov/index.html`. You can view the HTML report in any web browser for a more detailed analysis of the test coverage.
 
 ---
 
@@ -128,17 +118,17 @@ Sense_Fit/
 │   ├── frontmain.py        # Main interface (profile selection, navigation)
 │   ├── create_profile.py   # Popup to create new profile
 │   ├── profile_main.py     # Profile-specific tracking window
-│   ├── error_window.py     # Popup for any errors detected
+│   └── error_window.py     # Popup for any errors detected
 │
 ├── Backend/
 │   ├── tracking_module.py  # Handles live cursor tracking
 │   ├── analyze_module.py   # Post-tracking data analysis
-│   ├── create_profile.py   # Profile data management (JSON storage)
+│   └── create_profile.py   # Profile data management (JSON storage)
 │
-└── Tests/
-    ├── System              # System Testing files
-    ├── Unit_Testing        # Unit Testing files
-│
+├── Tests/
+│  ├── System              # Test suite for System Testing (Specialized for frontend)
+│  ├── Unit_Testing        # Test suite for Unit Testing (Specialized for backend)
+│  └── conftest.py         # Fixtures for Unit Testing
 │
 ├── storage/
 │   ├── profiles.json       # Stored user profiles
