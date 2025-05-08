@@ -19,6 +19,8 @@ Built using:
 
 - **PyQt5** (GUI Framework)
 - **pyautogui** (for cursor tracking)
+- **pyqtgraph** (for data visualization)
+- **pytest** (for coverage report)
 
 ---
 
@@ -69,21 +71,31 @@ cd Sense_Fit
 
 ### 2. Set up a virtual environment and install dependencies
 
-#### On Windows/MacOS
+#### On Windows
 
 ```bash
-make venv
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+#### On MacOS
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
 You should see `(.venv)` appear in your terminal prompt.
-`make venv` also installs all python dependencies (by running `pip install -r requirements.txt`)
 
-_Typical libraries include_:
+Then to install python libraries (for both Windows and MacOS):
+```
+pip install -r requirements.txt
+```
 
-- PyQt5
-- pyautogui
-- pyqtgraph
-- pytest
+_If the script does not run, try `pip3 install -r requirements.txt`._
+
+You may use `deactivate` to exit from the virtual environment.
+
+When you come back later, simply run `.venv\Scripts\activate` or `source .venv/bin/activate` to re-activate the virtual environment.
 
 ---
 
