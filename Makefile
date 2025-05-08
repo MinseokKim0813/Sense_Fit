@@ -6,4 +6,6 @@ run:
 	python3 main.py
 
 coverage:
-	pytest --cov=. --cov-fail-under=80 --cov-report=html:report Tests/
+	pytest --cov=. --cov-fail-under=90 --cov-report=html:report Tests/
+	coverage report
+	coverage html
