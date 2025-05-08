@@ -7,6 +7,7 @@ A desktop application built with PyQt5 that **tracks**, **analyzes**, and **visu
 ## Overview
 
 Sense Fit is a **multi-featured Python desktop application** that:
+
 - Allows users to **create personalized profiles** with their own DPI settings.
 - **Tracks** real-time mouse cursor movements and clicks.
 - **Analyzes** cursor movement paths, detecting:
@@ -15,6 +16,7 @@ Sense Fit is a **multi-featured Python desktop application** that:
 - Provides an **interactive GUI** to manage profiles, track sessions, and view tracking results.
 
 Built using:
+
 - **PyQt5** (GUI Framework)
 - **pyautogui** (for cursor tracking)
 
@@ -22,16 +24,18 @@ Built using:
 
 ## Features
 
-- Create multiple user profiles (Name + DPI)  
-- Real-time global mouse cursor tracking  
-- Automatic session logging (timestamp, X, Y, click status)  
+- Create multiple user profiles (Name + DPI)
+- Real-time global mouse cursor tracking
+- Automatic session logging (timestamp, X, Y, click status)
 - Intelligent data validation:
+
   - Minimum data length
   - Consistent timestamps
   - Reasonable screen positions
-  - No unrealistic cursor jumps or endless jittering  
+  - No unrealistic cursor jumps or endless jittering
 
 - Post-tracking analysis:
+
   - Find where users **paused** during movement
   - Detect **overshoot corrections** when moving toward targets
 
@@ -51,11 +55,13 @@ Built using:
 You will use **terminal** to set up and run the application.
 
 First, move to your desired repository:
+
 ```
 cd /path/to/dir
 ```
 
 ### 1. Clone this repository
+
 ```
 git clone https://github.com/MinseokKim0813/Sense_Fit.git
 cd Sense_Fit
@@ -64,12 +70,14 @@ cd Sense_Fit
 ### 2. Set up a virtual environment
 
 #### On Windows
+
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 ```
 
 #### On macOS/Linux
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
@@ -80,11 +88,13 @@ You should see `(.venv)` appear in your terminal prompt.
 ---
 
 ### 3. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-*Typical libraries include*:
+_Typical libraries include_:
+
 - PyQt5
 - pyautogui
 - numpy
@@ -96,7 +106,8 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
-*If it does not work, try `python3 main.py`*
+
+_If it does not work, try `python3 main.py`_
 
 This will launch the **Profile Selection Page**.  
 From there, you can create new profiles and start tracking sessions.
@@ -104,8 +115,6 @@ From there, you can create new profiles and start tracking sessions.
 ---
 
 ## How to run Tests
-
----
 
 ## How to get Coverage Report
 
@@ -125,6 +134,11 @@ Sense_Fit/
 │   ├── tracking_module.py  # Handles live cursor tracking
 │   ├── analyze_module.py   # Post-tracking data analysis
 │   ├── create_profile.py   # Profile data management (JSON storage)
+│
+└── Tests/
+    ├── System              # System Testing files
+    ├── Unit_Testing        # Unit Testing files
+│
 │
 ├── storage/
 │   ├── profiles.json       # Stored user profiles
