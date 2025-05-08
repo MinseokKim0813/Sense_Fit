@@ -138,9 +138,9 @@ Sense_Fit/
 │   └── create_profile.py   # Profile data management (JSON storage)
 │
 ├── Tests/
-│  ├── System              # Test suite for System Testing (Specialized for frontend)
-│  ├── Unit_Testing        # Test suite for Unit Testing (Specialized for backend)
-│  └── conftest.py         # Fixtures for Unit Testing
+│   ├── System              # Test suite for System Testing (Specialized for frontend)
+│   ├── Unit_Testing        # Test suite for Unit Testing (Specialized for backend)
+│   └── conftest.py         # Fixtures for Unit Testing
 │
 ├── storage/
 │   ├── profiles.json       # Stored user profiles
