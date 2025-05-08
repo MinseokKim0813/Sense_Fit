@@ -17,7 +17,6 @@ Sense Fit is a **multi-featured Python desktop application** that:
 Built using:
 - **PyQt5** (GUI Framework)
 - **pyautogui** (for cursor tracking)
-- **pandas / numpy** (for data analysis)
 
 ---
 
@@ -88,7 +87,6 @@ pip install -r requirements.txt
 *Typical libraries include*:
 - PyQt5
 - pyautogui
-- pandas
 - numpy
 
 ---

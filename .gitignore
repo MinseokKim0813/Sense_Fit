@@ -10,3 +10,8 @@ Backend/storage
 
 # Cache
 __pycache__
+
+# Coverage
+.coverage
+.pytest_cache
+report
